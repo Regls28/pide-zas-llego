@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abys pizzas - Ordena Aqui</title>
+    <style>
+        :root { --red:#e8360edb; --dark:#3b3a3a; --gray:#250404; --yellow:#ffb703; --white:#ffffff; --green:#25d366; --blue:#009ee3; }
+        body { font-family:'Segoe UI',sans-serif; background:var(--dark); color:var(--white); margin:0; padding-bottom:100px; }
+        header { background:#000; padding:25px; text-align:center; border-bottom:4px solid var(--red); }
+        .info-header { font-size:0.9rem; color:#ccc; margin-top:10px; line-height:1.4; }
+        .container { max-width:800px; margin:auto; padding:15px; }
+        .card { background:var(--gray); border-radius:12px; padding:15px; margin-bottom:20px; border:1px solid #333; position:relative; }
+        .price-badge { background:var(--red); padding:5px 12px; border-radius:20px; font-weight:bold; float:right; }
+        .btn { background:var(--red); color:white; border:none; padding:12px 20px; border-radius:8px; cursor:pointer; font-weight:bold; width:100%; margin-top:10px; transition:0.3s; }
+        .btn-sel { background:transparent; border:1px solid var(--red); color:var(--red); margin:5px 0; }
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:2000; overflow-y:auto; }
+        .modal-content { background:var(--gray); max-width:550px; margin:30px auto; padding:25px; border-radius:15px; border:1px solid var(--red); }
+        .grid-2x1 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+        .box-2x1 { border:1px solid #444; padding:10px; border-radius:8px; text-align:center; cursor:pointer; }
+        .payment-methods { display:flex; gap:10px; margin:15px 0; }
+        .pay-option { flex:1; border:1px solid #444; padding:10px; text-align:center; border-radius:8px; cursor:pointer; font-size:0.8rem; }
+        .pay-option.active { border-color:var(--red); background:rgba(230,57,70,0.1); }
+        .cart-bar { position:fixed; bottom:0; width:100%; background:var(--red); padding:15px; text-align:center; font-weight:bold; cursor:pointer; display:flex; justify-content:space-around; align-items:center; z-index:1000; }
+        input, select { background:#222; color:white; border:1px solid #444; border-radius:5px; width:96%; padding:10px; margin:5px; box-sizing:border-box; }
+        .cart-item-detail { background:#2a2a2a; padding:10px; border-radius:5px; margin-top:5px; font-size:0.85rem; border-left:3px solid var(--yellow); }
+
+        /* ── VISOR DE PIZZAS (igual al original + extras por pizza) ── */
+        .visual-box { display:grid; gap:8px; margin:15px 0; background:#000; min-height:80px; padding:8px; border:2px solid #555; }
+        .box-cell { border:1px dashed #777; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:0.75rem; color:var(--yellow); padding:10px; text-align:center; font-weight:bold; cursor:pointer; transition:background 0.2s; min-height:80px; }
+        .box-cell:hover { background:#1a0000; }
+        .box-cell.selected { background:#3a0000; color:#fff; }
+        .box-cell.half-top { border-bottom:1px dashed #555; color:#ffb703; font-size:0.65rem; }
+        .box-cell.half-bottom { color:#aaa; font-size:0.65rem; }
+        .cell-sub { font-size:0.65rem; color:#888; margin-top:3px; font-weight:normal; }
+
+        /* Celdas redondas SOLO en modal normal (paquetes y 2x1) */
+        #visual-preview-modal { border:none; background:transparent; padding:4px; }
+        #visual-preview-modal .box-cell { border-radius:50%; border:2px dashed #777; aspect-ratio:1/1; min-height:unset; height:90px; width:90px; margin:auto; font-size:0.7rem; }
+        #visual-preview-modal .box-cell:hover { background:#1a0000; }
+        #visual-preview-modal .box-cell.selected { background:#3a0000; border-color:var(--red); border-style:solid; }
+
+        /* ── VISOR RECTANGULO / CUADRADO (logica de Richard) ── */
+        .visual-box.shape-rect,
+        .visual-box.shape-square {
+            display: grid;
+            gap: 3px;
+            margin: 15px auto;
+            border: 6px solid var(--yellow);
+            border-radius: 10px;
+            overflow: hidden;
+            background: linear-gradient(180deg, #b5661f, #6b3a10);
+            box-shadow: 0 16px 34px rgba(0,0,0,.45);
+            padding: 0;
+        }
+        .visual-box.shape-rect { width: 100%; aspect-ratio: 1.7 / 1; }
+        .visual-box.shape-square { width: min(260px, 70vw); aspect-ratio: 1; }
+
+        .rect-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--white);
+            font-size: 0.72rem;
+            font-weight: bold;
+            line-height: 1.2;
+            text-shadow: 0 1px 3px rgba(0,0,0,.7);
+            background: rgba(10,8,6,.45);
+            transition: background .15s;
+            word-break: break-word;
+            min-width: 0;
+            min-height: 0;
+        }
+        .rect-cell.selected { background: rgba(255,183,3,.85); color:#1a1200; text-shadow:none; }
+        .rect-cell.active-slot { box-shadow: inset 0 0 0 3px var(--red); background: rgba(255,255,255,.16); }
+        .rect-cell.active-slot.selected { background: rgba(255,183,3,1); }
+
+        /* ── VISOR CIRCULO (Pizza D2) ── */
+        .visual-box.shape-circle {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 14px;
+            background: transparent;
+            border: none;
+            padding: 0;
+            min-height: auto;
+        }
+        .pizza-circle-abys {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 6px solid var(--yellow);
+            box-shadow: inset 0 0 0 3px rgba(0,0,0,.32), 0 12px 26px rgba(0,0,0,.5);
+            background: radial-gradient(circle, #f5c64c 0 58%, #d8842d 59% 68%, #88331d 69%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 16%;
+            cursor: pointer;
+            color: #fff7ee;
+            font-weight: bold;
+            font-size: 0.8rem;
+            line-height: 1.2;
+            text-shadow: 0 1px 3px rgba(0,0,0,.65);
+        }
+        .pizza-circle-abys.selected { background: rgba(255,183,3,.9); color:#1a1200; text-shadow:none; }
+        .pizza-circle-abys.active-slot { box-shadow: inset 0 0 0 4px var(--red), inset 0 0 0 3px rgba(0,0,0,.32); }
+
+        /* ── VISOR CORAZON (Pizza Corazon) ── */
+        .visual-box.shape-heart {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 14px;
+            background: transparent;
+            border: none;
+            padding: 0;
+            min-height: auto;
+        }
+        .heart-abys {
+            position: relative;
+            width: 210px;
+            height: 190px;
+            cursor: pointer;
+            filter: drop-shadow(0 10px 18px rgba(0,0,0,.5));
+        }
+        .heart-abys svg { width: 100%; height: 100%; display: block; }
+        .heart-abys path {
+            fill: #8a3a12;
+            stroke: var(--yellow);
+            stroke-width: 3;
+            transition: fill .15s, stroke .15s;
+        }
+        .heart-abys.selected path { fill: var(--yellow); }
+        .heart-abys.active-slot path { stroke: var(--red); stroke-width: 5; }
+        .heart-label {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 22% 24% 8%;
+            color: #fff7ee;
+            font-weight: bold;
+            font-size: 0.78rem;
+            line-height: 1.2;
+            text-shadow: 0 1px 3px rgba(0,0,0,.65);
+            pointer-events: none;
+        }
+        .heart-abys.selected .heart-label { color: #1a1200; text-shadow: none; }
+
+        /* ── CHECKBOXES POR PIZZA ── */
+        .pizzas-extras-row { display:grid; gap:8px; margin-top:4px; }
+        .pizza-extras-col { border:1px solid #333; border-radius:8px; padding:8px; background:#150000; }
+        .chk-row { display:flex; align-items:center; gap:6px; font-size:0.75rem; padding:3px 0; }
+        .chk-row input[type=checkbox] { width:16px; height:16px; margin:0; padding:0; flex-shrink:0; accent-color:var(--red); cursor:pointer; }
+        .chk-price { color:var(--yellow); font-size:0.7rem; margin-left:auto; white-space:nowrap; }
+
+        /* ── LISTA DE SABORES ── */
+        .flavor-item { padding:10px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center; }
+        .flavor-btn { background:var(--yellow); color:#000; border:none; width:42px; height:42px; border-radius:10px; font-size:1.3rem; font-weight:bold; cursor:pointer; flex-shrink:0; }
+
+        /* Indicador de qué pizza se está eligiendo */
+        .picking-label { background:#3a0000; color:var(--yellow); font-size:0.78rem; padding:6px 12px; border-radius:6px; text-align:center; margin-bottom:8px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="EPAP4942.PNG" alt="Logo" style="max-height:350px;">
+    <div class="info-header">
+        Av. Parque Nacional, (A 650 metros del parque "Los Ahuehuetes").<br>
+        Municipio San Salvador Atenco, Méx.<br>
+        <strong>Servicio: 12:00 PM - 10:30 PM</strong>
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">SUPER PROMOS</h2>
+        <h3>3 Pizzas a elegir + Refresco 2Lts</h3>
+        <div class="grid-2x1">
+            <button class="btn btn-sel" onclick="openPicker('Super promos 3 Medianas',  3,335,true,'mediana')">3 Medianas $335</button>
+            <button class="btn btn-sel" onclick="openPicker('Super promos 3 Grandes',   3,395,true,'grande')">3 Grandes $395</button>
+            <button class="btn btn-sel" onclick="openPicker('Super promos 3 Familiares',3,515,true,'familiar')">3 Familiares $515</button>
+        </div>
+    </div>
+    
+   <div class="card">
+    <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">paquete lo lleves</h2>
+    <div class="grid-2x1">
+        <div class="box-2x1" onclick="openPicker('Paquete 1',1,175,false,'grande')">
+            <strong>PAQUETE 1</strong><br>$175<br><span style="font-size:0.8rem;">1 Pizza Grande<br>(Sin refresco)</span>
+        </div>
+        <div class="box-2x1" onclick="openPicker('Paquete 2',1,224,true,'familiar')">
+            <strong>PAQUETE 2</strong><br>$224<br><span style="font-size:0.8rem;">1 Pizza Familiar<br>+ Refresco 2Lts</span>
+        </div>
+        <div class="box-2x1" onclick="openPicker('Paquete 3',2,315,true,'grande')">
+            <strong>PAQUETE 3</strong><br>$315<br><span style="font-size:0.8rem;">2 Pizzas Grandes<br>+ Refresco 2Lts</span>
+        </div>
+        <div class="box-2x1" onclick="openPicker('Paquete 4',2,375,true,'familiar')">
+            <strong>PAQUETE 4</strong><br>$375<br><span style="font-size:0.8rem;">2 Pizzas Familiares<br>+ Refresco 2Lts</span>
+        </div>
+     </div>
+    </div>   
+
+    <!-- RECTANGULARES sin mitad ni orilla extra -->
+    <div class="card">
+        <span class="price-badge">$385</span>
+        <img src="images/Pizza Rectangular.png" style="width:100%; border-radius:10px; margin:10px 0; object-fit:contain; max-height:250px; background:#000;">
+        <p>24 rebanadas, orilla rellena de queso crema y ajonjolí + Refresco 2Lts</p>
+        <button class="btn" onclick="openPickerRect('Pizza Rectangular',4,385,true)">Elegir 4 sabores</button>
+    </div>
+    <div class="card">
+        <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">pizza Barra<span class="price-badge">$255</span></h2>
+        <img src="images/IMG_0366.jpeg" style="width:100%; border-radius:10px; margin:10px 0; object-fit:contain; max-height:250px; background:#000;">
+        <p>12 rebanadas, orilla rellena de queso crema y ajonjolí + Refresco 2Lts</p>
+        <button class="btn" onclick="openPickerRect('Pizza Barra',2,255,true)">Elegir 2 sabores</button>
+    </div>
+    <div class="card">
+        <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">pizza Cuadrada<span class="price-badge">$315</span></h2>
+        <p>16 rebanadas, orilla rellena de queso crema y ajonjolí + Refresco 2Lts</p>
+        <button class="btn" onclick="openPickerRect('Pizza Cuadrada',2,315,true)">Elegir 2 sabores</button>
+    </div>
+    <div class="card">
+        <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">pizza De Dedos<span class="price-badge">$305</span></h2>
+        <img src="images/IMG_0368.jpeg" style="width:100%; border-radius:10px; margin:10px 0; object-fit:contain; max-height:250px; background:#000;">
+        <p>12 rebanadas, orilla rellena de queso crema y ajonjolí + Refresco 2Lts</p>
+        <button class="btn" onclick="openPickerRect('Pizza D2',1,305,true)">Elegir sabor</button>
+    </div>
+    <div class="card">
+        <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">pizza De Corazon<span class="price-badge">$265</span></h2>
+         <img src="images/IMG_0367.jpeg" style="width:100%; border-radius:10px; margin:10px 0; object-fit:contain; max-height:250px; background:#000;">
+        <p>14 rebanadas, orilla rellena de queso crema y ajonjolí + Refresco 2Lts</p>
+        <button class="btn" onclick="openPickerRect('Pizza Corazon',1,265,true)">Elegir sabor</button>
+    </div>
+    
+   <div class="card">
+    <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">Especialidades al 2x1</h2>
+    <div class="grid-2x1">
+        <div class="box-2x1" onclick="openPicker('2x1 Chica',   2,175,false,'chica')"><strong>CHICA</strong><br>$175<br><span>6 Rebanadas</span></div>
+        <div class="box-2x1" onclick="openPicker('2x1 Mediana', 2,260,false,'mediana')"><strong>MEDIANA</strong><br>$260<br><span>8 Rebanadas</span></div>
+        <div class="box-2x1" onclick="openPicker('2x1 Grande',  2,305,false,'grande')"><strong>GRANDE</strong><br>$305<br><span>8 Rebanadas</span></div>
+        <div class="box-2x1" onclick="openPicker('2x1 Familiar',2,365,true,'familiar')"><strong>FAMILIAR</strong><br>$365<br><span>12 Rebanadas</span></div>
+    </div>
+   </div>
+
+    <div class="card">
+        <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">Complementos</h2>
+        <img src="images/spaghetti.png" style="width:100%; border-radius:10px; margin:10px 0; object-fit:contain; max-height:250px; background:#000;">
+        <div class="card"></div>
+        <span class="price-badge">$110</span><h3>Spaghetti Hawaiano</h3>
+        <p>piña, jamon, crema, mantequilla y queso</p>
+        <button class="btn btn-sel" onclick="addToCartDirect('Spaghetti Hawiano',110)">Agregar al carrito</button>
+        <div class="card"></div>
+        <span class="price-badge">$100</span><h3>Spaghetti Italiano</h3>
+        <p>jamon, pure, mantequilla y queso</p>
+        <button class="btn btn-sel" onclick="addToCartDirect('Spaghetti Italiano',100)">Agregar al carrito</button>
+        <div class="card"></div>
+        <span class="price-badge">$110</span><h3>Spaghetti a la Bologñesa</h3>
+        <p>carne molida, pure, mantequilla y queso</p>
+        <button class="btn btn-sel" onclick="addToCartDirect('Spaghetti Bologñesa',110)">Agregar al carrito</button>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL NORMAL — mismo visor original + checkboxes abajo
+══════════════════════════════════════════ -->
+<div id="pickerModal" class="modal">
+  <div class="modal-content">
+    <h2 id="pickerTitle" style="color:var(--yellow);margin-bottom:10px;"></h2>
+
+    <!-- VISOR de celdas (igual al original) -->
+    <div id="visual-preview-modal" class="visual-box"></div>
+
+    <!-- CHECKBOXES debajo de cada celda -->
+    <div id="extras-row" class="pizzas-extras-row"></div>
+
+    <!-- indicador de qué pizza se elige -->
+    <div id="picking-label" class="picking-label" style="display:none;"></div>
+
+    <!-- REFRESCO -->
+    <div id="refresco-area" style="display:none;background:#222;padding:10px;border-radius:8px;margin:10px 0;">
+        <p style="margin:0 0 6px;"><strong>Refresco 2LTS:</strong></p>
+        <select id="sel-refresco" onchange="updateCocaExtra()">
+            <option value="Sabor">Sabor (Cualquier sabor disponible.)</option>
+            <option value="Coca">Coca Cola (+ $15.00)</option>
+        </select>
+    </div>
+
+    <!-- LISTA DE SABORES -->
+    <div id="flavorList" style="max-height:320px;overflow-y:auto;background:#000;border-radius:8px;margin-top:8px;"></div>
+
+    <!-- TOTAL EXTRAS -->
+    <p id="p-total" style="text-align:right;color:var(--yellow);font-size:0.85rem;margin:8px 0;"></p>
+
+    <button class="btn" style="background:var(--green);" onclick="confirmOrder()">✅ AGREGAR AL CARRITO</button>
+    <button class="btn btn-sel" onclick="closeModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL RECT — logica de Richard (grid rect/cuadrado)
+══════════════════════════════════════════ -->
+<div id="pickerModal2" class="modal">
+  <div class="modal-content">
+    <h2 id="pickerTitle2" style="color:var(--yellow);"></h2>
+    <div id="refresco-area2" style="display:none;background:#222;padding:10px;border-radius:8px;margin-bottom:10px;">
+        <p><strong>Refresco 2LTS:</strong></p>
+        <select id="sel-refresco2" onchange="updateCocaExtra2()">
+            <option value="Sabor">Sabor (Cualquier sabor disponible.)</option>
+            <option value="Coca">Coca Cola (+ $15.00)</option>
+        </select>
+    </div>
+    <div id="visual-preview-modal2" class="visual-box"></div>
+    <p id="p-total2" style="text-align:right;color:var(--yellow);font-size:0.85rem;margin:8px 0;"></p>
+    <div id="flavorList2" style="max-height:300px;overflow-y:auto;background:#000;"></div>
+    <button class="btn" style="background:var(--green);" onclick="confirmOrder2()">✅ AGREGAR AL CARRITO</button>
+    <button class="btn btn-sel" onclick="closeModal2()">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL CARRITO -->
+<div id="cartModal" class="modal">
+  <div class="modal-content">
+    <h2>Confirmar Pedido</h2>
+    <div id="cartItems"></div>
+    <hr>
+    <button class="btn" style="background:#3b82f6;" onclick="getLocation()">📍 COMPARTIR UBICACIÓN GPS</button>
+    <p id="geo-status" style="font-size:0.7rem;color:var(--yellow);text-align:center;"></p>
+    <input type="text" id="c-nombre"  placeholder="Nombre completo">
+    <input type="text" id="c-tel"     placeholder="Teléfono">
+    <input type="text" id="c-colonia" placeholder="Colonia">
+    <input type="text" id="c-dir"     placeholder="Dirección y Numero">
+    <input type="text" id="c-entrecalles" placeholder="Entre que calles">
+    <div style="display:flex;">
+        <input type="text" id="c-zaguan"  placeholder="Color Zaguán"  style="width:48%;">
+        <input type="text" id="c-fachada" placeholder="Color Fachada" style="width:48%;">
+    </div>
+    <h3>Forma de Pago</h3>
+    <div class="payment-methods">
+        <div class="pay-option active" id="p-efe" onclick="setPay('Efectivo')">Efectivo</div>
+        <div class="pay-option"        id="p-tra" onclick="setPay('Transferencia')">Transferencia</div>
+        <div class="pay-option"        id="p-tar" onclick="setPay('Tarjeta')">Tarjeta (+4%)</div>
+    </div>
+    <div id="info-pago-extra" style="display:none;background:#000;padding:15px;border-radius:8px;border:1px solid var(--yellow);margin:10px 0;">
+        <p id="txt-pago-inst" style="font-size:0.85rem;margin:0;"></p>
+        <button id="btn-mp" class="btn" style="background:var(--blue);display:none;" onclick="window.open('https://link.mercadopago.com.mx/abyspizzas1','_blank')">PAGAR AHORA</button>
+    </div>
+    <h2 id="total-final" style="text-align:right;color:var(--yellow);font-size:1.8rem;">Total: $0</h2>
+    <p style="font-size:0.7rem;text-align:center;color:#888;">* Al dar click en enviar, se abrirá tu WhatsApp. No olvides enviar tu captura si pagaste por banco.</p>
+    <button class="btn" style="background:var(--green);height:60px;font-size:1.2rem;" onclick="sendWhatsApp()">🚀 ENVIAR PEDIDO</button>
+    <button class="btn btn-sel" onclick="closeCart()">Seguir Comprando</button>
+  </div>
+</div>
+
+<div class="cart-bar" onclick="openCart()">
+    <span>🛒 MI CARRITO</span>
+    <span id="cart-count">0</span>
+    <span id="cart-total">$0</span>
+</div>
+
+<script>
+const especialidades = [
+    {n:"SUPER ABYS",            i:"Atun, chipotle, cebolla, aguacate y mayonesas"},
+    {n:"HAWAIANA TRADICIONAL",  i:"Jamón y piña"},
+    {n:"HAWAIANA INTERNACIONAL",i:"Jamón, piña, cerezas y durazno"},
+    {n:"PASTOR ESPECIAL",       i:"Carne al pastor, piña, cebolla y chipotle"},
+    {n:"PASTOR NORMAL",         i:"Jamón, piña y chorizo"},
+    {n:"MEXICANA",              i:"Pierna, pollo, jalapeños y aguacate"},
+    {n:"RANCHERA",              i:"Frijoles, jalapeños, chorizo y aguacate"},
+    {n:"CHILANGA",              i:"Salchicha, jamón y pepperoni"},
+    {n:"CUBANA",                i:"Pierna, atún, jalapeños, tocino, jitomate y aguacate"},
+    {n:"VEGETARIANA",           i:"Champiñones, cebolla, pimiento verde, aceitunas y aguacate"},
+    {n:"COSTILLA BBQ",          i:"Costilla en salsa BBQ"},
+    {n:"COCHINITA PIBIL",       i:"Cochinita pibil y cebolla morada"},
+    {n:"BBQ POLLO",             i:"Pollo y salsa BBQ"},
+    {n:"CHAMPERONI",            i:"Champiñones y pepperoni"},
+    {n:"TABASQUEÑA",            i:"Piña, lomo canadiense, tocino y salsa tabasqueña"},
+    {n:"COMBINADA",             i:"Jamón, salami, champiñones, cebolla, pimiento verde y chorizo"},
+    {n:"CHISTORRA",             i:"Chistorra con champiñones"},
+    {n:"CARNES FRÍAS",          i:"Pierna, salchicha, jamón, pepperoni y tocino"},
+    {n:"MAFIOSA",               i:"Champiñones, salami, jalapeños y tocino"},
+    {n:"CLÁSICA ESPECIAL",      i:"Carne molida, champiñones, pepperoni, aceitunas y pimiento verde"},
+    {n:"PEPERONI",              i:"Peperoni"},
+    {n:"CAMPESTRE",             i:"Pollo, cebolla, jalapeño y elote"}
+];
+
+const ORILLA = {chica:20,mediana:30,grande:35,familiar:40};
+
+let cart=[], selectedPay='Efectivo', userLocation="No enviada";
+const linkMP="https://link.mercadopago.com.mx/abyspizzas1";
+
+// Estado picker normal
+// slots[i] = {sabor1:'', sabor2:'', mitad:false, orilla:false}
+let cur=null, slots=[], activePizza=-1, activeHalf=1;
+
+// Estado picker rect (logica de Richard: grid rect/cuadrado)
+let cur2=null, slots2=[], activeSlot2=0;
+
+// ── ABRIR PICKER NORMAL ──────────────────────
+function openPicker(type,limit,price,hasRef,size){
+    cur={type,limit,basePrice:price,hasRef,size,refresco:'Sabor',cocaExtra:0};
+    slots=[];
+    for(let i=0;i<limit;i++) slots.push({sabor1:'',sabor2:'',mitad:false,orilla:false});
+    activePizza=0; activeHalf=1;
+
+    document.getElementById('pickerTitle').innerText=type;
+    document.getElementById('refresco-area').style.display=hasRef?'block':'none';
+    document.getElementById('sel-refresco').value='Sabor';
+    cur.cocaExtra=0;
+
+    renderVisor();
+    renderFlavorList();
+    document.getElementById('pickerModal').style.display='block';
+}
+
+// ── VISOR: celdas iguales al original pero mostrando mitad ──
+function renderVisor(){
+    const vBox=document.getElementById('visual-preview-modal');
+    const extRow=document.getElementById('extras-row');
+    const op=ORILLA[cur.size]||0;
+
+    vBox.style.gridTemplateColumns=`repeat(${cur.limit},1fr)`;
+    vBox.innerHTML='';
+    extRow.style.gridTemplateColumns=`repeat(${cur.limit},1fr)`;
+    extRow.innerHTML='';
+
+    slots.forEach((sl,i)=>{
+        // CELDA del visor
+        const cell=document.createElement('div');
+        cell.className='box-cell'+(sl.sabor1?' selected':'');
+        cell.id='vcell-'+i;
+
+        if(sl.mitad){
+            // Dividida en 2 mitades
+            cell.style.flexDirection='column';
+            cell.style.padding='4px';
+            cell.innerHTML=`
+                <div style="flex:1;width:100%;display:flex;align-items:center;justify-content:center;border-bottom:1px dashed #666;font-size:0.7rem;color:${sl.sabor1?'#fff':'var(--yellow)'};padding:4px;cursor:pointer;" onclick="startPicking(${i},1)">
+                    ${sl.sabor1?'½ '+sl.sabor1:'½ Sabor 1'}
+                </div>
+                <div style="flex:1;width:100%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:${sl.sabor2?'#fff':'#888'};padding:4px;cursor:pointer;" onclick="startPicking(${i},2)">
+                    ${sl.sabor2?'½ '+sl.sabor2:'½ Sabor 2'}
+                </div>`;
+        } else {
+            cell.innerHTML=sl.sabor1||('Sabor '+(i+1));
+            cell.onclick=()=>startPicking(i,1);
+        }
+
+        // Resaltar celda activa
+        if(activePizza===i) cell.style.outline='2px solid var(--yellow)';
+        vBox.appendChild(cell);
+
+        // CHECKBOXES debajo
+        const col=document.createElement('div');
+        col.className='pizza-extras-col';
+        col.innerHTML=`
+            <div class="chk-row">
+                <input type="checkbox" id="chk-m-${i}" ${sl.mitad?'checked':''} onchange="toggleMitad(${i})">
+                <label for="chk-m-${i}">Mitad y mitad</label>
+                <span class="chk-price">+$10</span>
+            </div>
+            <div class="chk-row">
+                <input type="checkbox" id="chk-o-${i}" ${sl.orilla?'checked':''} onchange="toggleOrilla(${i})">
+                <label for="chk-o-${i}">Orilla de queso</label>
+                <span class="chk-price">+$${op}</span>
+            </div>`;
+        extRow.appendChild(col);
+    });
+
+    updatePickingLabel();
+    recalcTotal();
+}
+
+function startPicking(pizzaIdx,half){
+    activePizza=pizzaIdx;
+    activeHalf=half;
+    renderVisor();
+    renderFlavorList();
+}
+
+function updatePickingLabel(){
+    const lbl=document.getElementById('picking-label');
+    if(activePizza<0){ lbl.style.display='none'; return; }
+    const pLabel=cur.limit>1?`Pizza ${activePizza+1}`:'Pizza';
+    const hLabel=slots[activePizza].mitad?(activeHalf===1?' — ½ Sabor 1':' — ½ Sabor 2'):'';
+    lbl.innerText=`Eligiendo: ${pLabel}${hLabel} — toca un sabor de la lista`;
+    lbl.style.display='block';
+}
+
+function toggleMitad(i){
+    slots[i].mitad=document.getElementById(`chk-m-${i}`).checked;
+    if(!slots[i].mitad) slots[i].sabor2='';
+    // Si activamos mitad y esta pizza está activa, quedamos en half 1
+    if(activePizza===i) activeHalf=1;
+    renderVisor();
+    renderFlavorList();
+}
+
+function toggleOrilla(i){
+    slots[i].orilla=document.getElementById(`chk-o-${i}`).checked;
+    recalcTotal();
+}
+
+// ── LISTA DE SABORES ─────────────────────────
+function renderFlavorList(){
+    const list=document.getElementById('flavorList');
+    list.innerHTML='';
+    especialidades.forEach(e=>{
+        const div=document.createElement('div');
+        div.className='flavor-item';
+        div.innerHTML=`<div><strong>${e.n}</strong><br><small style="color:#888;">${e.i}</small></div>
+            <button class="flavor-btn" onclick="selectFlavor('${e.n}')">+</button>`;
+        list.appendChild(div);
+    });
+}
+
+function selectFlavor(nombre){
+    if(activePizza<0) activePizza=0;
+    if(activeHalf===1) slots[activePizza].sabor1=nombre;
+    else               slots[activePizza].sabor2=nombre;
+
+    // Avanzar automáticamente al siguiente slot pendiente
+    let found=false;
+    for(let i=activePizza;i<cur.limit;i++){
+        if(i===activePizza){
+            if(activeHalf===1 && slots[i].mitad && !slots[i].sabor2){ activeHalf=2; found=true; break; }
+            if(i===activePizza && activeHalf===1) continue;
+        }
+        if(!slots[i].sabor1){ activePizza=i; activeHalf=1; found=true; break; }
+        if(slots[i].mitad && !slots[i].sabor2){ activePizza=i; activeHalf=2; found=true; break; }
+    }
+    if(!found){
+        // Buscar desde el inicio
+        for(let i=0;i<cur.limit;i++){
+            if(!slots[i].sabor1){ activePizza=i; activeHalf=1; found=true; break; }
+            if(slots[i].mitad && !slots[i].sabor2){ activePizza=i; activeHalf=2; found=true; break; }
+        }
+    }
+    if(!found) activePizza=0;
+
+    renderVisor();
+    renderFlavorList();
+}
+
+function recalcTotal(){
+    if(!cur) return;
+    const op=ORILLA[cur.size]||0;
+    let extras=cur.cocaExtra, parts=[];
+    slots.forEach((sl,i)=>{
+        const lbl=cur.limit>1?`P${i+1}: `:'';
+        if(sl.mitad)  { extras+=10; parts.push(`${lbl}Mitad +$10`); }
+        if(sl.orilla) { extras+=op; parts.push(`${lbl}Orilla +$${op}`); }
+    });
+    const total=cur.basePrice+extras;
+    document.getElementById('p-total').innerText=
+        parts.length?`Extras: ${parts.join(' | ')}  →  Total: $${total}`:`Total: $${total}`;
+}
+
+function updateCocaExtra(){
+    const v=document.getElementById('sel-refresco').value;
+    cur.refresco=v; cur.cocaExtra=v==='Coca'?15:0;
+    recalcTotal();
+}
+
+function confirmOrder(){
+    const op=ORILLA[cur.size]||0;
+    for(let i=0;i<cur.limit;i++){
+        if(!slots[i].sabor1){alert(`Elige el sabor de la Pizza ${i+1}`);return;}
+        if(slots[i].mitad&&!slots[i].sabor2){alert(`Elige el 2do sabor (mitad) de la Pizza ${i+1}`);return;}
+    }
+    let flavors=[],extras=cur.cocaExtra;
+    slots.forEach((sl,i)=>{
+        const lbl=cur.limit>1?`Pizza ${i+1}: `:'';
+        let desc=lbl+(sl.mitad?`${sl.sabor1} 1/2 ${sl.sabor2}`:sl.sabor1);
+        if(sl.orilla){desc+=' + Orilla de queso';extras+=op;}
+        if(sl.mitad) extras+=10;
+        flavors.push(desc);
+    });
+    cart.push({type:cur.type,flavors,price:cur.basePrice+extras,hasRef:cur.hasRef,refresco:cur.refresco});
+    closeModal();updateStats();
+}
+
+function closeModal(){ document.getElementById('pickerModal').style.display='none'; }
+
+// ── PICKER RECT / CUADRADO (logica de Richard: grid + slot activo) ───────────
+function openPickerRect(type,limit,price,hasRef){
+    cur2={type,limit,basePrice:price,hasRef,refresco:'Sabor',cocaExtra:0,
+          shape: type.indexOf('Cuadrada')>=0 ? 'square'
+               : type.indexOf('D2')>=0 ? 'circle'
+               : type.indexOf('Corazon')>=0 ? 'heart'
+               : 'rect'};
+    slots2=[];
+    for(let i=0;i<limit;i++) slots2.push('');
+    activeSlot2=0;
+
+    document.getElementById('pickerTitle2').innerText=type;
+    document.getElementById('refresco-area2').style.display=hasRef?'block':'none';
+    document.getElementById('sel-refresco2').value='Sabor';
+    cur2.cocaExtra=0;
+
+    renderVisorRect();
+    renderFlavorList2();
+    document.getElementById('pickerModal2').style.display='block';
+}
+
+function renderVisorRect(){
+    const vBox=document.getElementById('visual-preview-modal2');
+    vBox.className='visual-box shape-'+cur2.shape;
+    vBox.innerHTML='';
+
+    if(cur2.shape==='circle'){
+        renderCircleSlots(vBox);
+    } else if(cur2.shape==='heart'){
+        renderHeartSlots(vBox);
+    } else {
+        renderGridSlots(vBox);
+    }
+
+    recalcTotal2();
+}
+
+function renderGridSlots(vBox){
+    const total=slots2.length;
+    const cols=Math.ceil(Math.sqrt(total));
+    const rows=Math.ceil(total/cols);
+    vBox.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+    vBox.style.gridTemplateRows=`repeat(${rows},1fr)`;
+
+    slots2.forEach((sabor,i)=>{
+        const cell=document.createElement('div');
+        cell.className='rect-cell'
+            +(sabor?' selected':'')
+            +(activeSlot2===i?' active-slot':'');
+        cell.innerText=sabor||('Sabor '+(i+1));
+        cell.onclick=()=>startPickingRect(i);
+        vBox.appendChild(cell);
+    });
+}
+
+function renderCircleSlots(vBox){
+    slots2.forEach((sabor,i)=>{
+        const circle=document.createElement('div');
+        circle.className='pizza-circle-abys'
+            +(sabor?' selected':'')
+            +(activeSlot2===i?' active-slot':'');
+        circle.innerText=sabor||('Sabor '+(i+1));
+        circle.onclick=()=>startPickingRect(i);
+        vBox.appendChild(circle);
+    });
+}
+
+function renderHeartSlots(vBox){
+    slots2.forEach((sabor,i)=>{
+        const heart=document.createElement('div');
+        heart.className='heart-abys'
+            +(sabor?' selected':'')
+            +(activeSlot2===i?' active-slot':'');
+        heart.onclick=()=>startPickingRect(i);
+        heart.innerHTML=`<svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg"><path d="M50,90 C50,90 5,58 5,30 C5,12 20,2 35,2 C43,2 49,6 50,14 C51,6 57,2 65,2 C80,2 95,12 95,30 C95,58 50,90 50,90 Z"/></svg><div class="heart-label">${sabor||('Sabor '+(i+1))}</div>`;
+        vBox.appendChild(heart);
+    });
+}
+
+function startPickingRect(i){
+    activeSlot2=i;
+    renderVisorRect();
+}
+
+function pickRect(nombre){
+    if(activeSlot2<0) activeSlot2=0;
+    slots2[activeSlot2]=nombre;
+
+    // Avanza automaticamente al siguiente slot vacio
+    let next=-1;
+    for(let i=0;i<slots2.length;i++){
+        if(!slots2[i]){ next=i; break; }
+    }
+    activeSlot2 = next>=0 ? next : 0;
+
+    renderVisorRect();
+}
+
+function recalcTotal2(){
+    if(!cur2) return;
+    const total=cur2.basePrice+cur2.cocaExtra;
+    document.getElementById('p-total2').innerText='Total: $'+total;
+}
+
+function updateCocaExtra2(){
+    const v=document.getElementById('sel-refresco2').value;
+    cur2.refresco=v; cur2.cocaExtra=v==='Coca'?15:0;
+    recalcTotal2();
+}
+
+function renderFlavorList2(){
+    const list=document.getElementById('flavorList2');
+    list.innerHTML='';
+    especialidades.forEach(e=>{
+        list.innerHTML+=`<div class="flavor-item">
+            <div><strong>${e.n}</strong><br><small style="color:#888;">${e.i}</small></div>
+            <button class="flavor-btn" onclick="pickRect('${e.n}')">+</button></div>`;
+    });
+}
+
+function confirmOrder2(){
+    for(let i=0;i<slots2.length;i++){
+        if(!slots2[i]){ alert(`Elige el sabor ${i+1}`); return; }
+    }
+    cart.push({type:cur2.type,flavors:slots2.slice(),price:cur2.basePrice+cur2.cocaExtra,hasRef:cur2.hasRef,refresco:cur2.refresco});
+    closeModal2();updateStats();
+}
+function closeModal2(){ document.getElementById('pickerModal2').style.display='none'; }
+
+// ── DIRECTO ───────────────────────────────────
+function addToCartDirect(name,price){
+    cart.push({type:name,flavors:[],price,hasRef:false,refresco:''});
+    updateStats(); alert(name+" agregado al carrito");
+}
+
+// ── CARRITO ───────────────────────────────────
+function updateStats(){
+    const total=cart.reduce((s,i)=>s+i.price,0);
+    document.getElementById('cart-count').innerText=cart.length;
+    document.getElementById('cart-total').innerText="$"+total;
+}
+function setPay(m){
+    selectedPay=m;
+    document.querySelectorAll('.pay-option').forEach(el=>el.classList.remove('active'));
+    document.getElementById('p-'+m.substring(0,3).toLowerCase()).classList.add('active');
+    const info=document.getElementById('info-pago-extra');
+    const txt=document.getElementById('txt-pago-inst');
+    const btnMp=document.getElementById('btn-mp');
+    info.style.display=m==='Efectivo'?'none':'block';
+    if(m==='Transferencia'){
+        txt.innerHTML="🏦 <strong>CLABE: 7229 6902 8108 0883 38<br>🏦 STP (Abys pizza)</strong><br>Por favor enviar captura de tu pago.";
+        btnMp.style.display='none';
+    } else if(m==='Tarjeta'){
+        txt.innerHTML="💳 <strong>Pago con Tarjeta:</strong> No olvides enviar tu comprobante.";
+        btnMp.style.display='block';
+    }
+    calculateFinalTotal();
+}
+function calculateFinalTotal(){
+    let total=cart.reduce((s,i)=>s+i.price,0);
+    if(selectedPay==='Tarjeta') total*=1.04;
+    document.getElementById('total-final').innerText="Total: $"+Math.round(total);
+}
+function getLocation(){
+    navigator.geolocation.getCurrentPosition(p=>{
+        userLocation=`https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+        document.getElementById('geo-status').innerText="✅ Ubicación capturada";
+    });
+}
+function sendWhatsApp(){
+    const n=document.getElementById('c-nombre').value;
+    const d=document.getElementById('c-dir').value;
+    if(!n||!d){alert("Faltan datos del cliente");return;}
+    let msg=`*Abys pizzas - Nuevo Pedido*\n`;
+    msg+=`Cliente: ${n}\nDir: ${d}\nCol: ${document.getElementById('c-colonia').value}\nEntre calles: ${document.getElementById('c-entrecalles').value}\n`;
+    msg+=`Zaguán: ${document.getElementById('c-zaguan').value} | Fachada: ${document.getElementById('c-fachada').value}\n`;
+    msg+=`GPS: ${userLocation}\n----------------\n`;
+    cart.forEach(i=>{
+        msg+=`• ${i.type}`;
+        if(i.flavors.length) msg+=`\n  ${i.flavors.join('\n  ')}`;
+        if(i.hasRef) msg+=`\n  Refresco: ${i.refresco}`;
+        msg+=`\n  Subtotal: $${i.price}\n`;
+    });
+    msg+=`----------------\nPago: ${selectedPay}\nTOTAL: ${document.getElementById('total-final').innerText}`;
+    if(selectedPay==='Tarjeta') window.open(linkMP,'_blank');
+    else if(selectedPay==='Transferencia') msg+=`\n*Nota:* Comprobante adjunto en mi galería.`;
+    window.open(`https://wa.me/+525660728759?text=${encodeURIComponent(msg)}`);
+}
+function openCart(){
+    document.getElementById('cartModal').style.display='block';
+    const items=document.getElementById('cartItems');
+    items.innerHTML='';
+    cart.forEach((i,idx)=>{
+        const fl=i.flavors.map(f=>`<div>• ${f}</div>`).join('');
+        items.innerHTML+=`<div class="cart-item-detail">
+            <strong>${i.type}</strong> — <span style="color:var(--yellow);">$${i.price}</span>
+            <button onclick="cart.splice(${idx},1);openCart();updateStats();calculateFinalTotal();"
+                style="color:red;background:none;border:none;float:right;cursor:pointer;">[X]</button>
+            <div style="margin-top:4px;font-size:0.8rem;color:#ccc;">${fl}</div>
+            ${i.hasRef?`<div style="font-size:0.75rem;color:#888;">Refresco: ${i.refresco}</div>`:''}
+        </div>`;
+    });
+    calculateFinalTotal();
+}
+function closeCart(){ document.getElementById('cartModal').style.display='none'; }
+</script>
+</body>
+</html>
