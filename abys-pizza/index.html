@@ -1,295 +1,351 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abys pizzas - Ordena Aqui</title>
-    <style>
-        :root { --red:#e8360edb; --dark:#3b3a3a; --gray:#250404; --yellow:#ffb703; --white:#ffffff; --green:#25d366; --blue:#009ee3; }
-        body { font-family:'Segoe UI',sans-serif; background:var(--dark); color:var(--white); margin:0; padding-bottom:100px; }
-        header { background:#000; padding:25px; text-align:center; border-bottom:4px solid var(--red); }
-        .info-header { font-size:0.9rem; color:#ccc; margin-top:10px; line-height:1.4; }
-        .container { max-width:800px; margin:auto; padding:15px; }
-        .card { background:var(--gray); border-radius:12px; padding:15px; margin-bottom:20px; border:1px solid #333; position:relative; }
-        .price-badge { background:var(--red); padding:5px 12px; border-radius:20px; font-weight:bold; float:right; }
-        .btn { background:var(--red); color:white; border:none; padding:12px 20px; border-radius:8px; cursor:pointer; font-weight:bold; width:100%; margin-top:10px; transition:0.3s; }
-        .btn-sel { background:transparent; border:1px solid var(--red); color:var(--red); margin:5px 0; }
-        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:2000; overflow-y:auto; }
-        .modal-content { background:var(--gray); max-width:550px; margin:30px auto; padding:25px; border-radius:15px; border:1px solid var(--red); }
-        .grid-2x1 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
-        .box-2x1 { border:1px solid #444; padding:10px; border-radius:8px; text-align:center; cursor:pointer; }
-        .payment-methods { display:flex; gap:10px; margin:15px 0; }
-        .pay-option { flex:1; border:1px solid #444; padding:10px; text-align:center; border-radius:8px; cursor:pointer; font-size:0.8rem; }
-        .pay-option.active { border-color:var(--red); background:rgba(230,57,70,0.1); }
-        .cart-bar { position:fixed; bottom:0; width:100%; background:var(--red); padding:15px; text-align:center; font-weight:bold; cursor:pointer; display:flex; justify-content:space-around; align-items:center; z-index:1000; }
-        input, select { background:#222; color:white; border:1px solid #444; border-radius:5px; width:96%; padding:10px; margin:5px; box-sizing:border-box; }
-        .cart-item-detail { background:#2a2a2a; padding:10px; border-radius:5px; margin-top:5px; font-size:0.85rem; border-left:3px solid var(--yellow); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abys pizzas | Ordena Aquí</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700;900&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --azul:   #E8360E;
+    --azul2:  #8a1f05;
+    --rojo:   #B32608;
+    --amarillo:#FFB703;
+    --dorado: #D4A017;
+    --negro:  #0c0707;
+    --gris:   #150b0b;
+    --gris2:  #211212;
+    --blanco: #FFFFFF;
+    --muted:  #e3d0cc;
+  }
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Nunito',sans-serif; background:var(--negro); color:var(--blanco); overflow-x:hidden; }
 
-        /* ── VISOR DE PIZZAS (igual al original + extras por pizza) ── */
-        .visual-box { display:grid; gap:8px; margin:15px 0; background:#000; min-height:80px; padding:8px; border:2px solid #555; }
-        .box-cell { border:1px dashed #777; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:0.75rem; color:var(--yellow); padding:10px; text-align:center; font-weight:bold; cursor:pointer; transition:background 0.2s; min-height:80px; }
-        .box-cell:hover { background:#1a0000; }
-        .box-cell.selected { background:#3a0000; color:#fff; }
-        .box-cell.half-top { border-bottom:1px dashed #555; color:#ffb703; font-size:0.65rem; }
-        .box-cell.half-bottom { color:#aaa; font-size:0.65rem; }
-        .cell-sub { font-size:0.65rem; color:#888; margin-top:3px; font-weight:normal; }
+  /* ── HERO ── */
+  .hero {
+    position:relative; min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:3rem 1.5rem 5rem;
+    background:
+      radial-gradient(ellipse at 30% 30%, rgba(232,54,14,.45) 0%, transparent 60%),
+      radial-gradient(ellipse at 75% 70%, rgba(179,38,8,.3) 0%, transparent 55%),
+      url('https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=1400&q=80') center/cover no-repeat;
+  }
+  .hero::after { content:''; position:absolute; inset:0; background:linear-gradient(to bottom,rgba(12,7,7,.7) 0%,rgba(12,7,7,.94) 100%); z-index:0; }
+  .hero > * { position:relative; z-index:1; }
 
-        /* Celdas redondas SOLO en modal normal (paquetes y 2x1) */
-        #visual-preview-modal { border:none; background:transparent; padding:4px; }
-        #visual-preview-modal .box-cell { border-radius:50%; border:2px dashed #777; aspect-ratio:1/1; min-height:unset; height:90px; width:90px; margin:auto; font-size:0.7rem; }
-        #visual-preview-modal .box-cell:hover { background:#1a0000; }
-        #visual-preview-modal .box-cell.selected { background:#3a0000; border-color:var(--red); border-style:solid; }
+  .logo-wrap { margin-bottom:1rem; }
+  .logo-karyz { font-family:'Bebas Neue',sans-serif; font-size:clamp(4.5rem,14vw,9rem); color:var(--blanco); line-height:.85; letter-spacing:.05em; text-shadow:4px 4px 0 var(--azul),0 0 50px rgba(232,54,14,.5); }
+  .logo-pizza { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,8vw,5rem); color:var(--rojo); letter-spacing:.14em; }
 
-        /* ── VISOR RECTANGULO / CUADRADO (logica de Richard) ── */
-        .visual-box.shape-rect,
-        .visual-box.shape-square {
-            display: grid;
-            gap: 3px;
-            margin: 15px auto;
-            border: 6px solid var(--yellow);
-            border-radius: 10px;
-            overflow: hidden;
-            background: linear-gradient(180deg, #b5661f, #6b3a10);
-            box-shadow: 0 16px 34px rgba(0,0,0,.45);
-            padding: 0;
-        }
-        .visual-box.shape-rect { width: 100%; aspect-ratio: 1.7 / 1; }
-        .visual-box.shape-square { width: min(260px, 70vw); aspect-ratio: 1; }
+  .tagline { font-family:'Montserrat',sans-serif; font-weight:700; font-size:clamp(.7rem,2vw,.9rem); letter-spacing:.25em; text-transform:uppercase; color:var(--amarillo); margin-bottom:2rem; border-top:1px solid rgba(255,183,3,.35); border-bottom:1px solid rgba(255,183,3,.35); padding:.5rem 2rem; }
 
-        .rect-cell {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 8px;
-            cursor: pointer;
-            color: var(--white);
-            font-size: 0.72rem;
-            font-weight: bold;
-            line-height: 1.2;
-            text-shadow: 0 1px 3px rgba(0,0,0,.7);
-            background: rgba(10,8,6,.45);
-            transition: background .15s;
-            word-break: break-word;
-            min-width: 0;
-            min-height: 0;
-        }
-        .rect-cell.selected { background: rgba(255,183,3,.85); color:#1a1200; text-shadow:none; }
-        .rect-cell.active-slot { box-shadow: inset 0 0 0 3px var(--red); background: rgba(255,255,255,.16); }
-        .rect-cell.active-slot.selected { background: rgba(255,183,3,1); }
+  .domicilio-banner { background:rgba(232,54,14,.15); border:1.5px solid var(--azul); border-radius:12px; padding:.8rem 2rem; font-family:'Montserrat',sans-serif; font-weight:700; font-size:clamp(.75rem,2vw,.92rem); color:rgba(255,205,195,.9); letter-spacing:.05em; text-transform:uppercase; margin-bottom:2rem; }
+  .domicilio-banner span { color:var(--blanco); }
 
-        /* ── VISOR CIRCULO (Pizza D2) ── */
-        .visual-box.shape-circle {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: flex-start;
-            gap: 14px;
-            background: transparent;
-            border: none;
-            padding: 0;
-            min-height: auto;
-        }
-        .pizza-circle-abys {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            border: 6px solid var(--yellow);
-            box-shadow: inset 0 0 0 3px rgba(0,0,0,.32), 0 12px 26px rgba(0,0,0,.5);
-            background: radial-gradient(circle, #f5c64c 0 58%, #d8842d 59% 68%, #88331d 69%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 16%;
-            cursor: pointer;
-            color: #fff7ee;
-            font-weight: bold;
-            font-size: 0.8rem;
-            line-height: 1.2;
-            text-shadow: 0 1px 3px rgba(0,0,0,.65);
-        }
-        .pizza-circle-abys.selected { background: rgba(255,183,3,.9); color:#1a1200; text-shadow:none; }
-        .pizza-circle-abys.active-slot { box-shadow: inset 0 0 0 4px var(--red), inset 0 0 0 3px rgba(0,0,0,.32); }
+  .hero-chips { display:flex; gap:.9rem; flex-wrap:wrap; justify-content:center; }
+  .chip { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.15); border-radius:40px; padding:.5rem 1.1rem; font-size:.78rem; font-weight:600; display:flex; align-items:center; gap:.4rem; }
 
-        /* ── VISOR CORAZON (Pizza Corazon) ── */
-        .visual-box.shape-heart {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: flex-start;
-            gap: 14px;
-            background: transparent;
-            border: none;
-            padding: 0;
-            min-height: auto;
-        }
-        .heart-abys {
-            position: relative;
-            width: 210px;
-            height: 190px;
-            cursor: pointer;
-            filter: drop-shadow(0 10px 18px rgba(0,0,0,.5));
-        }
-        .heart-abys svg { width: 100%; height: 100%; display: block; }
-        .heart-abys path {
-            fill: #8a3a12;
-            stroke: var(--yellow);
-            stroke-width: 3;
-            transition: fill .15s, stroke .15s;
-        }
-        .heart-abys.selected path { fill: var(--yellow); }
-        .heart-abys.active-slot path { stroke: var(--red); stroke-width: 5; }
-        .heart-label {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 22% 24% 8%;
-            color: #fff7ee;
-            font-weight: bold;
-            font-size: 0.78rem;
-            line-height: 1.2;
-            text-shadow: 0 1px 3px rgba(0,0,0,.65);
-            pointer-events: none;
-        }
-        .heart-abys.selected .heart-label { color: #1a1200; text-shadow: none; }
+  /* ── SECCIONES ── */
+  section { padding:4.5rem 1.5rem; }
+  .max-w { max-width:1180px; margin:0 auto; }
 
-        /* ── CHECKBOXES POR PIZZA ── */
-        .pizzas-extras-row { display:grid; gap:8px; margin-top:4px; }
-        .pizza-extras-col { border:1px solid #333; border-radius:8px; padding:8px; background:#150000; }
-        .chk-row { display:flex; align-items:center; gap:6px; font-size:0.75rem; padding:3px 0; }
-        .chk-row input[type=checkbox] { width:16px; height:16px; margin:0; padding:0; flex-shrink:0; accent-color:var(--red); cursor:pointer; }
-        .chk-price { color:var(--yellow); font-size:0.7rem; margin-left:auto; white-space:nowrap; }
+  .sec-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(2rem,6vw,3.2rem); letter-spacing:.07em; display:inline-block; position:relative; padding-bottom:.4rem; }
+  .sec-title::after { content:''; position:absolute; left:0; bottom:0; width:55%; height:4px; background:var(--rojo); border-radius:2px; }
+  .sec-title.azul::after  { background:var(--azul); }
+  .sec-title.dorado::after{ background:var(--dorado); }
+  .sec-title.centered { display:block; text-align:center; }
+  .sec-title.centered::after { left:22.5%; }
 
-        /* ── LISTA DE SABORES ── */
-        .flavor-item { padding:10px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center; }
-        .flavor-btn { background:var(--yellow); color:#000; border:none; width:42px; height:42px; border-radius:10px; font-size:1.3rem; font-weight:bold; cursor:pointer; flex-shrink:0; }
+  /* ── PIZZAS ESPECIALES ── */
+  #especiales { background:linear-gradient(135deg,#0c0707,#1a0c0a); }
 
-        /* Indicador de qué pizza se está eligiendo */
-        .picking-label { background:#3a0000; color:var(--yellow); font-size:0.78rem; padding:6px 12px; border-radius:6px; text-align:center; margin-bottom:8px; }
-    </style>
+  .esp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.4rem; margin-top:2.5rem; }
+  .esp-card { background:rgba(0,0,0,.5); border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,.08); transition:transform .2s,box-shadow .2s; }
+  .esp-card:hover { transform:translateY(-5px); box-shadow:0 14px 40px rgba(0,0,0,.7); }
+  .esp-head { padding:.9rem 1.3rem; display:flex; align-items:center; justify-content:space-between; }
+  .eh-barra  { background:linear-gradient(90deg,#8a1f05,#E8360E); }
+  .eh-rect   { background:linear-gradient(90deg,#8B0000,#B32608); }
+  .esp-nombre { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:.06em; color:var(--blanco); line-height:1.1; }
+  .esp-nombre small { display:block; font-size:.65rem; font-family:'Montserrat',sans-serif; font-weight:600; color:rgba(255,255,255,.65); letter-spacing:.07em; }
+  .esp-precio { font-family:'Bebas Neue',sans-serif; font-size:2.4rem; color:var(--amarillo); }
+  .esp-body { padding:1.1rem 1.4rem; }
+  .esp-body ul { list-style:none; display:flex; flex-direction:column; gap:.45rem; }
+  .esp-body ul li { font-size:.82rem; color:rgba(255,255,255,.8); display:flex; align-items:flex-start; gap:.55rem; line-height:1.5; }
+  .esp-body ul li::before { content:'✔'; color:var(--amarillo); font-weight:700; font-size:.78rem; flex-shrink:0; margin-top:.15rem; }
+  .orilla-tag { display:inline-flex; align-items:center; gap:.4rem; background:rgba(212,160,23,.12); border:1px solid rgba(212,160,23,.35); border-radius:8px; padding:.28rem .75rem; font-size:.7rem; color:var(--dorado); font-family:'Montserrat',sans-serif; font-weight:600; margin-top:.7rem; }
+  .no2x1-tag { display:inline-flex; align-items:center; background:rgba(179,38,8,.15); border:1px solid rgba(179,38,8,.35); border-radius:8px; padding:.28rem .75rem; font-size:.68rem; color:#ffb4a7; font-family:'Montserrat',sans-serif; font-weight:700; margin-top:.4rem; }
+
+  /* ── 2×1 ── */
+  #dosxuno { background:var(--gris); }
+
+  .tam-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1.2rem; margin-top:2.5rem; }
+  .tam-card { background:var(--negro); border-radius:16px; padding:1.6rem 1.2rem; text-align:center; border:2px solid rgba(232,54,14,.25); position:relative; overflow:hidden; transition:transform .2s,border-color .2s; }
+  .tam-card:hover { transform:translateY(-5px); border-color:var(--azul); }
+  .tam-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,var(--azul),var(--rojo)); }
+  .tam-label  { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:.1em; color:var(--blanco); margin-bottom:.3rem; }
+  .tam-badge  { display:inline-block; background:var(--rojo); color:var(--amarillo); font-family:'Bebas Neue',sans-serif; font-size:.95rem; letter-spacing:.08em; border-radius:20px; padding:.1rem .8rem; margin-bottom:.7rem; }
+  .tam-precio { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,5.5vw,3.3rem); color:var(--amarillo); line-height:1; }
+
+  /* ── ESPECIALIDADES ── */
+  #especialidades { background:var(--negro); }
+
+  .pizza-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1rem; margin-top:2.5rem; }
+  .pizza-card { background:var(--gris2); border-radius:12px; padding:1rem 1.2rem; border-left:4px solid var(--azul); transition:transform .2s,border-color .2s; }
+  .pizza-card:hover { transform:translateY(-3px); border-color:var(--amarillo); }
+  .pizza-card.dest  { border-left-color:var(--dorado); }
+  .pizza-card.prem  { border-left-color:#7b2ff7; }
+  .pizza-card.mar   { border-left-color:#00c4ff; }
+  .pizza-card h3 { font-family:'Montserrat',sans-serif; font-weight:900; font-size:.85rem; text-transform:uppercase; letter-spacing:.05em; color:var(--blanco); margin-bottom:.35rem; }
+  .pizza-card.dest h3 { color:var(--amarillo); }
+  .pizza-card.prem h3 { color:#c8a8ff; }
+  .pizza-card.mar  h3 { color:#80e4ff; }
+  .pizza-card p { font-size:.77rem; color:rgba(255,255,255,.52); line-height:1.5; }
+
+  /* tabla premium / marisco */
+  .price-row { display:flex; justify-content:space-between; align-items:center; margin-top:.6rem; flex-wrap:wrap; gap:.3rem; }
+  .price-pill { font-family:'Bebas Neue',sans-serif; font-size:.9rem; letter-spacing:.04em; }
+  .price-pill span { background:rgba(232,54,14,.25); border:1px solid rgba(232,54,14,.4); border-radius:6px; padding:.1rem .55rem; color:var(--amarillo); }
+  .price-pill.pur span { background:rgba(123,47,247,.25); border-color:rgba(123,47,247,.4); }
+  .price-pill.cya span { background:rgba(0,196,255,.15); border-color:rgba(0,196,255,.3); }
+
+  /* ── PROMOS ── */
+  #promos { background:var(--gris); }
+
+  .promo-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1.4rem; margin-top:2.5rem; }
+  .promo-card { background:var(--negro); border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,.07); transition:transform .2s,box-shadow .2s; }
+  .promo-card:hover { transform:translateY(-5px); box-shadow:0 14px 40px rgba(0,0,0,.6); }
+  .promo-head { padding:.9rem 1.3rem; display:flex; align-items:center; justify-content:space-between; }
+  .ph-1 { background:linear-gradient(90deg,#8a1f05,#E8360E); }
+  .ph-2 { background:linear-gradient(90deg,#8B0000,#B32608); }
+  .ph-3 { background:linear-gradient(90deg,#1a4a00,#2A8B00); }
+  .ph-c { background:linear-gradient(90deg,#6B001A,#CC1A55); }
+  .promo-nombre { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:.06em; color:var(--blanco); line-height:1.1; }
+  .promo-nombre small { display:block; font-size:.62rem; font-family:'Montserrat',sans-serif; font-weight:600; color:rgba(255,255,255,.65); letter-spacing:.07em; }
+  .promo-precio { font-family:'Bebas Neue',sans-serif; font-size:2.2rem; color:var(--amarillo); }
+  .promo-body { padding:1rem 1.3rem; }
+  .promo-body ul { list-style:none; display:flex; flex-direction:column; gap:.45rem; }
+  .promo-body ul li { font-size:.81rem; color:rgba(255,255,255,.8); display:flex; align-items:flex-start; gap:.5rem; line-height:1.5; }
+  .promo-body ul li::before { content:'✔'; color:var(--dorado); font-weight:700; font-size:.78rem; flex-shrink:0; margin-top:.15rem; }
+
+  /* ── ANTOJITOS & BEBIDAS ── */
+  #antojitos { background:var(--negro); }
+
+  .otros-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1.2rem; margin-top:2.5rem; }
+  .otro-card { background:var(--gris2); border-radius:14px; padding:1.2rem 1.4rem; display:flex; flex-direction:column; justify-content:space-between; border-bottom:3px solid var(--azul); transition:transform .2s; }
+  .otro-card:hover { transform:translateY(-3px); }
+  .otro-card h3 { font-family:'Montserrat',sans-serif; font-weight:900; font-size:.88rem; text-transform:uppercase; letter-spacing:.05em; color:var(--blanco); margin-bottom:.4rem; }
+  .otro-card p  { font-size:.78rem; color:rgba(255,255,255,.52); line-height:1.5; margin-bottom:.8rem; }
+  .otro-card .pt{ font-family:'Bebas Neue',sans-serif; font-size:1.7rem; color:var(--amarillo); }
+
+  /* bebidas */
+  .beb-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; margin-top:1.5rem; }
+  .beb-card { background:var(--gris2); border-radius:12px; padding:1rem 1.2rem; text-align:center; border:1px solid rgba(255,255,255,.06); transition:transform .2s; }
+  .beb-card:hover { transform:translateY(-3px); }
+  .beb-card .bic { font-size:1.8rem; margin-bottom:.3rem; }
+  .beb-card h3   { font-size:.8rem; font-weight:700; color:var(--blanco); margin-bottom:.3rem; }
+  .beb-card .bp  { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:var(--amarillo); }
+
+  /* ingredientes extra */
+  .extra-table { width:100%; border-collapse:collapse; margin-top:1rem; font-size:.82rem; }
+  .extra-table th { background:rgba(232,54,14,.3); padding:7px 10px; text-align:center; font-size:.72rem; letter-spacing:.06em; color:var(--amarillo); }
+  .extra-table td { padding:7px 10px; text-align:center; border-bottom:1px solid rgba(255,255,255,.06); color:rgba(255,255,255,.7); }
+  .extra-table td:first-child { text-align:left; font-weight:700; color:var(--blanco); }
+  .extra-table td.amt { color:var(--amarillo); font-weight:700; }
+
+  /* ── CONTACTO ── */
+  #contacto { background:linear-gradient(135deg,#050303,#120909); }
+
+  .con-grid { display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; margin-top:2.5rem; align-items:start; }
+  @media(max-width:680px){ .con-grid { grid-template-columns:1fr; } }
+  .con-card { background:rgba(255,255,255,.04); border:1px solid rgba(232,54,14,.3); border-radius:18px; padding:2rem; }
+  .con-card h3 { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:.07em; color:var(--azul); margin-bottom:1.3rem; }
+  .con-row { display:flex; align-items:flex-start; gap:.75rem; margin-bottom:1.1rem; font-size:.88rem; color:rgba(255,255,255,.8); line-height:1.6; }
+  .con-row .ic { font-size:1.2rem; flex-shrink:0; margin-top:.1rem; }
+  .con-row strong { display:block; font-size:.68rem; font-weight:700; color:rgba(255,255,255,.4); letter-spacing:.12em; text-transform:uppercase; margin-bottom:.1rem; }
+  .tel-big    { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:var(--rojo); letter-spacing:.04em; line-height:1.2; }
+  .tel-big.wa { color:#25D366; }
+  .hor-card { background:rgba(255,255,255,.04); border:1px solid rgba(179,38,8,.25); border-radius:18px; padding:2rem; }
+  .hor-card h3 { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:.07em; color:var(--rojo); margin-bottom:1.3rem; }
+  .hor-row { display:flex; justify-content:space-between; align-items:center; padding:.65rem 0; border-bottom:1px solid rgba(255,255,255,.07); font-size:.88rem; }
+  .hor-row:last-child { border-bottom:none; }
+  .hor-row .dias  { color:rgba(255,255,255,.6); }
+  .hor-row .horas { font-weight:700; color:var(--amarillo); }
+
+  /* ── FOOTER ── */
+  footer { background:#050303; text-align:center; padding:1.5rem 1rem; font-size:.72rem; color:rgba(255,255,255,.28); font-family:'Montserrat',sans-serif; }
+  footer span { color:var(--rojo); }
+
+  /* ── REVEAL ── */
+  .reveal { opacity:0; transform:translateY(26px); transition:opacity .6s ease,transform .6s ease; }
+  .reveal.visible { opacity:1; transform:none; }
+
+  @media(max-width:500px){ .tam-grid { grid-template-columns:1fr 1fr; } }
+  .logo-img { display:block; width:auto; height:auto; max-width:min(92vw,460px); max-height:46svh; margin:0 auto 1rem; filter:drop-shadow(0 10px 28px rgba(0,0,0,.6)); }
+  .hero-info { width:min(760px,100%); margin-top:.4rem; padding:1.4rem 1.2rem; border-radius:20px; background:linear-gradient(180deg,rgba(232,54,14,.28),rgba(12,7,7,.55)); border:2px solid rgba(255,183,3,.55); box-shadow:0 18px 50px rgba(0,0,0,.45); }
+  .hi-addr { display:flex; align-items:center; justify-content:center; gap:.7rem; font-family:'Montserrat',sans-serif; font-weight:800; font-size:clamp(.95rem,3.2vw,1.25rem); line-height:1.4; color:#fff; text-align:left; }
+  .hi-ic { font-size:1.7rem; }
+  .hi-phones { display:flex; flex-wrap:wrap; justify-content:center; gap:.7rem; margin-top:1.1rem; }
+  .hi-tel { font-family:'Bebas Neue',sans-serif; font-size:clamp(1.5rem,5vw,2.1rem); letter-spacing:.05em; line-height:1; padding:.55rem 1.1rem; border-radius:50px; color:#fff; text-decoration:none; background:var(--rojo); box-shadow:0 6px 22px rgba(179,38,8,.5); }
+  .hi-tel.wa { background:#25D366; color:#04210f; box-shadow:0 6px 22px rgba(37,211,102,.45); }
+  .hi-hor { margin-top:1.1rem; padding-top:.9rem; border-top:1px solid rgba(255,255,255,.15); font-family:'Montserrat',sans-serif; font-size:.82rem; color:rgba(255,255,255,.75); }
+  .hi-hor strong { color:var(--amarillo); }
+  html { -webkit-text-size-adjust:100%; }
+  img, svg { max-width:100%; }
+  @media (max-width:600px) {
+    section { padding:2.6rem 1rem; }
+    .hero { min-height:100vh; min-height:100svh; padding:1rem .9rem 1.2rem; }
+    .logo-img { width:auto; height:auto; max-width:94vw; max-height:44svh; margin-bottom:.6rem; }
+    .tagline { font-size:.6rem; letter-spacing:.1em; padding:.35rem .8rem; margin-bottom:.8rem; }
+    .domicilio-banner { padding:.5rem .8rem; margin-bottom:.8rem; font-size:.66rem; line-height:1.4; }
+    .hero-info { padding:.9rem .7rem; border-width:1.5px; }
+    .hi-addr { font-size:.88rem; gap:.5rem; }
+    .hi-ic { font-size:1.3rem; }
+    .hi-phones { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.5rem; margin-top:.7rem; }
+    .hi-tel { font-size:1.25rem; padding:.5rem .3rem; text-align:center; }
+    .hi-tel.wa { grid-column:1 / -1; }
+    .hi-hor { margin-top:.7rem; padding-top:.6rem; font-size:.7rem; line-height:1.5; }
+    .esp-grid, .promo-grid, .otros-grid { grid-template-columns:minmax(0,1fr); gap:1rem; margin-top:1.5rem; }
+    .tam-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; margin-top:1.5rem; }
+    .beb-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.7rem; }
+    .sec-title { font-size:2rem; }
+  }
+  :root { --red:#e8360e; --gray:#250404; --yellow:#ffb703; --white:#ffffff; --green:#25d366; --blue:#009ee3; }
+  body { padding-bottom:84px; }
+  .btn { background:var(--red); color:#fff; border:none; padding:12px 20px; border-radius:10px; cursor:pointer; font-weight:bold; width:100%; margin-top:10px; transition:.3s; font-family:'Montserrat',sans-serif; font-size:.85rem; }
+  .btn-sel { background:transparent; border:1.5px solid var(--yellow); color:var(--yellow); margin:5px 0; }
+  .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.95); z-index:2000; overflow-y:auto; }
+  .modal-content { background:linear-gradient(180deg,var(--gris2),var(--negro)); max-width:550px; margin:30px auto; padding:25px; border-radius:18px; border:1.5px solid rgba(255,183,3,.45); box-sizing:border-box; overflow-x:hidden; color:#fff; font-family:'Montserrat',sans-serif; }
+  .payment-methods { display:flex; gap:10px; margin:15px 0; }
+  .pay-option { flex:1; border:1px solid #555; padding:10px; text-align:center; border-radius:8px; cursor:pointer; font-size:.8rem; }
+  .pay-option.active { border-color:var(--yellow); background:rgba(255,183,3,.12); }
+  .cart-bar { position:fixed; bottom:0; left:0; width:100%; background:linear-gradient(135deg,#FFC21F,#F29A00); color:#1a0a00; padding:0 22px; min-height:68px; font-weight:800; font-size:1.05rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center; z-index:1000; border-top:3px solid #fff; box-shadow:0 -8px 28px rgba(0,0,0,.75); font-family:'Montserrat',sans-serif; }
+  .cart-bar #cart-total { font-family:'Bebas Neue',sans-serif; font-size:1.9rem; letter-spacing:.04em; }
+  .cart-bar .ver { font-size:.78rem; background:#1a0a00; color:#FFC21F; padding:8px 14px; border-radius:20px; letter-spacing:.06em; }
+  .modal input, .modal select { background:#222; color:#fff; border:1px solid #555; border-radius:6px; width:96%; padding:10px; margin:5px; box-sizing:border-box; }
+  .cart-item-detail { background:#2a2a2a; padding:10px; border-radius:5px; margin-top:5px; font-size:.85rem; border-left:3px solid var(--yellow); }
+  .visual-box { display:grid; gap:8px; margin:15px 0; background:#000; min-height:80px; padding:8px; border:2px solid #555; }
+  .box-cell { border:1px dashed #888; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:.75rem; color:var(--yellow); padding:10px; text-align:center; font-weight:bold; cursor:pointer; transition:background .2s; min-height:80px; }
+  .box-cell:hover { background:#1a0000; }
+  .box-cell.selected { background:#3a0000; color:#fff; }
+  #visual-preview-modal { border:none; background:transparent; padding:4px; gap:12px; }
+  #visual-preview-modal .box-cell { border-radius:50%; border:3px dashed #888; aspect-ratio:1/1; min-height:unset; height:auto; width:100%; max-width:150px; margin:auto; font-size:.85rem; padding:8px; }
+  #visual-preview-modal .box-cell.selected { background:#3a0000; border-color:var(--red); border-style:solid; }
+  .visual-box.shape-rect, .visual-box.shape-square { display:grid; gap:3px; margin:15px auto; border:6px solid var(--yellow); border-radius:10px; overflow:hidden; background:linear-gradient(180deg,#b5661f,#6b3a10); box-shadow:0 16px 34px rgba(0,0,0,.45); padding:0; }
+  .visual-box.shape-rect { width:100%; aspect-ratio:1.7/1; }
+  .visual-box.shape-square { width:min(260px,70vw); aspect-ratio:1; }
+  .rect-cell { display:flex; align-items:center; justify-content:center; text-align:center; padding:8px; cursor:pointer; color:#fff; font-size:.78rem; font-weight:bold; line-height:1.2; text-shadow:0 1px 3px rgba(0,0,0,.7); background:rgba(10,8,6,.45); transition:background .15s; word-break:break-word; min-width:0; min-height:0; }
+  .rect-cell.selected { background:rgba(255,183,3,.85); color:#1a1200; text-shadow:none; }
+  .rect-cell.active-slot { box-shadow:inset 0 0 0 3px var(--red); background:rgba(255,255,255,.16); }
+  .rect-cell.active-slot.selected { background:rgba(255,183,3,1); }
+  .visual-box.shape-circle, .visual-box.shape-heart { display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:14px; background:transparent; border:none; padding:0; min-height:auto; }
+  .pizza-circle-abys { position:relative; width:200px; height:200px; border-radius:50%; border:6px solid var(--yellow); box-shadow:inset 0 0 0 3px rgba(0,0,0,.32),0 12px 26px rgba(0,0,0,.5); background:radial-gradient(circle,#f5c64c 0 58%,#d8842d 59% 68%,#88331d 69%); display:flex; align-items:center; justify-content:center; text-align:center; padding:16%; cursor:pointer; color:#fff7ee; font-weight:bold; font-size:.85rem; line-height:1.2; text-shadow:0 1px 3px rgba(0,0,0,.65); }
+  .pizza-circle-abys.selected { background:rgba(255,183,3,.9); color:#1a1200; text-shadow:none; }
+  .pizza-circle-abys.active-slot { box-shadow:inset 0 0 0 4px var(--red),inset 0 0 0 3px rgba(0,0,0,.32); }
+  .heart-abys { position:relative; width:210px; height:190px; cursor:pointer; filter:drop-shadow(0 10px 18px rgba(0,0,0,.5)); }
+  .heart-abys svg { width:100%; height:100%; display:block; }
+  .heart-abys path { fill:#8a3a12; stroke:var(--yellow); stroke-width:3; transition:fill .15s,stroke .15s; }
+  .heart-abys.selected path { fill:var(--yellow); }
+  .heart-abys.active-slot path { stroke:var(--red); stroke-width:5; }
+  .heart-label { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; padding:22% 24% 8%; color:#fff7ee; font-weight:bold; font-size:.82rem; line-height:1.2; text-shadow:0 1px 3px rgba(0,0,0,.65); pointer-events:none; }
+  .heart-abys.selected .heart-label { color:#1a1200; text-shadow:none; }
+  .pizzas-extras-row { display:grid; gap:8px; margin-top:4px; }
+  .pizza-extras-col { border:1px solid #444; border-radius:8px; padding:8px; background:#150000; }
+  .chk-row { display:flex; align-items:center; gap:6px; font-size:.75rem; padding:3px 0; }
+  .modal .chk-row input[type=checkbox] { width:16px; height:16px; margin:0; padding:0; flex-shrink:0; accent-color:var(--red); cursor:pointer; }
+  .chk-price { color:var(--yellow); font-size:.7rem; margin-left:auto; white-space:nowrap; }
+  .flavor-item { padding:10px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .flavor-btn { background:var(--yellow); color:#000; border:none; width:42px; height:42px; border-radius:10px; font-size:1.3rem; font-weight:bold; cursor:pointer; flex-shrink:0; }
+  .picking-label { background:#3a0000; color:var(--yellow); font-size:.78rem; padding:6px 12px; border-radius:6px; text-align:center; margin-bottom:8px; }
+  @media (max-width:480px) { .modal-content { padding:15px; margin:15px auto; } #visual-preview-modal .box-cell { font-size:.78rem; padding:6px; } .pizza-circle-abys { width:170px; height:170px; } }
+  .cimg { width:100%; border-radius:10px; margin:10px 0; object-fit:contain; max-height:250px; background:#000; }
+  .cdesc { font-family:'Montserrat',sans-serif; font-size:.82rem; color:rgba(255,255,255,.78); line-height:1.5; margin:.2rem 0; text-align:center; }
+  .tam-card { cursor:pointer; }
+  .desde { font-size:.7rem; color:rgba(255,255,255,.6); font-family:'Montserrat',sans-serif; margin-top:.3rem; line-height:1.4; }
+  .eh-cuad { background:linear-gradient(90deg,#0b4a1a,#1f9a3c); } .eh-cor { background:linear-gradient(90deg,#6B001A,#CC1A55); } .eh-ded { background:linear-gradient(90deg,#6b2a00,#d9640a); }
+  .promo-precio small, .esp-precio small { display:block; font-size:.7rem; letter-spacing:.12em; opacity:.85; line-height:1.1; font-family:'Montserrat',sans-serif; }
+  #paquetes { background:var(--negro); }
+
+  .hero { min-height:0 !important; padding:1.2rem 1rem 1.4rem !important; justify-content:flex-start !important; }
+  #promos { padding-top:1.8rem !important; }
+</style>
 </head>
 <body>
 
-<header>
-    <img src="images/EPAP4942.PNG" alt="Logo" style="max-height:350px;">
-    <div class="info-header">
-        Av. Parque Nacional, (A 650 metros del parque "Los Ahuehuetes").<br>
-        Municipio San Salvador Atenco, Méx.<br>
-        <strong>Servicio: 12:00 PM - 10:30 PM</strong>
-    </div>
+<header class="hero">
+  <img class="logo-img" src="images/EPAP4942.PNG" alt="Abys pizzas">
+  <p class="tagline">Ordena aquí</p>
+  <div class="hero-info">
+    <div class="hi-addr"><span class="hi-ic">📍</span><span>Av. Parque Nacional (a 650 metros del parque "Los Ahuehuetes"),<br>San Salvador Atenco, Méx.</span></div>
+    <div class="hi-phones"><a class="hi-tel wa" href="https://wa.me/525660728759" target="_blank" rel="noopener">💬 56 6072-8759</a></div>
+    <div class="hi-hor">🕐 Servicio <strong>12:00 PM – 10:30 PM</strong></div>
+  </div>
 </header>
 
-<div class="container">
-
-    <div class="card">
-        <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">SUPER PROMOS</h2>
-        <h3>3 Pizzas a elegir + Refresco 2Lts</h3>
-        <div class="grid-2x1">
-            <button class="btn btn-sel" onclick="openPicker('Super promos 3 Medianas',  3,335,true,'mediana')">3 Medianas $335</button>
-            <button class="btn btn-sel" onclick="openPicker('Super promos 3 Grandes',   3,395,true,'grande')">3 Grandes $395</button>
-            <button class="btn btn-sel" onclick="openPicker('Super promos 3 Familiares',3,515,true,'familiar')">3 Familiares $515</button>
-        </div>
+<section id="promos">
+  <div class="max-w reveal">
+    <div class="sec-title dorado">Super Promos</div>
+    <p style="margin-top:.6rem;font-size:.82rem;color:rgba(255,255,255,.55);font-family:'Montserrat',sans-serif;">3 pizzas a elegir + Refresco 2 Lts</p>
+    <div class="promo-grid">
+      <div class="promo-card"><div class="promo-head ph-1"><div class="promo-nombre">3 MEDIANAS<small>3 pizzas a elegir + Refresco 2 Lts</small></div><div class="promo-precio">$335</div></div><div class="promo-body"><button class="btn" onclick="openPicker('Super promos 3 Medianas', 3,335,true,'mediana')">Elegir 3 sabores</button></div></div>
+      <div class="promo-card"><div class="promo-head ph-2"><div class="promo-nombre">3 GRANDES<small>3 pizzas a elegir + Refresco 2 Lts</small></div><div class="promo-precio">$395</div></div><div class="promo-body"><button class="btn" onclick="openPicker('Super promos 3 Grandes', 3,395,true,'grande')">Elegir 3 sabores</button></div></div>
+      <div class="promo-card"><div class="promo-head ph-3"><div class="promo-nombre">3 FAMILIARES<small>3 pizzas a elegir + Refresco 2 Lts</small></div><div class="promo-precio">$515</div></div><div class="promo-body"><button class="btn" onclick="openPicker('Super promos 3 Familiares', 3,515,true,'familiar')">Elegir 3 sabores</button></div></div>
     </div>
+  </div>
+</section>
+
+<section id="paquetes">
+  <div class="max-w reveal">
+    <div class="sec-title azul">Paquete Lo Lleves</div>
     
-   <div class="card">
-    <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">paquete lo lleves</h2>
-    <div class="grid-2x1">
-        <div class="box-2x1" onclick="openPicker('Paquete 1',1,175,false,'grande')">
-            <strong>PAQUETE 1</strong><br>$175<br><span style="font-size:0.8rem;">1 Pizza Grande<br>(Sin refresco)</span>
-        </div>
-        <div class="box-2x1" onclick="openPicker('Paquete 2',1,224,true,'familiar')">
-            <strong>PAQUETE 2</strong><br>$224<br><span style="font-size:0.8rem;">1 Pizza Familiar<br>+ Refresco 2Lts</span>
-        </div>
-        <div class="box-2x1" onclick="openPicker('Paquete 3',2,315,true,'grande')">
-            <strong>PAQUETE 3</strong><br>$315<br><span style="font-size:0.8rem;">2 Pizzas Grandes<br>+ Refresco 2Lts</span>
-        </div>
-        <div class="box-2x1" onclick="openPicker('Paquete 4',2,375,true,'familiar')">
-            <strong>PAQUETE 4</strong><br>$375<br><span style="font-size:0.8rem;">2 Pizzas Familiares<br>+ Refresco 2Lts</span>
-        </div>
-     </div>
-    </div>   
+    <div class="tam-grid"><div class="tam-card" onclick="openPicker('Paquete 1',1,175,false,'grande')"><div class="tam-label">PAQUETE 1</div><div class="tam-precio">$175</div><div class="desde">1 Pizza Grande<br>(Sin refresco)</div></div><div class="tam-card" onclick="openPicker('Paquete 2',1,224,true,'familiar')"><div class="tam-label">PAQUETE 2</div><div class="tam-precio">$224</div><div class="desde">1 Pizza Familiar<br>+ Refresco 2Lts</div></div><div class="tam-card" onclick="openPicker('Paquete 3',2,315,true,'grande')"><div class="tam-label">PAQUETE 3</div><div class="tam-precio">$315</div><div class="desde">2 Pizzas Grandes<br>+ Refresco 2Lts</div></div><div class="tam-card" onclick="openPicker('Paquete 4',2,375,true,'familiar')"><div class="tam-label">PAQUETE 4</div><div class="tam-precio">$375</div><div class="desde">2 Pizzas Familiares<br>+ Refresco 2Lts</div></div></div>
+  </div>
+</section>
 
-    <!-- RECTANGULARES sin mitad ni orilla extra -->
-    <div class="card">
-        <span class="price-badge">$385</span>
-        <img src="images/Pizza Rectangular.png" style="width:100%; border-radius:10px; margin:10px 0; object-fit:contain; max-height:250px; background:#000;">
-        <p>24 rebanadas, orilla rellena de queso crema y ajonjolí + Refresco 2Lts</p>
-        <button class="btn" onclick="openPickerRect('Pizza Rectangular',4,385,true)">Elegir 4 sabores</button>
+<section id="especiales">
+  <div class="max-w reveal">
+    <div class="sec-title azul">Pizzas Especiales</div>
+    <p style="margin-top:.6rem;font-size:.82rem;color:rgba(255,255,255,.55);font-family:'Montserrat',sans-serif;">Orilla rellena de queso crema y ajonjolí</p>
+    <div class="esp-grid">
+      <div class="esp-card"><div class="esp-head eh-rect"><div class="esp-nombre">PIZZA RECTANGULAR<small>24 rebanadas</small></div><div class="esp-precio">$385</div></div><div class="esp-body"><img src="images/Pizza Rectangular.png" class="cimg" alt="" onerror="this.style.display='none'"><p class="cdesc">Orilla rellena de queso crema y ajonjolí<br>+ Refresco 2Lts</p><button class="btn" onclick="openPickerRect('Pizza Rectangular',4,385,true)">Elegir 4 sabores</button></div></div>
+      <div class="esp-card"><div class="esp-head eh-barra"><div class="esp-nombre">PIZZA BARRA<small>12 rebanadas</small></div><div class="esp-precio">$255</div></div><div class="esp-body"><img src="images/IMG_0366.jpeg" class="cimg" alt="" onerror="this.style.display='none'"><p class="cdesc">Orilla rellena de queso crema y ajonjolí<br>+ Refresco 2Lts</p><button class="btn" onclick="openPickerRect('Pizza Barra',2,255,true)">Elegir 2 sabores</button></div></div>
+      <div class="esp-card"><div class="esp-head eh-cuad"><div class="esp-nombre">PIZZA CUADRADA<small>16 rebanadas</small></div><div class="esp-precio">$315</div></div><div class="esp-body"><p class="cdesc">Orilla rellena de queso crema y ajonjolí<br>+ Refresco 2Lts</p><button class="btn" onclick="openPickerRect('Pizza Cuadrada',2,315,true)">Elegir 2 sabores</button></div></div>
+      <div class="esp-card"><div class="esp-head eh-ded"><div class="esp-nombre">PIZZA DE DEDOS<small>12 rebanadas</small></div><div class="esp-precio">$305</div></div><div class="esp-body"><img src="images/IMG_0368.jpeg" class="cimg" alt="" onerror="this.style.display='none'"><p class="cdesc">Orilla rellena de queso crema y ajonjolí<br>+ Refresco 2Lts</p><button class="btn" onclick="openPickerRect('Pizza D2',1,305,true)">Elegir sabor</button></div></div>
+      <div class="esp-card"><div class="esp-head eh-cor"><div class="esp-nombre">❤️ PIZZA DE CORAZÓN<small>14 rebanadas</small></div><div class="esp-precio">$265</div></div><div class="esp-body"><img src="images/IMG_0367.jpeg" class="cimg" alt="" onerror="this.style.display='none'"><p class="cdesc">Orilla rellena de queso crema y ajonjolí<br>+ Refresco 2Lts</p><button class="btn" onclick="openPickerRect('Pizza Corazon',1,265,true)">Elegir sabor</button></div></div>
     </div>
-    <div class="card">
-        <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">pizza Barra<span class="price-badge">$255</span></h2>
-        <img src="images/IMG_0366.jpeg" style="width:100%; border-radius:10px; margin:10px 0; object-fit:contain; max-height:250px; background:#000;">
-        <p>12 rebanadas, orilla rellena de queso crema y ajonjolí + Refresco 2Lts</p>
-        <button class="btn" onclick="openPickerRect('Pizza Barra',2,255,true)">Elegir 2 sabores</button>
-    </div>
-    <div class="card">
-        <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">pizza Cuadrada<span class="price-badge">$315</span></h2>
-        <p>16 rebanadas, orilla rellena de queso crema y ajonjolí + Refresco 2Lts</p>
-        <button class="btn" onclick="openPickerRect('Pizza Cuadrada',2,315,true)">Elegir 2 sabores</button>
-    </div>
-    <div class="card">
-        <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">pizza De Dedos<span class="price-badge">$305</span></h2>
-        <img src="images/IMG_0368.jpeg" style="width:100%; border-radius:10px; margin:10px 0; object-fit:contain; max-height:250px; background:#000;">
-        <p>12 rebanadas, orilla rellena de queso crema y ajonjolí + Refresco 2Lts</p>
-        <button class="btn" onclick="openPickerRect('Pizza D2',1,305,true)">Elegir sabor</button>
-    </div>
-    <div class="card">
-        <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">pizza De Corazon<span class="price-badge">$265</span></h2>
-         <img src="images/IMG_0367.jpeg" style="width:100%; border-radius:10px; margin:10px 0; object-fit:contain; max-height:250px; background:#000;">
-        <p>14 rebanadas, orilla rellena de queso crema y ajonjolí + Refresco 2Lts</p>
-        <button class="btn" onclick="openPickerRect('Pizza Corazon',1,265,true)">Elegir sabor</button>
-    </div>
+  </div>
+</section>
+
+<section id="dosxuno">
+  <div class="max-w reveal">
+    <div class="sec-title ">Especialidades al 2×1</div>
+    <p style="margin-top:.6rem;font-size:.82rem;color:rgba(255,255,255,.55);font-family:'Montserrat',sans-serif;">Dos pizzas por el precio de una</p>
+    <div class="tam-grid"><div class="tam-card" onclick="openPicker('2x1 Chica', 2,175,false,'chica')"><div class="tam-label">CHICA</div><div class="tam-badge">2 × 1</div><div class="tam-precio">$175</div><div class="desde">6 Rebanadas</div></div><div class="tam-card" onclick="openPicker('2x1 Mediana', 2,260,false,'mediana')"><div class="tam-label">MEDIANA</div><div class="tam-badge">2 × 1</div><div class="tam-precio">$260</div><div class="desde">8 Rebanadas</div></div><div class="tam-card" onclick="openPicker('2x1 Grande', 2,305,false,'grande')"><div class="tam-label">GRANDE</div><div class="tam-badge">2 × 1</div><div class="tam-precio">$305</div><div class="desde">8 Rebanadas</div></div><div class="tam-card" onclick="openPicker('2x1 Familiar', 2,365,true,'familiar')"><div class="tam-label">FAMILIAR</div><div class="tam-badge">2 × 1</div><div class="tam-precio">$365</div><div class="desde">12 Rebanadas</div></div></div>
+  </div>
+</section>
+
+<section id="antojitos">
+  <div class="max-w reveal">
+    <div class="sec-title azul">Complementos</div>
     
-   <div class="card">
-    <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">Especialidades al 2x1</h2>
-    <div class="grid-2x1">
-        <div class="box-2x1" onclick="openPicker('2x1 Chica',   2,175,false,'chica')"><strong>CHICA</strong><br>$175<br><span>6 Rebanadas</span></div>
-        <div class="box-2x1" onclick="openPicker('2x1 Mediana', 2,260,false,'mediana')"><strong>MEDIANA</strong><br>$260<br><span>8 Rebanadas</span></div>
-        <div class="box-2x1" onclick="openPicker('2x1 Grande',  2,305,false,'grande')"><strong>GRANDE</strong><br>$305<br><span>8 Rebanadas</span></div>
-        <div class="box-2x1" onclick="openPicker('2x1 Familiar',2,365,true,'familiar')"><strong>FAMILIAR</strong><br>$365<br><span>12 Rebanadas</span></div>
+<img src="images/spaghetti.png" class="cimg" alt="" onerror="this.style.display='none'">    <div class="promo-grid">
+      <div class="promo-card"><div class="promo-head ph-1"><div class="promo-nombre">Spaghetti Hawaiano<small>Piña, jamón, crema, mantequilla y queso</small></div><div class="promo-precio">$110</div></div><div class="promo-body"><button class="btn btn-sel" onclick="addToCartDirect('Spaghetti Hawiano',110)">Agregar al carrito</button></div></div>
+      <div class="promo-card"><div class="promo-head ph-2"><div class="promo-nombre">Spaghetti Italiano<small>Jamón, puré, mantequilla y queso</small></div><div class="promo-precio">$100</div></div><div class="promo-body"><button class="btn btn-sel" onclick="addToCartDirect('Spaghetti Italiano',100)">Agregar al carrito</button></div></div>
+      <div class="promo-card"><div class="promo-head ph-3"><div class="promo-nombre">Spaghetti a la Boloñesa<small>Carne molida, puré, mantequilla y queso</small></div><div class="promo-precio">$110</div></div><div class="promo-body"><button class="btn btn-sel" onclick="addToCartDirect('Spaghetti Bologñesa',110)">Agregar al carrito</button></div></div>
     </div>
-   </div>
+  </div>
+</section>
 
-    <div class="card">
-        <h2 style="color:var(--yellow);text-align:center;margin:30px 0;">Complementos</h2>
-        <img src="images/spaghetti.png" style="width:100%; border-radius:10px; margin:10px 0; object-fit:contain; max-height:250px; background:#000;">
-        <div class="card"></div>
-        <span class="price-badge">$110</span><h3>Spaghetti Hawaiano</h3>
-        <p>piña, jamon, crema, mantequilla y queso</p>
-        <button class="btn btn-sel" onclick="addToCartDirect('Spaghetti Hawiano',110)">Agregar al carrito</button>
-        <div class="card"></div>
-        <span class="price-badge">$100</span><h3>Spaghetti Italiano</h3>
-        <p>jamon, pure, mantequilla y queso</p>
-        <button class="btn btn-sel" onclick="addToCartDirect('Spaghetti Italiano',100)">Agregar al carrito</button>
-        <div class="card"></div>
-        <span class="price-badge">$110</span><h3>Spaghetti a la Bologñesa</h3>
-        <p>carne molida, pure, mantequilla y queso</p>
-        <button class="btn btn-sel" onclick="addToCartDirect('Spaghetti Bologñesa',110)">Agregar al carrito</button>
-    </div>
-</div>
+<footer>
+  <p>© 2026 <span>Abys pizzas</span> — Av. Parque Nacional, San Salvador Atenco, Méx.</p>
+</footer>
 
-<!-- ══════════════════════════════════════════
-     MODAL NORMAL — mismo visor original + checkboxes abajo
-══════════════════════════════════════════ -->
 <div id="pickerModal" class="modal">
   <div class="modal-content">
     <h2 id="pickerTitle" style="color:var(--yellow);margin-bottom:10px;"></h2>
-
-    <!-- VISOR de celdas (igual al original) -->
     <div id="visual-preview-modal" class="visual-box"></div>
-
-    <!-- CHECKBOXES debajo de cada celda -->
     <div id="extras-row" class="pizzas-extras-row"></div>
-
-    <!-- indicador de qué pizza se elige -->
     <div id="picking-label" class="picking-label" style="display:none;"></div>
-
-    <!-- REFRESCO -->
     <div id="refresco-area" style="display:none;background:#222;padding:10px;border-radius:8px;margin:10px 0;">
         <p style="margin:0 0 6px;"><strong>Refresco 2LTS:</strong></p>
         <select id="sel-refresco" onchange="updateCocaExtra()">
@@ -297,21 +353,13 @@
             <option value="Coca">Coca Cola (+ $15.00)</option>
         </select>
     </div>
-
-    <!-- LISTA DE SABORES -->
     <div id="flavorList" style="max-height:320px;overflow-y:auto;background:#000;border-radius:8px;margin-top:8px;"></div>
-
-    <!-- TOTAL EXTRAS -->
     <p id="p-total" style="text-align:right;color:var(--yellow);font-size:0.85rem;margin:8px 0;"></p>
-
-    <button class="btn" style="background:var(--green);" onclick="confirmOrder()">✅ AGREGAR AL CARRITO</button>
+    <button class="btn" style="background:var(--green);color:#04210f;" onclick="confirmOrder()">✅ AGREGAR AL CARRITO</button>
     <button class="btn btn-sel" onclick="closeModal()">Cancelar</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     MODAL RECT — logica de Richard (grid rect/cuadrado)
-══════════════════════════════════════════ -->
 <div id="pickerModal2" class="modal">
   <div class="modal-content">
     <h2 id="pickerTitle2" style="color:var(--yellow);"></h2>
@@ -325,18 +373,17 @@
     <div id="visual-preview-modal2" class="visual-box"></div>
     <p id="p-total2" style="text-align:right;color:var(--yellow);font-size:0.85rem;margin:8px 0;"></p>
     <div id="flavorList2" style="max-height:300px;overflow-y:auto;background:#000;"></div>
-    <button class="btn" style="background:var(--green);" onclick="confirmOrder2()">✅ AGREGAR AL CARRITO</button>
+    <button class="btn" style="background:var(--green);color:#04210f;" onclick="confirmOrder2()">✅ AGREGAR AL CARRITO</button>
     <button class="btn btn-sel" onclick="closeModal2()">Cancelar</button>
   </div>
 </div>
 
-<!-- MODAL CARRITO -->
 <div id="cartModal" class="modal">
   <div class="modal-content">
     <h2>Confirmar Pedido</h2>
     <div id="cartItems"></div>
     <hr>
-    <button class="btn" style="background:#3b82f6;" onclick="getLocation()">📍 COMPARTIR UBICACIÓN GPS</button>
+    <button class="btn" style="background:#3b82f6;color:#fff;" onclick="getLocation()">📍 COMPARTIR UBICACIÓN GPS</button>
     <p id="geo-status" style="font-size:0.7rem;color:var(--yellow);text-align:center;"></p>
     <input type="text" id="c-nombre"  placeholder="Nombre completo">
     <input type="text" id="c-tel"     placeholder="Teléfono">
@@ -355,19 +402,19 @@
     </div>
     <div id="info-pago-extra" style="display:none;background:#000;padding:15px;border-radius:8px;border:1px solid var(--yellow);margin:10px 0;">
         <p id="txt-pago-inst" style="font-size:0.85rem;margin:0;"></p>
-        <button id="btn-mp" class="btn" style="background:var(--blue);display:none;" onclick="window.open('https://link.mercadopago.com.mx/abyspizzas1','_blank')">PAGAR AHORA</button>
+        <button id="btn-mp" class="btn" style="background:var(--blue);color:#fff;display:none;" onclick="window.open('https://link.mercadopago.com.mx/abyspizzas1','_blank')">PAGAR AHORA</button>
     </div>
     <h2 id="total-final" style="text-align:right;color:var(--yellow);font-size:1.8rem;">Total: $0</h2>
     <p style="font-size:0.7rem;text-align:center;color:#888;">* Al dar click en enviar, se abrirá tu WhatsApp. No olvides enviar tu captura si pagaste por banco.</p>
-    <button class="btn" style="background:var(--green);height:60px;font-size:1.2rem;" onclick="sendWhatsApp()">🚀 ENVIAR PEDIDO</button>
+    <button class="btn" style="background:var(--green);color:#04210f;height:60px;font-size:1.2rem;" onclick="sendWhatsApp()">🚀 ENVIAR PEDIDO</button>
     <button class="btn btn-sel" onclick="closeCart()">Seguir Comprando</button>
   </div>
 </div>
 
 <div class="cart-bar" onclick="openCart()">
-    <span>🛒 MI CARRITO</span>
-    <span id="cart-count">0</span>
+    <span>🛒 MI CARRITO: <span id="cart-count">0</span></span>
     <span id="cart-total">$0</span>
+    <span class="ver">VER ›</span>
 </div>
 
 <script>
@@ -405,7 +452,7 @@ const linkMP="https://link.mercadopago.com.mx/abyspizzas1";
 // slots[i] = {sabor1:'', sabor2:'', mitad:false, orilla:false}
 let cur=null, slots=[], activePizza=-1, activeHalf=1;
 
-// Estado picker rect (logica de Richard: grid rect/cuadrado)
+// Estado picker rect
 let cur2=null, slots2=[], activeSlot2=0;
 
 // ── ABRIR PICKER NORMAL ──────────────────────
@@ -594,7 +641,7 @@ function confirmOrder(){
 
 function closeModal(){ document.getElementById('pickerModal').style.display='none'; }
 
-// ── PICKER RECT / CUADRADO (logica de Richard: grid + slot activo) ───────────
+// ── PICKER RECT / CUADRADO (grid + slot activo) ───────────
 function openPickerRect(type,limit,price,hasRef){
     cur2={type,limit,basePrice:price,hasRef,refresco:'Sabor',cocaExtra:0,
           shape: type.indexOf('Cuadrada')>=0 ? 'square'
@@ -799,6 +846,13 @@ function openCart(){
     calculateFinalTotal();
 }
 function closeCart(){ document.getElementById('cartModal').style.display='none'; }
+
+</script>
+<script>
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }});
+  }, { threshold:0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 </script>
 </body>
 </html>
