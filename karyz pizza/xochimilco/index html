@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kary'z Pizza — Xochimilco</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;600;700;900&amp;family=Nunito:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --azul:   #1A2ECC;
+    --azul2:  #0d1a8a;
+    --rojo:   #CC1A1A;
+    --amarillo:#F5C518;
+    --dorado: #D4A017;
+    --negro:  #050810;
+    --gris:   #0d1020;
+    --gris2:  #141828;
+    --blanco: #FFFFFF;
+    --muted:  #a8b8d8;
+  }
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Nunito',sans-serif; background:var(--negro); color:var(--blanco); overflow-x:hidden; }
+
+  /* ── HERO ── */
+  .hero {
+    position:relative; min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:3rem 1.5rem 5rem;
+    background:
+      radial-gradient(ellipse at 30% 30%, rgba(26,46,204,.45) 0%, transparent 60%),
+      radial-gradient(ellipse at 75% 70%, rgba(204,26,26,.3) 0%, transparent 55%),
+      url('https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=1400&q=80') center/cover no-repeat;
+  }
+  .hero::after { content:''; position:absolute; inset:0; background:linear-gradient(to bottom,rgba(5,8,16,.7) 0%,rgba(5,8,16,.94) 100%); z-index:0; }
+  .hero > * { position:relative; z-index:1; }
+
+  .logo-wrap { margin-bottom:1rem; }
+  .logo-karyz { font-family:'Bebas Neue',sans-serif; font-size:clamp(4.5rem,14vw,9rem); color:var(--blanco); line-height:.85; letter-spacing:.05em; text-shadow:4px 4px 0 var(--azul),0 0 50px rgba(26,46,204,.5); }
+  .logo-pizza { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,8vw,5rem); color:var(--rojo); letter-spacing:.14em; }
+
+  .tagline { font-family:'Montserrat',sans-serif; font-weight:700; font-size:clamp(.7rem,2vw,.9rem); letter-spacing:.25em; text-transform:uppercase; color:var(--amarillo); margin-bottom:2rem; border-top:1px solid rgba(245,197,24,.35); border-bottom:1px solid rgba(245,197,24,.35); padding:.5rem 2rem; }
+
+  .domicilio-banner { background:rgba(26,46,204,.15); border:1.5px solid var(--azul); border-radius:12px; padding:.8rem 2rem; font-family:'Montserrat',sans-serif; font-weight:700; font-size:clamp(.75rem,2vw,.92rem); color:rgba(180,200,255,.9); letter-spacing:.05em; text-transform:uppercase; margin-bottom:2rem; }
+  .domicilio-banner span { color:var(--blanco); }
+
+  .hero-chips { display:flex; gap:.9rem; flex-wrap:wrap; justify-content:center; }
+  .chip { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.15); border-radius:40px; padding:.5rem 1.1rem; font-size:.78rem; font-weight:600; display:flex; align-items:center; gap:.4rem; }
+
+  /* ── SECCIONES ── */
+  section { padding:4.5rem 1.5rem; }
+  .max-w { max-width:1180px; margin:0 auto; }
+
+  .sec-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(2rem,6vw,3.2rem); letter-spacing:.07em; display:inline-block; position:relative; padding-bottom:.4rem; }
+  .sec-title::after { content:''; position:absolute; left:0; bottom:0; width:55%; height:4px; background:var(--rojo); border-radius:2px; }
+  .sec-title.azul::after  { background:var(--azul); }
+  .sec-title.dorado::after{ background:var(--dorado); }
+  .sec-title.centered { display:block; text-align:center; }
+  .sec-title.centered::after { left:22.5%; }
+
+  /* ── PIZZAS ESPECIALES ── */
+  #especiales { background:linear-gradient(135deg,#050810,#0a0f28); }
+
+  .esp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.4rem; margin-top:2.5rem; }
+  .esp-card { background:rgba(0,0,0,.5); border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,.08); transition:transform .2s,box-shadow .2s; }
+  .esp-card:hover { transform:translateY(-5px); box-shadow:0 14px 40px rgba(0,0,0,.7); }
+  .esp-head { padding:.9rem 1.3rem; display:flex; align-items:center; justify-content:space-between; }
+  .eh-barra  { background:linear-gradient(90deg,#0d1a8a,#1A2ECC); }
+  .eh-rect   { background:linear-gradient(90deg,#8B0000,#CC1A1A); }
+  .esp-nombre { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:.06em; color:var(--blanco); line-height:1.1; }
+  .esp-nombre small { display:block; font-size:.65rem; font-family:'Montserrat',sans-serif; font-weight:600; color:rgba(255,255,255,.65); letter-spacing:.07em; }
+  .esp-precio { font-family:'Bebas Neue',sans-serif; font-size:2.4rem; color:var(--amarillo); }
+  .esp-body { padding:1.1rem 1.4rem; }
+  .esp-body ul { list-style:none; display:flex; flex-direction:column; gap:.45rem; }
+  .esp-body ul li { font-size:.82rem; color:rgba(255,255,255,.8); display:flex; align-items:flex-start; gap:.55rem; line-height:1.5; }
+  .esp-body ul li::before { content:'✔'; color:var(--amarillo); font-weight:700; font-size:.78rem; flex-shrink:0; margin-top:.15rem; }
+  .orilla-tag { display:inline-flex; align-items:center; gap:.4rem; background:rgba(212,160,23,.12); border:1px solid rgba(212,160,23,.35); border-radius:8px; padding:.28rem .75rem; font-size:.7rem; color:var(--dorado); font-family:'Montserrat',sans-serif; font-weight:600; margin-top:.7rem; }
+  .no2x1-tag { display:inline-flex; align-items:center; background:rgba(204,26,26,.15); border:1px solid rgba(204,26,26,.35); border-radius:8px; padding:.28rem .75rem; font-size:.68rem; color:#ffb4a7; font-family:'Montserrat',sans-serif; font-weight:700; margin-top:.4rem; }
+
+  /* ── 2×1 ── */
+  #dosxuno { background:var(--gris); }
+
+  .tam-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1.2rem; margin-top:2.5rem; }
+  .tam-card { background:var(--negro); border-radius:16px; padding:1.6rem 1.2rem; text-align:center; border:2px solid rgba(26,46,204,.25); position:relative; overflow:hidden; transition:transform .2s,border-color .2s; }
+  .tam-card:hover { transform:translateY(-5px); border-color:var(--azul); }
+  .tam-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,var(--azul),var(--rojo)); }
+  .tam-label  { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:.1em; color:var(--blanco); margin-bottom:.3rem; }
+  .tam-badge  { display:inline-block; background:var(--rojo); color:var(--amarillo); font-family:'Bebas Neue',sans-serif; font-size:.95rem; letter-spacing:.08em; border-radius:20px; padding:.1rem .8rem; margin-bottom:.7rem; }
+  .tam-precio { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,5.5vw,3.3rem); color:var(--amarillo); line-height:1; }
+
+  /* ── ESPECIALIDADES ── */
+  #especialidades { background:var(--negro); }
+
+  .pizza-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1rem; margin-top:2.5rem; }
+  .pizza-card { background:var(--gris2); border-radius:12px; padding:1rem 1.2rem; border-left:4px solid var(--azul); transition:transform .2s,border-color .2s; }
+  .pizza-card:hover { transform:translateY(-3px); border-color:var(--amarillo); }
+  .pizza-card.dest  { border-left-color:var(--dorado); }
+  .pizza-card.prem  { border-left-color:#7b2ff7; }
+  .pizza-card.mar   { border-left-color:#00c4ff; }
+  .pizza-card h3 { font-family:'Montserrat',sans-serif; font-weight:900; font-size:.85rem; text-transform:uppercase; letter-spacing:.05em; color:var(--blanco); margin-bottom:.35rem; }
+  .pizza-card.dest h3 { color:var(--amarillo); }
+  .pizza-card.prem h3 { color:#c8a8ff; }
+  .pizza-card.mar  h3 { color:#80e4ff; }
+  .pizza-card p { font-size:.77rem; color:rgba(255,255,255,.52); line-height:1.5; }
+
+  /* tabla premium / marisco */
+  .price-row { display:flex; justify-content:space-between; align-items:center; margin-top:.6rem; flex-wrap:wrap; gap:.3rem; }
+  .price-pill { font-family:'Bebas Neue',sans-serif; font-size:.9rem; letter-spacing:.04em; }
+  .price-pill span { background:rgba(26,46,204,.25); border:1px solid rgba(26,46,204,.4); border-radius:6px; padding:.1rem .55rem; color:var(--amarillo); }
+  .price-pill.pur span { background:rgba(123,47,247,.25); border-color:rgba(123,47,247,.4); }
+  .price-pill.cya span { background:rgba(0,196,255,.15); border-color:rgba(0,196,255,.3); }
+
+  /* ── PROMOS ── */
+  #promos { background:var(--gris); }
+
+  .promo-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1.4rem; margin-top:2.5rem; }
+  .promo-card { background:var(--negro); border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,.07); transition:transform .2s,box-shadow .2s; }
+  .promo-card:hover { transform:translateY(-5px); box-shadow:0 14px 40px rgba(0,0,0,.6); }
+  .promo-head { padding:.9rem 1.3rem; display:flex; align-items:center; justify-content:space-between; }
+  .ph-1 { background:linear-gradient(90deg,#0d1a8a,#1A2ECC); }
+  .ph-2 { background:linear-gradient(90deg,#8B0000,#CC1A1A); }
+  .ph-3 { background:linear-gradient(90deg,#1a4a00,#2A8B00); }
+  .ph-c { background:linear-gradient(90deg,#6B001A,#CC1A55); }
+  .promo-nombre { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:.06em; color:var(--blanco); line-height:1.1; }
+  .promo-nombre small { display:block; font-size:.62rem; font-family:'Montserrat',sans-serif; font-weight:600; color:rgba(255,255,255,.65); letter-spacing:.07em; }
+  .promo-precio { font-family:'Bebas Neue',sans-serif; font-size:2.2rem; color:var(--amarillo); }
+  .promo-body { padding:1rem 1.3rem; }
+  .promo-body ul { list-style:none; display:flex; flex-direction:column; gap:.45rem; }
+  .promo-body ul li { font-size:.81rem; color:rgba(255,255,255,.8); display:flex; align-items:flex-start; gap:.5rem; line-height:1.5; }
+  .promo-body ul li::before { content:'✔'; color:var(--dorado); font-weight:700; font-size:.78rem; flex-shrink:0; margin-top:.15rem; }
+
+  /* ── ANTOJITOS & BEBIDAS ── */
+  #antojitos { background:var(--negro); }
+
+  .otros-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1.2rem; margin-top:2.5rem; }
+  .otro-card { background:var(--gris2); border-radius:14px; padding:1.2rem 1.4rem; display:flex; flex-direction:column; justify-content:space-between; border-bottom:3px solid var(--azul); transition:transform .2s; }
+  .otro-card:hover { transform:translateY(-3px); }
+  .otro-card h3 { font-family:'Montserrat',sans-serif; font-weight:900; font-size:.88rem; text-transform:uppercase; letter-spacing:.05em; color:var(--blanco); margin-bottom:.4rem; }
+  .otro-card p  { font-size:.78rem; color:rgba(255,255,255,.52); line-height:1.5; margin-bottom:.8rem; }
+  .otro-card .pt{ font-family:'Bebas Neue',sans-serif; font-size:1.7rem; color:var(--amarillo); }
+
+  /* bebidas */
+  .beb-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; margin-top:1.5rem; }
+  .beb-card { background:var(--gris2); border-radius:12px; padding:1rem 1.2rem; text-align:center; border:1px solid rgba(255,255,255,.06); transition:transform .2s; }
+  .beb-card:hover { transform:translateY(-3px); }
+  .beb-card .bic { font-size:1.8rem; margin-bottom:.3rem; }
+  .beb-card h3   { font-size:.8rem; font-weight:700; color:var(--blanco); margin-bottom:.3rem; }
+  .beb-card .bp  { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:var(--amarillo); }
+
+  /* ingredientes extra */
+  .extra-table { width:100%; border-collapse:collapse; margin-top:1rem; font-size:.82rem; }
+  .extra-table th { background:rgba(26,46,204,.3); padding:7px 10px; text-align:center; font-size:.72rem; letter-spacing:.06em; color:var(--amarillo); }
+  .extra-table td { padding:7px 10px; text-align:center; border-bottom:1px solid rgba(255,255,255,.06); color:rgba(255,255,255,.7); }
+  .extra-table td:first-child { text-align:left; font-weight:700; color:var(--blanco); }
+  .extra-table td.amt { color:var(--amarillo); font-weight:700; }
+
+  /* ── CONTACTO ── */
+  #contacto { background:linear-gradient(135deg,#020408,#080c20); }
+
+  .con-grid { display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; margin-top:2.5rem; align-items:start; }
+  @media(max-width:680px){ .con-grid { grid-template-columns:1fr; } }
+  .con-card { background:rgba(255,255,255,.04); border:1px solid rgba(26,46,204,.3); border-radius:18px; padding:2rem; }
+  .con-card h3 { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:.07em; color:var(--azul); margin-bottom:1.3rem; }
+  .con-row { display:flex; align-items:flex-start; gap:.75rem; margin-bottom:1.1rem; font-size:.88rem; color:rgba(255,255,255,.8); line-height:1.6; }
+  .con-row .ic { font-size:1.2rem; flex-shrink:0; margin-top:.1rem; }
+  .con-row strong { display:block; font-size:.68rem; font-weight:700; color:rgba(255,255,255,.4); letter-spacing:.12em; text-transform:uppercase; margin-bottom:.1rem; }
+  .tel-big    { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:var(--rojo); letter-spacing:.04em; line-height:1.2; }
+  .tel-big.wa { color:#25D366; }
+  .hor-card { background:rgba(255,255,255,.04); border:1px solid rgba(204,26,26,.25); border-radius:18px; padding:2rem; }
+  .hor-card h3 { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:.07em; color:var(--rojo); margin-bottom:1.3rem; }
+  .hor-row { display:flex; justify-content:space-between; align-items:center; padding:.65rem 0; border-bottom:1px solid rgba(255,255,255,.07); font-size:.88rem; }
+  .hor-row:last-child { border-bottom:none; }
+  .hor-row .dias  { color:rgba(255,255,255,.6); }
+  .hor-row .horas { font-weight:700; color:var(--amarillo); }
+
+  /* ── FOOTER ── */
+  footer { background:#020408; text-align:center; padding:1.5rem 1rem; font-size:.72rem; color:rgba(255,255,255,.28); font-family:'Montserrat',sans-serif; }
+  footer span { color:var(--rojo); }
+
+  /* ── REVEAL ── */
+  .reveal { opacity:0; transform:translateY(26px); transition:opacity .6s ease,transform .6s ease; }
+  .reveal.visible { opacity:1; transform:none; }
+
+  @media(max-width:500px){ .tam-grid { grid-template-columns:1fr 1fr; } }
+/* ══════════ SISTEMA DE PEDIDOS ══════════ */
+  .order-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 46px;
+    margin-top: .9rem;
+    padding: .7rem 1rem;
+    border: 0;
+    border-radius: 10px;
+    background: var(--oro);
+    color: var(--negro);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: .85rem;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform .15s, filter .15s;
+  }
+  .order-btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+  .order-btn.rojo { background: var(--rojo); color: var(--blanco); }
+  .order-btn.disabled { background: rgba(255,255,255,.08); color: rgba(255,255,255,.4); cursor: not-allowed; }
+
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    background: rgba(5,5,5,.94);
+    overflow-y: auto;
+    padding: 18px;
+  }
+
+  .modal-content {
+    max-width: 620px;
+    margin: 18px auto;
+    padding: 22px;
+    background: linear-gradient(180deg, var(--gris2), var(--negro));
+    border: 1px solid rgba(212,160,23,.3);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .modal-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .modal-head h2 {
+    margin: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: .05em;
+    color: var(--oro);
+    font-size: 1.5rem;
+  }
+
+  .close-btn {
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,.1);
+    color: var(--blanco);
+    cursor: pointer;
+    font-weight: 900;
+    flex: 0 0 auto;
+  }
+
+  .visual-box {
+    display: grid;
+    gap: 8px;
+    margin: 14px 0;
+  }
+
+  /* Circulo: una circunferencia por cada pizza */
+  .visual-box.shape-circle {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 16px;
+    margin: 6px auto 18px;
+  }
+
+  .pizza-circle-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .pizza-circle-wrap .pizza-caption {
+    font-size: .7rem;
+    color: var(--muted);
+    font-weight: 800;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .pizza-circle {
+    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 6px solid var(--oro);
+    box-shadow:
+      inset 0 0 0 3px rgba(0,0,0,.32),
+      0 14px 28px rgba(0,0,0,.5);
+    background: radial-gradient(circle, #f0c94a 0 58%, #c8201a 59% 68%, #6b120f 69%);
+    flex: 0 0 auto;
+  }
+
+  .circle-fill {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12%;
+    cursor: pointer;
+    color: var(--blanco);
+    font-family: 'Montserrat', sans-serif;
+    font-size: .7rem;
+    font-weight: 800;
+    line-height: 1.15;
+    text-shadow: 0 1px 3px rgba(0,0,0,.7);
+    background: rgba(10,8,6,.45);
+    transition: background .15s, box-shadow .15s;
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  .circle-fill.top {
+    top: 0; bottom: auto; height: 50%; width: 100%;
+    padding: 10% 10% 6% 10%;
+    border-bottom: 1px dashed rgba(255,255,255,.55);
+  }
+
+  .circle-fill.bottom {
+    top: auto; bottom: 0; height: 50%; width: 100%;
+    padding: 6% 10% 10% 10%;
+  }
+
+  .circle-fill.selected {
+    background: rgba(212,160,23,.9);
+    color: var(--negro);
+    text-shadow: none;
+  }
+
+  .circle-fill.active-slot {
+    box-shadow: inset 0 0 0 3px var(--oro);
+    background: rgba(255,255,255,.18);
+  }
+
+  .circle-fill.active-slot.selected { background: rgba(212,160,23,1); }
+
+  /* Rectangulo/cuadrado: cuadricula para Mega y Barra */
+  .visual-box.shape-rect,
+  .visual-box.shape-square {
+    display: grid;
+    gap: 3px;
+    margin: 6px auto 16px;
+    border: 6px solid var(--oro);
+    border-radius: 10px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #c8201a, #6b120f);
+    box-shadow: 0 16px 34px rgba(0,0,0,.45);
+  }
+
+  .visual-box.shape-rect { width: 100%; aspect-ratio: 1.7 / 1; }
+  .visual-box.shape-square { width: min(240px, 66vw); aspect-ratio: 1; }
+
+  .rect-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .rect-cell > div {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--blanco);
+    font-family: 'Montserrat', sans-serif;
+    font-size: .7rem;
+    font-weight: 800;
+    line-height: 1.15; 
+    text-shadow: 0 1px 3px rgba(0,0,0,.7);
+    background: rgba(10,8,6,.45);
+    transition: background .15s;
+    word-break: break-word;
+  }
+
+  .rect-cell > div.selected { background: rgba(212,160,23,.9); color: var(--negro); text-shadow: none; }
+  .rect-cell > div.active-slot { box-shadow: inset 0 0 0 3px var(--oro); background: rgba(255,255,255,.18); }
+  .rect-cell > div.active-slot.selected { background: rgba(212,160,23,1); }
+
+  .extras-row {
+    display: grid;
+    gap: 8px;
+    margin: 8px 0 12px;
+  }
+
+  .extras-col {
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    padding: 9px;
+    background: rgba(255,255,255,.04);
+    min-width: 0;
+  }
+
+  .chk-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 28px;
+    color: var(--muted);
+    font-size: .78rem;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .chk-row input[type="checkbox"] {
+    width: 16px; height: 16px; min-height: auto; margin: 0;
+    accent-color: var(--oro);
+    flex: 0 0 auto;
+  }
+
+  .chk-price { margin-left: auto; color: var(--oro); font-size: .74rem; font-weight: 800; white-space: nowrap; }
+
+  .picking-label {
+    display: none;
+    margin: 8px 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(212,160,23,.12);
+    color: var(--oro);
+    text-align: center;
+    font-size: .82rem;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .option-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+
+  .option-row strong { font-family: 'Montserrat', sans-serif; font-size: .85rem; color: var(--blanco); }
+  .option-row small { display: block; margin-top: 3px; color: var(--muted); line-height: 1.35; }
+
+  .flavor-list {
+    max-height: 340px;
+    overflow: auto;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 8px;
+    background: #0d0a08;
+  }
+
+  .flavor-btn {
+    width: 42px; height: 42px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--oro);
+    color: var(--negro);
+    cursor: pointer;
+    font-size: 1.3rem;
+    font-weight: 900;
+  }
+
+  .modal input, .modal select, .modal textarea {
+    width: 100%;
+    min-height: 46px;
+    padding: 12px;
+    margin: 6px 0;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 8px;
+    background: #14100e;
+    color: var(--blanco);
+    font-family: 'Nunito', sans-serif;
+    font-size: .92rem;
+  }
+
+  .modal textarea { min-height: 80px; resize: vertical; }
+
+  .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+
+  .payment-methods { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin: 12px 0; }
+
+  .pay-option {
+    padding: 12px 8px;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 8px;
+    background: rgba(255,255,255,.04);
+    color: var(--muted);
+    text-align: center;
+    cursor: pointer;
+    font-weight: 800;
+    font-family: 'Montserrat', sans-serif;
+    font-size: .78rem;
+  }
+
+  .pay-option.active { border-color: var(--oro); color: var(--blanco); background: rgba(212,160,23,.16); }
+
+  .cart-item {
+    margin: 9px 0;
+    padding: 12px;
+    border-radius: 8px;
+    background: rgba(255,255,255,.05);
+    border-left: 4px solid var(--oro);
+    color: var(--muted);
+    line-height: 1.4;
+    font-size: .88rem;
+  }
+
+  .cart-item strong { color: var(--blanco); font-family: 'Montserrat', sans-serif; }
+  .cart-remove { float: right; background: transparent; border: 0; color: #ff8c7a; cursor: pointer; font-weight: 900; }
+
+  .notice {
+    border: 1px solid rgba(212,160,23,.35);
+    border-radius: 8px;
+    background: rgba(212,160,23,.08);
+    color: var(--muted);
+    padding: 14px;
+    line-height: 1.45;
+    font-size: .88rem;
+    margin-top: 10px;
+  }
+
+  .fine-print { color: rgba(255,255,255,.4); font-size: .76rem; line-height: 1.4; text-align: center; }
+
+  .btn-full { width: 100%; }
+
+  .cart-bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 2500;
+    min-height: 76px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 22px;
+    padding: 14px 18px;
+    background: var(--verde);
+    color: #071007;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    box-shadow: 0 -14px 40px rgba(0,0,0,.35);
+  }
+
+  body { padding-bottom: 92px; }
+
+  @media (max-width: 560px) {
+    .payment-methods, .form-grid { grid-template-columns: 1fr; }
+    .modal { padding: 10px; }
+    .modal-content { padding: 17px; }
+    .visual-box.shape-rect { aspect-ratio: 1.3 / 1; }
+    .visual-box.shape-square { width: min(210px, 72vw); }
+    .visual-box.shape-circle { gap: 10px; }
+    .cart-bar { justify-content: space-between; gap: 8px; font-size: .9rem; }
+  }
+
+  :root { --oro:#F5C518; --verde:#25D366; --shadow:0 22px 70px rgba(0,0,0,.4); }
+  .order-btn.mini { min-height:34px; margin-top:.6rem; padding:.4rem .8rem; font-size:.72rem; }
+  .pill-btn { cursor:pointer; transition:filter .15s; }
+  .pill-btn:hover { filter:brightness(1.4); }
+  .tam-card .order-btn { margin-top:1rem; }
+  .esp-body .order-btn, .promo-body .order-btn { margin-top:1rem; }
+
+  #dosxunopm { background:linear-gradient(135deg,#050810,#0a0f28); }
+  .desde { font-size:.68rem; color:rgba(255,255,255,.5); font-family:'Montserrat',sans-serif; margin-top:.3rem; }
+  .option-row.nor { border-left:4px solid var(--azul); }
+  .option-row.prem { border-left:4px solid #7b2ff7; background:rgba(123,47,247,.1); }
+  .option-row.prem strong { color:#c8a8ff; }
+  .option-row.mar { border-left:4px solid #00c4ff; background:rgba(0,196,255,.08); }
+  .option-row.mar strong { color:#80e4ff; }
+  .flavor-group { position:sticky; top:0; z-index:1; padding:8px 12px; font-family:'Bebas Neue',sans-serif; letter-spacing:.08em; font-size:1.05rem; background:#0d1020; border-bottom:1px solid rgba(255,255,255,.1); }
+  .flavor-group.nor { color:var(--amarillo); } .flavor-group.prem { color:#c8a8ff; } .flavor-group.mar { color:#80e4ff; }
+  .tier-price { display:inline-block; margin-top:5px; padding:0 8px; border-radius:6px; font-family:'Bebas Neue',sans-serif; font-size:.95rem; letter-spacing:.04em; background:rgba(26,46,204,.3); color:var(--amarillo); }
+  .tier-price.prem { background:rgba(123,47,247,.28); color:#c8a8ff; } .tier-price.mar { background:rgba(0,196,255,.2); color:#80e4ff; }
+  .circle-fill.selected.t-p, .circle-fill.active-slot.selected.t-p { background:rgba(123,47,247,.95); color:#fff; }
+  .circle-fill.selected.t-m, .circle-fill.active-slot.selected.t-m { background:rgba(0,196,255,.95); color:#04121a; }
+  #dosxunosen { background:var(--gris); }
+  .circle-fill.selected.t-n, .circle-fill.active-slot.selected.t-n { background:rgba(26,46,204,.95); color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.5); }
+  .rect-cell > div.selected, .rect-cell > div.active-slot.selected { background:rgba(26,46,204,.95); color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.5); }
+  .flavor-group.sep { margin-top:16px; border-top:2px solid rgba(255,255,255,.14); }
+  #pickerModal .modal-head > div { flex:1; text-align:center; padding-left:56px; }
+  .extra-title { font-family:'Montserrat',sans-serif; font-size:.7rem; font-weight:800; color:var(--amarillo); text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px; }
+  .extra-chip { display:inline-flex; align-items:center; gap:6px; margin:2px 4px 2px 0; padding:3px 8px; border-radius:20px; background:rgba(245,197,24,.15); border:1px solid rgba(245,197,24,.4); color:var(--blanco); font-size:.72rem; font-weight:700; }
+  .extra-chip button { border:0; background:transparent; color:#ff8c7a; cursor:pointer; font-weight:900; }
+  #extrasRow select { min-height:38px; font-size:.8rem; padding:6px; }
+  .eh-cor { background:linear-gradient(90deg,#6B001A,#CC1A55); }
+  .logo-img { display:block; width:min(560px,86vw); height:auto; margin:0 auto 1.2rem; filter:drop-shadow(0 10px 28px rgba(0,0,0,.55)); }
+  .hero-info { width:min(760px,100%); margin-top:.4rem; padding:1.4rem 1.2rem; border-radius:20px; background:linear-gradient(180deg,rgba(26,46,204,.28),rgba(5,8,16,.55)); border:2px solid rgba(245,197,24,.55); box-shadow:0 18px 50px rgba(0,0,0,.45); }
+  .hi-addr { display:flex; align-items:center; justify-content:center; gap:.7rem; font-family:'Montserrat',sans-serif; font-weight:800; font-size:clamp(.95rem,3.2vw,1.25rem); line-height:1.4; color:#fff; text-align:left; }
+  .hi-ic { font-size:1.7rem; }
+  .hi-phones { display:flex; flex-wrap:wrap; justify-content:center; gap:.7rem; margin-top:1.1rem; }
+  .hi-tel { font-family:'Bebas Neue',sans-serif; font-size:clamp(1.5rem,5vw,2.1rem); letter-spacing:.05em; line-height:1; padding:.55rem 1.1rem; border-radius:50px; color:#fff; text-decoration:none; background:var(--rojo); box-shadow:0 6px 22px rgba(204,26,26,.5); }
+  .hi-tel.wa { background:#25D366; color:#04210f; box-shadow:0 6px 22px rgba(37,211,102,.45); }
+  .hi-hor { margin-top:1.1rem; padding-top:.9rem; border-top:1px solid rgba(255,255,255,.15); font-family:'Montserrat',sans-serif; font-size:.82rem; color:rgba(255,255,255,.75); }
+  .hi-hor strong { color:var(--amarillo); }
+  html { -webkit-text-size-adjust:100%; }
+  img, svg { max-width:100%; }
+  @media (max-width:600px) {
+    section { padding:2.6rem 1rem; }
+    .hero { min-height:100vh; min-height:100svh; padding:1rem .9rem 1.2rem; }
+    .logo-img { width:auto; height:auto; max-width:74vw; max-height:24svh; margin-bottom:.7rem; }
+    .tagline { font-size:.6rem; letter-spacing:.1em; padding:.35rem .8rem; margin-bottom:.8rem; }
+    .domicilio-banner { padding:.5rem .8rem; margin-bottom:.8rem; font-size:.66rem; line-height:1.4; }
+    .hero-info { padding:.9rem .7rem; border-width:1.5px; }
+    .hi-addr { font-size:.88rem; gap:.5rem; }
+    .hi-ic { font-size:1.3rem; }
+    .hi-phones { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.5rem; margin-top:.7rem; }
+    .hi-tel { font-size:1.25rem; padding:.5rem .3rem; text-align:center; }
+    .hi-tel.wa { grid-column:1 / -1; }
+    .hi-hor { margin-top:.7rem; padding-top:.6rem; font-size:.7rem; line-height:1.5; }
+    .esp-grid, .promo-grid, .otros-grid { grid-template-columns:minmax(0,1fr); gap:1rem; margin-top:1.5rem; }
+    .tam-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; margin-top:1.5rem; }
+    .beb-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.7rem; }
+    .sec-title { font-size:2rem; }
+  }
+  .field-error { border-color:#ff4d4d !important; background:rgba(255,77,77,.12) !important; box-shadow:0 0 0 2px rgba(255,77,77,.35); }
+  .form-error { display:none; margin:10px 0; padding:12px 14px; border-radius:10px; background:rgba(255,77,77,.12); border:1px solid rgba(255,77,77,.65); color:#ffb4b4; font-family:'Montserrat',sans-serif; font-size:.82rem; font-weight:700; line-height:1.5; }
+</style>
+<style>.ph{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden}.ph img{width:100%;height:100%;object-fit:contain}.reveal{opacity:1;transform:none}.promo-nombre,.esp-nombre{min-width:0}.promo-head,.esp-head{gap:8px}</style></head>
+<body>
+<!-- ══ HERO ══ -->
+<header class="hero">
+<img alt="Kary'z Pizza" class="logo-img" src="images/logo.png"/>
+<p class="tagline">Sabor que enamora · Sucursal Xochimilco</p>
+<div class="domicilio-banner">
+    🛵 Servicio a domicilio <span>SIN COSTO EXTRA</span> los 365 días
+  </div>
+<div class="hero-info">
+<div class="hi-addr"><span class="hi-ic">📍</span><span>Francisco I. Madero #2, Col. Pueblo Santa María Nativitas, Xochimilco</span></div>
+<div class="hi-phones">
+<a class="hi-tel" href="tel:+525524785817">📞 55 2478 5817</a>
+<a class="hi-tel" href="tel:+525524785818">📞 55 2478 5818</a>
+<a class="hi-tel wa" href="https://wa.me/525611750154" rel="noopener" target="_blank">💬 56 1175 0154</a>
+</div>
+<div class="hi-hor">🕐 Servicio · 12:00 PM – 10:30 PM</div>
+</div>
+</header>
+<!-- ══ PROMOCIÓN PERMANENTE ══ -->
+<section id="promos">
+<div class="max-w reveal">
+<div class="sec-title dorado">Promoción Permanente</div>
+<div class="promo-grid"><div class="promo-card">
+<div class="ph" data-i="📦" data-id="paq1" data-l="Paquete 1"><img alt="Paquete 1" loading="lazy" src="images/paq1.png"/></div>
+<div class="promo-head ph-1"><div class="promo-nombre">Paquete 1<small>2 Grandes Hawaianas</small></div><div class="promo-precio">$355</div></div>
+<div class="promo-body"><ul><li>2 Pizzas Grandes <strong>Hawaianas</strong></li></ul><button class="order-btn" onclick="openPackage(1)" type="button">Agregar al carrito</button></div>
+</div><div class="promo-card">
+<div class="ph" data-i="📦" data-id="paq2" data-l="Paquete 2"><img alt="Paquete 2" loading="lazy" src="images/paq2.png"/></div>
+<div class="promo-head ph-1"><div class="promo-nombre">Paquete 2<small>Super Kary'z</small></div><div class="promo-precio">$270</div></div>
+<div class="promo-body"><ul><li>1 Pizza Familiar a su gusto</li><li>+ Coca-Cola de 1 litro</li></ul><span class="tag r">Excepto Premium y Mariscos</span><button class="order-btn" onclick="openPackage(2)" type="button">Agregar al carrito</button></div>
+</div><div class="promo-card">
+<div class="ph" data-i="📦" data-id="paq3" data-l="Paquete 3"><img alt="Paquete 3" loading="lazy" src="images/paq3.png"/></div>
+<div class="promo-head ph-1"><div class="promo-nombre">Paquete 3<small>Pizza Familiar de Dedos</small></div><div class="promo-precio">$315</div></div>
+<div class="promo-body"><ul><li>Pizza Familiar de Dedos (cualquier especialidad)</li><li>+ Coca-Cola de 1 litro</li></ul><span class="tag r">Excepto Mariscos</span><button class="order-btn" onclick="openPackage(3)" type="button">Agregar al carrito</button></div>
+</div><div class="promo-card">
+<div class="ph" data-i="❤️" data-id="paq4" data-l="Paquete 4"><img alt="Paquete 4" loading="lazy" src="images/paq4.png"/></div>
+<div class="promo-head ph-1"><div class="promo-nombre">Paquete 4<small>Pizza de Corazón ❤️</small></div><div class="promo-precio">$255</div></div>
+<div class="promo-body"><ul><li>Pizza en forma de corazón</li><li>Incluye 2 refrescos de lata</li></ul><button class="order-btn" onclick="openPackage(4)" type="button">Agregar al carrito</button></div>
+</div></div>
+</div>
+</section>
+<!-- ══ PIZZAS ESPECIALES ══ -->
+<section id="especiales">
+<div class="max-w reveal">
+<div class="sec-title azul">Pizzas Especiales</div>
+<p style="margin-top:.6rem;font-size:.82rem;color:rgba(255,255,255,.45);font-family:'Montserrat',sans-serif;">Incluyen refresco · No aplican 2×1</p>
+<div class="esp-grid"><div class="esp-card">
+<div class="ph" data-i="🍕" data-id="rect" data-l="Pizza Rectangular"><img alt="Pizza Rectangular" loading="lazy" src="images/rect.png"/></div>
+<div class="esp-head eh-rect"><div class="esp-nombre">Pizza Rectangular<small>52 × 38 cm · 4 Estaciones</small></div><div class="esp-precio">$405</div></div>
+<div class="esp-body"><ul><li>24 rebanadas · 4 estaciones</li><li>Incluye refresco de 2 litros</li></ul><button class="order-btn" onclick="openSpecial('Pizza Rectangular',405,4)" type="button">Agregar al carrito</button></div>
+</div><div class="esp-card">
+<div class="ph" data-i="🍕" data-id="barra" data-l="Pizza de Barra"><img alt="Pizza de Barra" loading="lazy" src="images/barra.png"/></div>
+<div class="esp-head eh-rect"><div class="esp-nombre">Pizza de Barra<small>52 × 19 cm · 2 Estaciones</small></div><div class="esp-precio">$275</div></div>
+<div class="esp-body"><ul><li>12 rebanadas · 2 estaciones</li><li>Incluye refresco de 1 litro</li></ul><button class="order-btn" onclick="openSpecial('Pizza de Barra',275,2)" type="button">Agregar al carrito</button></div>
+</div></div>
+</div>
+</section>
+<!-- ══ 2×1 ══ -->
+<section id="dosxuno">
+<div class="max-w reveal">
+<div class="sec-title">Pizza 2×1 — Todos los días</div>
+<p style="margin-top:.6rem;font-size:.82rem;color:rgba(255,255,255,.45);font-family:'Montserrat',sans-serif;">Dos pizzas por el precio de una · Combina Normales, Premium, Mariscos y Sencillas · Se cobra el precio de la pizza de mayor categoría</p>
+<div class="tam-grid"><div class="tam-card"><div class="tam-label">Chica</div><div class="tam-badge">2 × 1</div><div class="tam-precio">$200</div><div class="desde">desde · hasta $300</div><button class="order-btn" onclick='openTwoForOne("Chica")'>Elegir sabores</button></div><div class="tam-card"><div class="tam-label">Mediana</div><div class="tam-badge">2 × 1</div><div class="tam-precio">$270</div><div class="desde">desde · hasta $380</div><button class="order-btn" onclick='openTwoForOne("Mediana")'>Elegir sabores</button></div><div class="tam-card"><div class="tam-label">Grande</div><div class="tam-badge">2 × 1</div><div class="tam-precio">$360</div><div class="desde">desde · hasta $455</div><button class="order-btn" onclick='openTwoForOne("Grande")'>Elegir sabores</button></div><div class="tam-card"><div class="tam-label">Familiar</div><div class="tam-badge">2 × 1</div><div class="tam-precio">$400</div><div class="desde">desde · hasta $500</div><button class="order-btn" onclick='openTwoForOne("Familiar")'>Elegir sabores</button></div></div>
+</div>
+</section>
+<!-- ══ ANTOJITOS & BEBIDAS ══ -->
+<section id="antojitos">
+<div class="max-w reveal">
+<div class="sec-title azul">Antojitos</div>
+<div class="otros-grid">
+<div class="otro-card"><div><h3>🍝 Spaguetti Rojo y Blanco</h3><p>Gratinado · Orden para 2 personas</p></div><div class="pt">$150</div><button class="order-btn mini" onclick='addToCartDirect("Spaguetti Rojo y Blanco", 150, [])'>Agregar</button></div>
+<div class="otro-card"><div><h3>🌊 Spaguetti Mar y Tierra</h3><p>Combinación especial</p></div><div class="pt">$215</div><button class="order-btn mini" onclick='addToCartDirect("Spaguetti Mar y Tierra", 215, [])'>Agregar</button></div>
+
+</div>
+</div>
+</section>
+<!-- ══ FOOTER ══ -->
+<footer>
+<p>Kary'z Pizza® — Sucursal Xochimilco · Francisco I. Madero #2, Santa María Nativitas</p>
+<p style="margin-top:.3rem;">Precios sujetos a cambio sin previo aviso · Servicio a domicilio sin costo extra los 365 días</p>
+</footer>
+<!-- ══════════ MODAL: ELEGIR SABORES ══════════ -->
+<div aria-labelledby="pickerTitle" aria-modal="true" class="modal" id="pickerModal" role="dialog">
+<div class="modal-content">
+<div class="modal-head">
+<div>
+<h2 id="pickerTitle"></h2>
+<p id="pickerSubtitle" style="margin:6px 0 0; color:var(--muted); font-size:.85rem;">Elige los sabores de tus pizzas.</p>
+</div>
+<button aria-label="Cerrar" class="close-btn" onclick="closeModal()" type="button">X</button>
+</div>
+<div class="visual-box" id="visualPreview"></div>
+<div class="extras-row" id="extrasRow"></div>
+<div class="picking-label" id="pickingLabel"></div>
+<div class="flavor-list" id="flavorList"></div>
+<p id="pickerTotal" style="text-align:center; color:var(--oro); font-size:.95rem; margin:12px 0; font-family:'Montserrat',sans-serif; font-weight:800;"></p>
+<button class="order-btn" onclick="confirmPicker()">Agregar al carrito</button>
+<button class="order-btn disabled" onclick="closeModal()" style="margin-top:8px;background:rgba(255,255,255,.08);color:var(--blanco);">Cancelar</button>
+</div>
+</div>
+<!-- ══════════ MODAL: CARRITO ══════════ -->
+<div aria-labelledby="cartTitle" aria-modal="true" class="modal" id="cartModal" role="dialog">
+<div class="modal-content">
+<div class="modal-head">
+<h2 id="cartTitle">Confirmar pedido</h2>
+<button aria-label="Cerrar" class="close-btn" onclick="closeCart()" type="button">X</button>
+</div>
+<div id="cartItems"></div>
+<button class="order-btn" onclick="getLocation()" style="background:var(--gris2);color:var(--blanco);border:1px solid rgba(255,255,255,.2);" type="button">📍 Compartir ubicación GPS</button>
+<p class="fine-print" id="geoStatus"></p>
+<input id="customerName" placeholder="Nombre completo" type="text"/>
+<input id="customerPhone" placeholder="Telefono" type="tel"/>
+<input id="customerNeighborhood" placeholder="Colonia" type="text"/>
+<input id="customerAddress" placeholder="Dirección (calle y número)" type="text"/>
+<input id="customerBetweenStreets" placeholder="Entre qué calles" type="text"/>
+<input id="customerGate" placeholder="Color de zaguán" type="text"/>
+<input id="customerFacade" placeholder="Color de fachada" type="text"/>
+<textarea id="customerNotes" placeholder="Notas para la entrega"></textarea>
+<h3 style="font-family:'Bebas Neue',sans-serif; letter-spacing:.06em; color:var(--oro); margin-top:14px;">Forma de pago</h3>
+<div class="payment-methods">
+<div class="pay-option active" id="p-efe" onclick="setPay('Efectivo')">Efectivo</div>
+<div class="pay-option" id="p-tra" onclick="setPay('Transferencia')">Transferencia</div>
+<div class="pay-option" id="p-tar" onclick="setPay('Tarjeta')">Tarjeta +4%</div>
+</div>
+<div class="notice" id="paymentInfo" style="display:none;"></div>
+<h2 id="finalTotal" style="text-align:right; color:var(--oro); font-size:1.8rem; font-family:'Bebas Neue',sans-serif; letter-spacing:.05em;">Total: $0</h2>
+<p class="fine-print">Al enviar el pedido se abrira WhatsApp. Si pagas por transferencia, envia tambien tu comprobante.</p>
+<div class="form-error" id="formError" role="alert"></div>
+<button class="order-btn" onclick="sendWhatsApp()" style="background:var(--verde);color:#071007;height:56px;font-size:.95rem;">💬 Enviar pedido por WhatsApp</button>
+<button class="order-btn disabled" onclick="closeCart()" style="margin-top:8px;background:rgba(255,255,255,.08);color:var(--blanco);">Seguir comprando</button>
+</div>
+</div>
+<div class="cart-bar" onclick="openCart()">
+<span>🛒 Mi carrito</span>
+<span id="cartCount">0 articulos</span>
+<span id="cartTotal">$0</span>
+</div>
+
+
+<script>
+  const especialidades = [
+    {n:"SUPER KARY'Z", i:"Champiñón, pollo, jitomate, chile cuaresmeño, chorizo, aguacate y queso"},
+    {n:"MEXICANA", i:"Pierna, pollo, jalapeño, aguacate y queso"},
+    {n:"ESPECIAL KARY'Z", i:"Jamón, atún, mayonesa, jitomate, jalapeños, aguacate y queso"},
+    {n:"HAWAILAN CHICKEN", i:"Piña, tocino y pollo bañado de BBQ"},
+    {n:"PEPPERONI", i:"Pepperoni (hasta 2 ingredientes)"},
+    {n:"HAWAIANA INTER.", i:"Jamón, piña, cereza y queso"},
+    {n:"HAWAIANA ESPECIAL", i:"Jamón, piña, tocino y queso"},
+    {n:"COMBINADA", i:"Jamón, salami, champiñones, pimiento verde, cebolla, chorizo y queso"},
+    {n:"CUBANA", i:"Atún, jalapeño, pierna, jitomate, tocino, aguacate y queso"},
+    {n:"CHORIMANÍA", i:"Piña, aceituna, chorizo, champiñones y queso"},
+    {n:"VEGETARIANA", i:"Champiñones, pimiento verde, cebolla, aceitunas y queso"},
+    {n:"CLÁSICA", i:"Pepperoni, champiñones, chile cuaresmeño, cebolla y queso"},
+    {n:"CARNES FRÍAS", i:"Pierna, lomo, salchicha, tocino, pepperoni y queso"},
+    {n:"AZTECA", i:"Chorizo, frijoles, jalapeños, aguacate y queso"},
+    {n:"CAMPESTRE", i:"Pollo, elote, jalapeño, cebolla y queso"},
+    {n:"PASTOR", i:"Jamón, piña, chorizo, tocino y queso"},
+    {n:"SUPREMA", i:"Salchicha, chorizo, tocino, cebolla, pimiento verde, aguacate y queso"},
+    {n:"AMERICANA", i:"Pepperoni, champiñones, pimiento verde, aceituna y queso"},
+    {n:"MAFIOSA", i:"Salami, champiñones, tocino, jalapeños, aguacate y queso"}
+  ];
+
+  const PREM = [
+    {n:"AL PASTOR ESPECIAL", i:"Carne al pastor, piña, cebolla, chipotle o rajas de jalapeños y queso", r:2, g:"prem"},
+    {n:"COSTILLA BBQ", i:"Costilla de puerco, cebolla y queso", r:2, g:"prem"},
+    {n:"MÁXIMA", i:"Jamón, salami, carne molida, champiñones, salchicha, pimiento verde, cebolla, pepperoni, aceitunas y queso", r:2, g:"prem"},
+    {n:"EXCÉNTRICA", i:"Salchicha, jamón, tocino, pierna, jitomate, aguacate y queso", r:2, g:"prem"},
+    {n:"TROPICAL", i:"Camarones, piña y queso", r:4, g:"mar"},
+    {n:"MARINERA", i:"Camarones, atún, mejillones, pulpo, aceitunas, cebolla y queso", r:5, g:"mar"}
+  ];
+  const SEN_REG = ["PIMIENTO VERDE","ACEITUNAS","CHAMPIÑONES","PIERNA","POLLO","ELOTE","CHORIZO","TOCINO","LOMO","JAMÓN","CEBOLLA","PIÑA","RAJAS","QUESO"].map(function(n) { return {n:"SENCILLA DE " + n, i:"Pizza de 1 ingrediente", r:0, g:"nor"}; });
+  const SEN_MAR = ["CAMARONES","MEJILLONES","PULPO","ATÚN"].map(function(n) { return {n:"SENCILLA DE " + n, i:"Pizza de 1 ingrediente de mariscos", r:3, g:"mar"}; });
+  const NORMALES = especialidades.map(function(x) { return {n:x.n, i:x.i, r:1, g:"nor"}; });
+  const ALL = NORMALES.concat(PREM, SEN_MAR, SEN_REG);
+  const TIER_NAMES = ["Sencilla regular", "Normal", "Premium", "Sencilla mariscos", "Tropical", "Marinera"];
+  const TIER_PRICES = {Chica:[200,215,230,240,245,300], Mediana:[270,285,300,310,315,380], Grande:[360,375,390,400,405,455], Familiar:[400,415,430,440,445,500]};
+  function rankOf(n) { const f = ALL.find(function(x) { return x.n === n; }); return f ? f.r : 0; }
+  function currentRank() { let r = 0; slots.forEach(function(s) { if (s.sabor1) r = Math.max(r, rankOf(s.sabor1)); }); return r; }
+  function tierPrice(size, r) { return TIER_PRICES[size][r]; }
+  function tierName(r) { return TIER_NAMES[r]; }
+
+  const MITAD_EXTRA = 10;
+  let cart = [];
+  let currentPicker = null;
+  let slots = [];
+  let activePizza = 0;
+  let activeHalf = 1;
+  let selectedPay = "Efectivo";
+  let userLocation = "No enviada";
+
+  function money(value) { return "$" + value.toFixed(2); }
+
+  function makeSlots(limit) {
+    slots = [];
+    for (let i = 0; i < limit; i++) slots.push({sabor1: "", sabor2: "", mitad: false, extras: []});
+    activePizza = 0;
+    activeHalf = 1;
+  }
+
+  function openTwoForOne(size) {
+    currentPicker = { type: size + " 2x1", mode: "normal", shape: "circle", basePrice: 0, limit: 2, tiered: true, size: size };
+    makeSlots(2);
+    document.getElementById("pickerTitle").innerText = size + " 2x1";
+    document.getElementById("pickerSubtitle").innerText = "";
+    renderPicker();
+    document.getElementById("pickerModal").style.display = "block";
+  }
+
+  function openPickerRect(type, limit, price, details) {
+    currentPicker = { type: type, mode: "rect", shape: type.indexOf("CUADRADA") >= 0 ? "square" : "rect", basePrice: price, details: details || [], limit: limit };
+    makeSlots(limit);
+    document.getElementById("pickerTitle").innerText = type;
+    document.getElementById("pickerSubtitle").innerText = "Elige " + limit + " especialidades. ";
+    renderPicker();
+    document.getElementById("pickerModal").style.display = "block";
+  }
+
+  function renderPicker() {
+    if (!currentPicker) return;
+    renderVisual();
+    renderExtras();
+    renderPickingLabel();
+    renderFlavorList();
+    document.getElementById("pickerTotal").innerText = buildTotalText();
+  }
+
+  function renderVisual() {
+    const preview = document.getElementById("visualPreview");
+    preview.className = "visual-box shape-" + (currentPicker.shape || "circle");
+    preview.innerHTML = "";
+    if (currentPicker.shape === "circle") renderCircleVisual(preview);
+    else renderGridVisual(preview);
+  }
+
+  function renderCircleVisual(preview) {
+    const total = slots.length;
+    const size = total <= 1 ? 190 : total === 2 ? 150 : total === 3 ? 118 : 96;
+    slots.forEach(function(slot, index) {
+      const wrap = document.createElement("div");
+      wrap.className = "pizza-circle-wrap";
+      const circle = document.createElement("div");
+      circle.className = "pizza-circle";
+      circle.style.width = size + "px";
+      circle.style.height = size + "px";
+      if (slot.mitad) {
+        circle.appendChild(makeCircleFill(index, 1, "top", slot.sabor1 ? slot.sabor1 : "Sabor 1"));
+        circle.appendChild(makeCircleFill(index, 2, "bottom", slot.sabor2 ? slot.sabor2 : "Sabor 2"));
+      } else {
+        circle.appendChild(makeCircleFill(index, 1, "", slot.sabor1 || "Sabor " + (index + 1)));
+      }
+      wrap.appendChild(circle);
+      if (total > 1) {
+        const caption = document.createElement("span");
+        caption.className = "pizza-caption";
+        caption.innerText = "Pizza " + (index + 1);
+        wrap.appendChild(caption);
+      }
+      preview.appendChild(wrap);
+    });
+  }
+
+  function makeCircleFill(index, half, side, label) {
+    const div = document.createElement("div");
+    const slot = slots[index];
+    const filled = half === 2 ? !!slot.sabor2 : !!slot.sabor1;
+    div.className = "circle-fill" + (side ? " " + side : "") + (filled ? " selected" : "") + (activePizza === index && (!slot.mitad || activeHalf === half) ? " active-slot" : "");
+    div.innerText = label;
+    if (filled && currentPicker.tiered) { const r = rankOf(half === 2 ? slot.sabor2 : slot.sabor1); const g = (ALL.find(function(x) { return x.n === (half === 2 ? slot.sabor2 : slot.sabor1); }) || {}).g; if (g === "prem") div.className += " t-p"; else if (g === "mar") div.className += " t-m"; else if (g === "nor") div.className += " t-n"; }
+    div.onclick = function() { startPicking(index, half); };
+    return div;
+  }
+
+  function renderGridVisual(preview) {
+    const total = slots.length;
+    const cols = Math.ceil(Math.sqrt(total));
+    const rows = Math.ceil(total / cols);
+    preview.style.gridTemplateColumns = "repeat(" + cols + ", 1fr)";
+    preview.style.gridTemplateRows = "repeat(" + rows + ", 1fr)";
+    slots.forEach(function(slot, index) {
+      const cell = document.createElement("div");
+      cell.className = "rect-cell";
+      cell.appendChild(makeRectHalf(index, 1, slot.sabor1 || "Sabor " + (index + 1)));
+      preview.appendChild(cell);
+    });
+  }
+
+  function makeRectHalf(index, half, label) {
+    const div = document.createElement("div");
+    const slot = slots[index];
+    const filled = !!slot.sabor1;
+    div.className = (filled ? "selected" : "") + (activePizza === index ? " active-slot" : "");
+    div.innerText = label;
+    div.onclick = function() { startPicking(index, 1); };
+    return div;
+  }
+
+  const EXTRA_PRICES = {Chica:[15,20], Mediana:[20,25], Grande:[25,30], Familiar:[30,35]};
+  const EXTRA_REG = ["PIMIENTO VERDE","ACEITUNAS","CHAMPIÑONES","PIERNA","POLLO","ELOTE","CHORIZO","TOCINO","LOMO","JAMÓN","CEBOLLA","PIÑA","RAJAS","QUESO"];
+  const EXTRA_MAR = ["CAMARONES","MEJILLONES","PULPO","ATÚN"];
+  function extraPrice(name) { return EXTRA_PRICES[currentPicker.size][EXTRA_MAR.indexOf(name) >= 0 ? 1 : 0]; }
+  function extraCost(slot) { return currentPicker && currentPicker.tiered ? (slot.extras || []).reduce(function(s, e) { return s + extraPrice(e); }, 0) : 0; }
+  function extrasTotal() { return slots.reduce(function(s, sl) { return s + extraCost(sl); }, 0); }
+  function addExtra(index) { const sel = document.getElementById("extraSel-" + index); if (!sel || !sel.value) return; slots[index].extras.push(sel.value); renderPicker(); }
+  function removeExtra(index, k) { slots[index].extras.splice(k, 1); renderPicker(); }
+
+  function renderExtras() {
+    const row = document.getElementById("extrasRow");
+    if (!currentPicker.tiered) { row.style.display = "none"; row.innerHTML = ""; return; }
+    row.style.display = "grid";
+    row.style.gridTemplateColumns = "repeat(2, minmax(0, 1fr))";
+    const P = EXTRA_PRICES[currentPicker.size];
+    const opt = function(n) { return '<option value="' + n + '">' + n + '</option>'; };
+    row.innerHTML = slots.map(function(slot, index) {
+      const chips = slot.extras.map(function(e, k) { return '<span class="extra-chip">' + e + ' +$' + extraPrice(e) + ' <button type="button" onclick="removeExtra(' + index + ',' + k + ')">✕</button></span>'; }).join("");
+      return '<div class="extras-col"><div class="extra-title">Pizza ' + (index + 1) + ' · ingredientes extra</div>'
+        + '<select id="extraSel-' + index + '" onchange="addExtra(' + index + ')"><option value="">+ Ingrediente extra</option>'
+        + '<optgroup label="Regular +$' + P[0] + ' c/u">' + EXTRA_REG.map(opt).join("") + '</optgroup>'
+        + '<optgroup label="🌊 Mariscos +$' + P[1] + ' c/u">' + EXTRA_MAR.map(opt).join("") + '</optgroup></select><div>' + chips + '</div></div>';
+    }).join("");
+  }
+
+  function startPicking(index, half) {
+    activePizza = index;
+    activeHalf = half || 1;
+    renderPicker();
+  }
+
+  function toggleMitad(index) {
+    slots[index].mitad = document.getElementById("mitad-" + index).checked;
+    if (!slots[index].mitad) slots[index].sabor2 = "";
+    if (activePizza === index) activeHalf = 1;
+    renderPicker();
+  }
+
+  function renderPickingLabel() {
+    const label = document.getElementById("pickingLabel");
+    if (!currentPicker || currentPicker.mode !== "normal") { label.style.display = "none"; return; }
+    const pizzaText = currentPicker.limit > 1 ? "Pizza " + (activePizza + 1) : "Pizza";
+    const halfText = slots[activePizza] && slots[activePizza].mitad ? (activeHalf === 1 ? " - 1/2 sabor 1" : " - 1/2 sabor 2") : "";
+    label.innerText = "Eligiendo: " + pizzaText + halfText + ". Toca un sabor de la lista.";
+    label.style.display = "block";
+  }
+
+  function rowHtml(item, cls, price) {
+    return '<div class="option-row ' + cls + '"><div><strong>' + item.n + '</strong><small>' + item.i + '</small>' + (price ? '<span class="tier-price ' + cls + '">2x1 ' + money(price) + '</span>' : '') + '</div><button class="flavor-btn" onclick="selectFlavor(&quot;' + item.n + '&quot;)">+</button></div>';
+  }
+
+  function renderFlavorList() {
+    const list = document.getElementById("flavorList");
+    if (!currentPicker.tiered) { list.innerHTML = (currentPicker.allowed || especialidades).map(function(x) { return rowHtml(x, "", 0); }).join(""); return; }
+    const P = TIER_PRICES[currentPicker.size];
+    const group = function(title, cls, items, extra) { return '<div class="flavor-group ' + cls + (extra ? ' ' + extra : '') + '">' + title + '</div>' + items.map(function(x) { return rowHtml(x, cls, P[x.r]); }).join(""); };
+    list.innerHTML = group("Especialidades normales", "nor", NORMALES)
+      + group("⭐ Premium", "prem", PREM.filter(function(x) { return x.g === "prem"; }))
+      + group("🌊 Mariscos", "mar", PREM.filter(function(x) { return x.g === "mar"; }))
+      + group("🍕 Sencillas regular (1 ingrediente)", "nor", SEN_REG, "sep")
+      + group("🌊 Sencillas de mariscos (1 ingrediente)", "mar", SEN_MAR);
+  }
+
+  function selectFlavor(name) {
+    if (!currentPicker) return;
+    if (activePizza < 0) activePizza = 0;
+    if (currentPicker.mode === "normal" && activeHalf === 2 && slots[activePizza].mitad) slots[activePizza].sabor2 = name;
+    else slots[activePizza].sabor1 = name;
+
+    for (let i = 0; i < slots.length; i++) {
+      if (!slots[i].sabor1) { activePizza = i; activeHalf = 1; renderPicker(); return; }
+      if (currentPicker.mode === "normal" && slots[i].mitad && !slots[i].sabor2) { activePizza = i; activeHalf = 2; renderPicker(); return; }
+    }
+    activePizza = 0;
+    activeHalf = 1;
+    renderPicker();
+  }
+
+  function calculatePickerTotal() {
+    if (!currentPicker) return 0;
+    if (currentPicker.tiered) return tierPrice(currentPicker.size, currentRank()) + extrasTotal();
+    let total = currentPicker.basePrice;
+    if (currentPicker.mode === "normal") {
+      slots.forEach(function(slot) { if (slot.mitad) total += MITAD_EXTRA; });
+    }
+    return total;
+  }
+
+  function buildTotalText() {
+    if (currentPicker.tiered) {
+      if (!slots.some(function(s) { return s.sabor1; })) return "Elige tus 2 sabores";
+      return "Precio " + tierName(currentRank()) + (extrasTotal() ? " + extras $" + extrasTotal() : "") + " -> Total: " + money(calculatePickerTotal());
+    }
+    const parts = [];
+    if (currentPicker.mode === "normal") {
+      slots.forEach(function(slot, index) {
+        const label = currentPicker.limit > 1 ? "P" + (index + 1) + ": " : "";
+        if (slot.mitad) parts.push(label + "Mitad +$" + MITAD_EXTRA);
+      });
+    }
+    return (parts.length ? parts.join(" | ") + " -> " : "") + "Total: " + money(calculatePickerTotal());
+  }
+
+  function confirmPicker() {
+    if (!currentPicker) return;
+    for (let i = 0; i < currentPicker.limit; i++) {
+      if (!slots[i].sabor1) { alert("Elige el sabor de la Pizza " + (i + 1)); return; }
+      if (currentPicker.mode === "normal" && slots[i].mitad && !slots[i].sabor2) { alert("Elige el segundo sabor de la Pizza " + (i + 1)); return; }
+    }
+    const details = [];
+    if (currentPicker.details) currentPicker.details.forEach(function(d) { details.push(d); });
+    slots.forEach(function(slot, index) {
+      let desc = currentPicker.limit > 1 ? "Pizza " + (index + 1) + ": " : "Pizza: ";
+      desc += slot.mitad ? slot.sabor1 + " / " + slot.sabor2 + " (mitad y mitad)" : slot.sabor1;
+      if (slot.mitad) desc += " + mitad $" + MITAD_EXTRA;
+      if (slot.extras && slot.extras.length) desc += " + extras: " + slot.extras.join(", ") + " (+$" + extraCost(slot) + ")";
+      details.push(desc);
+    });
+    if (currentPicker.tiered) details.push("Precio aplicado: " + tierName(currentRank()) + " (" + currentPicker.size + ")");
+    cart.push({type: currentPicker.type, flavors: details, price: calculatePickerTotal()});
+    closeModal();
+    updateStats();
+  }
+
+  function closeModal() { document.getElementById("pickerModal").style.display = "none"; }
+
+  function addToCartDirect(name, price, details) {
+    cart.push({type: name, flavors: details || [], price: price});
+    updateStats();
+    alert(name + " agregado al carrito");
+  }
+
+  function updateStats() {
+    const total = cart.reduce(function(sum, item) { return sum + item.price; }, 0);
+    document.getElementById("cartCount").innerText = cart.length + (cart.length === 1 ? " articulo" : " articulos");
+    document.getElementById("cartTotal").innerText = money(total);
+    calculateFinalTotal();
+  }
+
+  function openCart() {
+    document.getElementById("cartModal").style.display = "block";
+    const items = document.getElementById("cartItems");
+    if (!cart.length) {
+      items.innerHTML = '<div class="notice">Tu carrito esta vacio. Agrega una pizza o promocion para continuar.</div>';
+    } else {
+      items.innerHTML = cart.map(function(item, index) {
+        const detailHtml = item.flavors.map(function(d) { return "<div>- " + d + "</div>"; }).join("");
+        return '<div class="cart-item"><button class="cart-remove" onclick="removeItem(' + index + ')">X</button><strong>' + item.type + '</strong> <span style="color:var(--oro);">' + money(item.price) + '</span><div style="margin-top:6px;">' + detailHtml + "</div></div>";
+      }).join("");
+    }
+    calculateFinalTotal();
+  }
+
+  function closeCart() { document.getElementById("cartModal").style.display = "none"; }
+
+  function removeItem(index) { cart.splice(index, 1); updateStats(); openCart(); }
+
+  function setPay(method) {
+    selectedPay = method;
+    document.querySelectorAll(".pay-option").forEach(function(el) { el.classList.remove("active"); });
+    document.getElementById("p-" + method.substring(0, 3).toLowerCase()).classList.add("active");
+    const info = document.getElementById("paymentInfo");
+    if (method === "Efectivo") {
+      info.style.display = "none";
+    } else if (method === "Transferencia") {
+      info.style.display = "block";
+      info.innerHTML = "<strong>Transferencia:</strong> envia tu comprobante por WhatsApp despues de mandar el pedido.";
+    } else {
+      info.style.display = "block";
+      info.innerHTML = "<strong>Tarjeta:</strong> se agrega 4% al total. Aceptamos MasterCard y Visa.";
+    }
+    calculateFinalTotal();
+  }
+
+  function calculateFinalTotal() {
+    let total = cart.reduce(function(sum, item) { return sum + item.price; }, 0);
+    if (selectedPay === "Tarjeta") total *= 1.04;
+    document.getElementById("finalTotal").innerText = "Total: " + money(total);
+  }
+
+  function getLocation() {
+    if (!navigator.geolocation) {
+      document.getElementById("geoStatus").innerText = "Tu navegador no permite enviar ubicacion.";
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        userLocation = "https://www.google.com/maps?q=" + position.coords.latitude + "," + position.coords.longitude;
+        document.getElementById("geoStatus").innerText = "Ubicacion capturada correctamente.";
+      },
+      function() { document.getElementById("geoStatus").innerText = "No se pudo capturar la ubicacion."; }
+    );
+  }
+
+  const REQUIRED_FIELDS = [
+    ["customerName", "Nombre completo"], ["customerPhone", "Teléfono"], ["customerNeighborhood", "Colonia"],
+    ["customerAddress", "Dirección"], ["customerBetweenStreets", "Entre qué calles"],
+    ["customerGate", "Color de zaguán"], ["customerFacade", "Color de fachada"]
+  ];
+  REQUIRED_FIELDS.forEach(function(f) {
+    const el = document.getElementById(f[0]);
+    el.addEventListener("input", function() { el.classList.remove("field-error"); });
+  });
+
+  function sendWhatsApp() {
+    if (!cart.length) { alert("Agrega productos al carrito."); return; }
+    const name = document.getElementById("customerName").value.trim();
+    const phone = document.getElementById("customerPhone").value.trim();
+    const address = document.getElementById("customerAddress").value.trim();
+    const betweenStreets = document.getElementById("customerBetweenStreets").value.trim();
+    const missing = [];
+    REQUIRED_FIELDS.forEach(function(f) {
+      const el = document.getElementById(f[0]);
+      const empty = !el.value.trim();
+      el.classList.toggle("field-error", empty);
+      if (empty) missing.push(f[1]);
+    });
+    const errBox = document.getElementById("formError");
+    if (missing.length) {
+      errBox.innerHTML = "⚠️ Faltan datos por llenar para enviar tu pedido:<br>" + missing.join(", ") + ".";
+      errBox.style.display = "block";
+      errBox.scrollIntoView({behavior: "smooth", block: "center"});
+      return;
+    }
+    errBox.style.display = "none";
+    let total = cart.reduce(function(sum, item) { return sum + item.price; }, 0);
+    if (selectedPay === "Tarjeta") total = Math.round(total * 1.04 * 100) / 100;
+    
+    let msg = "*KARY'Z PIZZA XOCHIMILCO - PEDIDO*\n";
+    msg += "Cliente: " + name + "\n";
+    msg += "Telefono: " + phone + "\n";
+    msg += "Colonia: " + document.getElementById("customerNeighborhood").value.trim() + "\n";
+    msg += "Direccion: " + address + "\n";
+    msg += "Entre calles: " + betweenStreets + "\n";
+    msg += "Color de zaguan: " + document.getElementById("customerGate").value.trim() + "\n";
+    msg += "Color de fachada: " + document.getElementById("customerFacade").value.trim() + "\n";
+    msg += "GPS: " + userLocation + "\n";
+    msg += "Notas: " + document.getElementById("customerNotes").value + "\n";
+    msg += "----------------\n";
+    cart.forEach(function(item) {
+      msg += "- " + item.type + " " + money(item.price) + "\n";
+      item.flavors.forEach(function(d) { msg += "  * " + d + "\n"; });
+    });
+    msg += "----------------\n";
+    msg += "Pago: " + selectedPay + "\n";
+    msg += "TOTAL: " + money(total);
+    if (selectedPay === "Tarjeta") msg += " (incluye 4% por pago con tarjeta)";
+    if (selectedPay === "Transferencia") msg += "\nEnviar comprobante por este chat.";
+    window.open("https://wa.me/525611750154?text=" + encodeURIComponent(msg), "_blank");
+  }
+
+  updateStats();
+
+function openSpecial(name,price,limit,allowed,details){
+ currentPicker={type:name,mode:'rect',shape:limit===4?'square':'rect',basePrice:price,limit:limit,allowed:allowed||especialidades,details:details||[limit===4?'24 rebanadas · 52 × 38 cm · Refresco de 2 litros':'12 rebanadas · 52 × 19 cm · Refresco de 1 litro']};
+ makeSlots(limit);document.getElementById('pickerTitle').innerText=name;document.getElementById('pickerSubtitle').innerText='Elige '+limit+' especialidad(es).';renderPicker();document.getElementById('pickerModal').style.display='block';
+}
+function openPackage(n){
+ if(n===1){addToCartDirect('Paquete 1',355,['2 pizzas grandes hawaianas']);return;}
+ const cfg={2:['Paquete 2 · Super Kary’z',270,especialidades,['1 pizza familiar a su gusto','Coca-Cola de 1 litro','Excepto Premium y Mariscos']],3:['Paquete 3 · Familiar de Dedos',315,NORMALES.concat(PREM.filter(x=>x.g==='prem')),['Pizza familiar de dedos','Coca-Cola de 1 litro','Excepto Mariscos']],4:['Paquete 4 · Corazón',255,especialidades,['Pizza en forma de corazón','2 refrescos de lata']]};
+ const p=cfg[n];openSpecial(p[0],p[1],1,p[2],p[3]);currentPicker.shape='circle';renderPicker();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeCart();}});
+const sizes=['CH','MED','GDE','FAM'];document.querySelectorAll('.strip').forEach(s=>{s.innerHTML=s.dataset.p.split(',').map((p,i)=>'<div class="s'+i+'"><small>'+sizes[i]+'</small><b>$'+p+'</b></div>').join('');});
+</script></body>
+</html>
