@@ -268,6 +268,13 @@
 
   .hero { min-height:0 !important; padding:1.2rem 1rem 1.4rem !important; justify-content:flex-start !important; }
   #promos { padding-top:1.8rem !important; }
+  #bebidas .promo-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  @media (max-width: 600px) {
+    #bebidas .promo-grid { gap:.65rem; }
+    #bebidas .promo-head { flex-wrap:wrap; gap:.35rem; padding:.75rem; }
+    #bebidas .promo-body { padding:.65rem; }
+    #bebidas .btn { height:auto; min-height:44px; padding:.5rem; white-space:normal; }
+  }
 </style>
 </head>
 <body>
@@ -332,6 +339,68 @@
       <div class="promo-card"><div class="promo-head ph-1"><div class="promo-nombre">Spaghetti Hawaiano<small>Piña, jamón, crema, mantequilla y queso</small></div><div class="promo-precio">$130</div></div><div class="promo-body"><button class="btn btn-sel" onclick="addToCartDirect('Spaghetti Hawiano',130)">Agregar al carrito</button></div></div>
       <div class="promo-card"><div class="promo-head ph-2"><div class="promo-nombre">Spaghetti Italiano<small>Jamón, puré, mantequilla y queso</small></div><div class="promo-precio">$120</div></div><div class="promo-body"><button class="btn btn-sel" onclick="addToCartDirect('Spaghetti Italiano',120)">Agregar al carrito</button></div></div>
       <div class="promo-card"><div class="promo-head ph-3"><div class="promo-nombre">Spaghetti a la Boloñesa<small>Carne molida, puré, mantequilla y queso</small></div><div class="promo-precio">$130</div></div><div class="promo-body"><button class="btn btn-sel" onclick="addToCartDirect('Spaghetti Bologñesa',130)">Agregar al carrito</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="bebidas">
+  <div class="max-w reveal">
+    <div class="sec-title azul">Bebidas</div>
+    <div class="promo-grid">
+      <div class="promo-card">
+        <div class="promo-head ph-1">
+          <div class="promo-nombre">Coca-Cola 2 L</div>
+          <div class="promo-precio">$55</div>
+        </div>
+        <div class="promo-body">
+          <button class="btn btn-sel" onclick="addToCartDirect('Coca-Cola 2 L',55)">Agregar al carrito</button>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-head ph-2">
+          <div class="promo-nombre">Coca-Cola 3 L</div>
+          <div class="promo-precio">$70</div>
+        </div>
+        <div class="promo-body">
+          <button class="btn btn-sel" onclick="addToCartDirect('Coca-Cola 3 L',70)">Agregar al carrito</button>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-head ph-3">
+          <div class="promo-nombre">Jarritos 2 L</div>
+          <div class="promo-precio">$38</div>
+        </div>
+        <div class="promo-body">
+          <button class="btn btn-sel" onclick="addToCartDirect('Jarritos 2 L',38)">Agregar al carrito</button>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-head ph-1">
+          <div class="promo-nombre">Agua 600 ml</div>
+          <div class="promo-precio">$15</div>
+        </div>
+        <div class="promo-body">
+          <button class="btn btn-sel" onclick="addToCartDirect('Agua 600 ml',15)">Agregar al carrito</button>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-head ph-2">
+          <div class="promo-nombre">Coca-Cola 600 ml</div>
+          <div class="promo-precio">$25</div>
+        </div>
+        <div class="promo-body">
+          <button class="btn btn-sel" onclick="addToCartDirect('Coca-Cola 600 ml',25)">Agregar al carrito</button>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-head ph-3">
+          <div class="promo-nombre">Refresco en lata 355 ml</div>
+          <div class="promo-precio">$28</div>
+        </div>
+        <div class="promo-body">
+          <button class="btn btn-sel" onclick="addToCartDirect('Refresco en lata 355 ml',28)">Agregar al carrito</button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
