@@ -858,7 +858,7 @@
     </div>
     <div id="cartItems"></div>
     <button class="order-btn" style="background:var(--gris2);color:var(--blanco);border:1px solid rgba(255,255,255,.2);" type="button" onclick="getLocation()">📍 Compartir ubicación GPS</button>
-    <p id="geoStatus" class="fine-print"></p>
+    <p id="geoStatus" class="fine-print" style="color:#FFD21F;font-weight:700;font-size:.9rem;text-align:center;margin:.5rem 0;"></p>
     <input id="customerName" type="text" placeholder="Nombre completo">
     <input id="customerPhone" type="tel" placeholder="Teléfono">
     <input id="customerNeighborhood" type="text" placeholder="Colonia">
@@ -900,9 +900,9 @@
   const LOGO_FILE   = "Logo Pizzas OH-HENRY.png";   // ruta del logo (está junto a index.html, fuera de "img src")
   const IMG_ESP_DIR = "img src/";   // fotos de especialidades. Si están en una subcarpeta: "imagenes/especialidades/"
   // ── Datos para transferencia (llena estos 3 campos con los datos de Oh Henry) ──
-  const BANK_CLABE   = "1234 5678 9012 3456 78";   // CAMBIAR por la CLABE real de 18 dígitos
-  const BANK_NAME    = "";   // Banco. Ej: "STP"
-  const BANK_TITULAR = "Pizzas Oh Henry";   // Nombre del titular
+  const BANK_CLABE   = "0021 8070 2453 5188 57";   // CLABE de Banamex
+  const BANK_NAME    = "Banamex";   // Banco
+  const BANK_TITULAR = "Pizza Oh Henry";   // Nombre en la cuenta
   const CARD_FEE    = 0;                // recargo por tarjeta (el volante no lo indica)
 
   // ── Sabores (solo se ven dentro de cada paquete / promoción) ──
@@ -1176,15 +1176,13 @@
   function getLocation() {
     const st = document.getElementById("geoStatus");
     if (!navigator.geolocation) { st.innerText = "Tu navegador no permite enviar ubicación. Escribe tu dirección completa."; return; }
-    if (window.isSecureContext === false) { st.innerText = "La ubicación solo funciona con la página publicada (https). Escribe tu dirección completa."; return; }
-    st.innerText = "Obteniendo ubicación… acepta el permiso cuando el navegador lo pida.";
+    st.innerText = "Obteniendo ubicación… acepta el permiso si el navegador lo pide.";
     navigator.geolocation.getCurrentPosition(
       function(pos) { userLocation = "https://www.google.com/maps?q=" + pos.coords.latitude + "," + pos.coords.longitude; st.innerText = "✅ Ubicación capturada correctamente."; },
       function(err) {
-        const m = {1: "Permiso denegado. Activa la ubicación para este sitio en tu navegador y vuelve a intentar.", 2: "No se pudo determinar tu ubicación. Activa el GPS del teléfono.", 3: "Tardó demasiado. Intenta de nuevo."};
-        st.innerText = (m[err.code] || "No se pudo capturar la ubicación.") + " También puedes escribir tu dirección completa.";
-      },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 60000});
+        const m = {1: "Permiso denegado: activa la ubicación para este sitio (candado junto a la dirección) y vuelve a intentar.", 2: "No se pudo determinar tu ubicación. Activa el GPS.", 3: "Tardó demasiado. Intenta de nuevo."};
+        st.innerText = (m[err.code] || "No se pudo capturar la ubicación.") + " (código " + (err.code || "?") + ") También puedes escribir tu dirección completa.";
+      });
   }
 
   const REQUIRED_FIELDS = [
