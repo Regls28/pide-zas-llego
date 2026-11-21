@@ -968,6 +968,14 @@
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, viejo);
     else viejo();
   }
+  function zoomImg(el, name) {
+    const img = el.querySelector("img"); if (!img) return;
+    document.getElementById("zoomImg").src = img.src;
+    document.getElementById("zoomCap").textContent = name;
+    document.getElementById("zoomOv").classList.add("show");
+  }
+  function closeZoom() { document.getElementById("zoomOv").classList.remove("show"); }
+  document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeZoom(); });
   function money(v) { return "$" + Math.round(v); }
 
   // ── Entradas ──
