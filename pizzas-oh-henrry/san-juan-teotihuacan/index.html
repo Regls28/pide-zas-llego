@@ -955,18 +955,19 @@
   let cart = [], cfg = null, slots = [], activePizza = 0, activeHalf = 1, selectedPay = "Efectivo", userLocation = "No enviada";
   function copyClabe(btn) {
     const t = BANK_CLABE.replace(/\s+/g, "");
-    function ok() { btn.textContent = "¡CLABE copiada!"; }
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, function() { btn.textContent = t; });
-    else btn.textContent = t;
+    function ok() { btn.textContent = "¡CLABE copiada! " + t; }
+    function viejo() {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = t; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;";
+        document.body.appendChild(ta); ta.focus(); ta.select(); ta.setSelectionRange(0, t.length);
+        const r = document.execCommand("copy"); document.body.removeChild(ta);
+        if (r) ok(); else btn.textContent = "Copia manual: " + t;
+      } catch (e) { btn.textContent = "Copia manual: " + t; }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, viejo);
+    else viejo();
   }
-  function zoomImg(el, name) {
-    const img = el.querySelector("img"); if (!img) return;
-    document.getElementById("zoomImg").src = img.src;
-    document.getElementById("zoomCap").textContent = name;
-    document.getElementById("zoomOv").classList.add("show");
-  }
-  function closeZoom() { document.getElementById("zoomOv").classList.remove("show"); }
-  document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeZoom(); });
   function money(v) { return "$" + Math.round(v); }
 
   // ── Entradas ──
