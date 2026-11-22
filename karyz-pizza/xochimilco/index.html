@@ -820,7 +820,7 @@
     <div class="payment-methods">
       <div class="pay-option active" id="p-efe" onclick="setPay('Efectivo')">Efectivo</div>
       <div class="pay-option" id="p-tra" onclick="setPay('Transferencia')">Transferencia</div>
-      <div class="pay-option" id="p-tar" onclick="setPay('Tarjeta')">Tarjeta +4%</div>
+      <div class="pay-option" id="p-tar" onclick="setPay('Tarjeta')">Tarjeta</div>
     </div>
     <div id="paymentInfo" class="notice" style="display:none;"></div>
     <h2 id="finalTotal" style="text-align:right; color:var(--oro); font-size:1.8rem; font-family:'Bebas Neue',sans-serif; letter-spacing:.05em;">Total: $0</h2>
@@ -1183,7 +1183,7 @@
 
   function removeItem(index) { cart.splice(index, 1); updateStats(); openCart(); }
 
-  const BANK_CLABE = "0000 0000 0000 0000 00"; // 18 dígitos: cámbiala por tu CLABE
+  const BANK_CLABE = "7229 6901 0194 2964 14"; // 18 dígitos: cámbiala por tu CLABE
   const BANK_NAME = "Banco";                   // nombre del banco
   const BANK_TITULAR = "Kary'z Pizza";         // nombre del titular
   function copyClabe(btn) {
@@ -1205,14 +1205,14 @@
       info.innerHTML = "🏦 <strong>CLABE:</strong> " + BANK_CLABE + "<br>🏦 " + BANK_NAME + " (" + BANK_TITULAR + ")<br>Por favor enviar captura de tu pago.<br><button type=\"button\" class=\"order-btn\" style=\"margin-top:8px;width:auto;padding:8px 16px;\" onclick=\"copyClabe(this)\">Copiar CLABE</button>";
     } else {
       info.style.display = "block";
-      info.innerHTML = "💳 <strong>Pago con tarjeta:</strong> se agrega 4% al total. Llevaremos la terminal a tu domicilio.";
+      info.innerHTML = "💳 <strong>Pago con tarjeta:</strong> Llevaremos la terminal a tu domicilio.";
     }
     calculateFinalTotal();
   }
 
   function calculateFinalTotal() {
     let total = cart.reduce(function(sum, item) { return sum + item.price; }, 0);
-    if (selectedPay === "Tarjeta") total *= 1.04;
+    if (selectedPay === "Tarjeta") total *= 1;
     document.getElementById("finalTotal").innerText = "Total: " + money(total);
   }
 
@@ -1262,7 +1262,7 @@
     }
     errBox.style.display = "none";
     let total = cart.reduce(function(sum, item) { return sum + item.price; }, 0);
-    if (selectedPay === "Tarjeta") total = Math.round(total * 1.04);
+    if (selectedPay === "Tarjeta") total = Math.round(total);
     
     let msg = "*KARY'Z PIZZA XOCHIMILCO - PEDIDO*\n";
     msg += "Cliente: " + name + "\n";
@@ -1282,7 +1282,7 @@
     msg += "----------------\n";
     msg += "Pago: " + selectedPay + "\n";
     msg += "TOTAL: " + money(total);
-    if (selectedPay === "Tarjeta") msg += " (incluye 4% por pago con tarjeta)";
+    if (selectedPay === "Tarjeta") msg += "";
     if (selectedPay === "Transferencia") msg += "\nEnviar comprobante por este chat.";
     if (selectedPay === "Tarjeta") msg += "\n💳 PAGO CON TARJETA: favor de llevar la terminal.";
     window.open("https://wa.me/525611750154?text=" + encodeURIComponent(msg), "_blank");
