@@ -645,6 +645,7 @@
   .spag-opt { display:flex; gap:10px; margin:0 0 .8rem; }
   .spag-opt label { flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:9px 6px; border:1px solid rgba(255,255,255,.2); border-radius:8px; font-family:'Montserrat',sans-serif; font-weight:800; font-size:.8rem; cursor:pointer; }
   .spag-opt input { accent-color:#F5C518; width:16px; height:16px; }
+  .cart-item > div { font-size:.78rem !important; line-height:1.35 !important; }
 </style>
 </head>
 <body>
@@ -910,7 +911,7 @@
   const PKG_OPTS = {"PAQUETE 2 - SUPER KARY'Z":{mitad:true,orilla:35}, "PAQUETE 3 - FAMILIAR DE DEDOS":{mitad:true,orilla:0}, "PAQUETE 4 - PIZZA DE CORAZÓN":{mitad:true,orilla:0}};
   function openPickerRect(type, limit, price, details, allowPrem) {
     const opts = PKG_OPTS[type] || null;
-    currentPicker = { opts: opts, type: type, mode: (opts && opts.mitad) ? "normal" : "rect", shape: (/RECTANGULAR|BARRA/.test(type) ? "rect" : /CORAZ/.test(type) ? "heart" : "circle"), basePrice: price, details: details || [], limit: limit, allowPrem: !!allowPrem };
+    currentPicker = { secs: /RECTANGULAR|BARRA/.test(type), opts: opts, type: type, mode: (opts && opts.mitad) ? "normal" : "rect", shape: (/RECTANGULAR|BARRA/.test(type) ? "rect" : /CORAZ/.test(type) ? "heart" : "circle"), basePrice: price, details: details || [], limit: limit, allowPrem: !!allowPrem };
     makeSlots(limit);
     document.getElementById("pickerTitle").innerText = type;
     document.getElementById("pickerSubtitle").innerText = limit === 1 ? "Elige tu especialidad." : "Elige el sabor de cada una de las " + limit + " estaciones.";
@@ -1059,12 +1060,19 @@
     label.style.display = "block";
   }
 
+  // Cargo extra POR SECCIÓN en Rectangular y Barra (según el tipo de especialidad). AJUSTA LOS MONTOS.
+  const SEC_EXTRA = {0:0, 1:0, 2:15, 3:20, 4:25, 5:30};  // 0 sencilla, 1 normal, 2 premium, 3 sencilla mariscos, 4 tropical, 5 marinera
+  function secExtra(name) { return SEC_EXTRA[rankOf(name)] || 0; }
+  function secTotal() { return (currentPicker && currentPicker.secs) ? slots.reduce(function(a, sl) { return a + (sl.sabor1 ? secExtra(sl.sabor1) : 0); }, 0) : 0; }
   function rowHtml(item, cls, price) {
+    if (!price && currentPicker && currentPicker.secs && secExtra(item.n)) return '<div class="option-row ' + cls + '"><div><strong>' + item.n + '</strong><small>' + item.i + '</small><span class="tier-price ' + cls + '">+' + money(secExtra(item.n)) + ' por sección</span></div><button class="flavor-btn" onclick="selectFlavor(&quot;' + item.n + '&quot;)">+</button></div>';
     return '<div class="option-row ' + cls + '"><div><strong>' + item.n + '</strong><small>' + item.i + '</small>' + (price ? '<span class="tier-price ' + cls + '">2x1 ' + money(price) + '</span>' : '') + '</div><button class="flavor-btn" onclick="selectFlavor(&quot;' + item.n + '&quot;)">+</button></div>';
   }
 
   function renderFlavorList() {
     const list = document.getElementById("flavorList");
+    if (!currentPicker.tiered && currentPicker.secs) { const g2 = function(t, cls, items, ex) { return '<div class="flavor-group ' + cls + (ex ? ' ' + ex : '') + '">' + t + '</div>' + items.map(function(x) { return rowHtml(x, cls, 0); }).join(""); };
+      list.innerHTML = g2("Especialidades normales", "nor", NORMALES) + g2("⭐ Premium", "prem", PREM.filter(function(x) { return x.g === "prem"; })) + g2("🌊 Mariscos", "mar", PREM.filter(function(x) { return x.g === "mar"; })) + g2("🍕 Sencillas regular (1 ingrediente)", "nor", SEN_REG, "sep") + g2("🌊 Sencillas de mariscos (1 ingrediente)", "mar", SEN_MAR); return; }
     if (!currentPicker.tiered) { const pool = currentPicker.allowPrem ? NORMALES.concat(PREM.filter(function(x) { return x.g === "prem"; })) : NORMALES; list.innerHTML = pool.map(function(x) { return rowHtml(x, x.g === "prem" ? "prem" : "", 0); }).join(""); return; }
     const P = TIER_PRICES[currentPicker.size];
     const group = function(title, cls, items, extra) { return '<div class="flavor-group ' + cls + (extra ? ' ' + extra : '') + '">' + title + '</div>' + items.map(function(x) { return rowHtml(x, cls, P[x.r]); }).join(""); };
@@ -1093,7 +1101,7 @@
   function calculatePickerTotal() {
     if (!currentPicker) return 0;
     if (currentPicker.tiered) return tierPrice(currentPicker.size, currentRank()) + extrasTotal() + optTotal();
-    let total = currentPicker.basePrice;
+    let total = currentPicker.basePrice + secTotal();
     if (currentPicker.opts && currentPicker.opts.orilla) slots.forEach(function(sl) { if (sl.orilla) total += currentPicker.opts.orilla; });
     if (currentPicker.mode === "normal") {
       slots.forEach(function(slot) { if (slot.mitad) total += MITAD_EXTRA; });
@@ -1124,11 +1132,11 @@
       if (currentPicker.mode === "normal" && slots[i].mitad && !slots[i].sabor2) { alert("Elige el segundo sabor de la Pizza " + (i + 1)); return; }
     }
     const details = [];
-    if (currentPicker.details) currentPicker.details.forEach(function(d) { details.push(d); });
     slots.forEach(function(slot, index) {
-      let desc = currentPicker.limit > 1 ? (currentPicker.mode === "rect" ? "Estación " : "Pizza ") + (index + 1) + ": " : "Pizza: ";
-      desc += slot.mitad ? slot.sabor1 + " / " + slot.sabor2 + " (mitad y mitad)" : slot.sabor1;
-      if (slot.mitad) desc += " + mitad $" + MITAD_EXTRA;
+      let desc = currentPicker.limit > 1 ? (currentPicker.mode === "rect" ? "Estación " : "Pizza ") + (index + 1) + ": " : "";
+      desc += slot.mitad ? slot.sabor1 + " / " + slot.sabor2 + " (1/2 y 1/2)" : slot.sabor1;
+      if (slot.mitad) desc += " +$" + MITAD_EXTRA;
+      if (currentPicker.secs && secExtra(slot.sabor1)) desc += " +$" + secExtra(slot.sabor1);
       if (slot.orilla) desc += " + Orilla de queso $" + (currentPicker.tiered ? ORILLA[currentPicker.size] : currentPicker.opts.orilla);
       if (slot.extras && slot.extras.length) desc += " + extras: " + slot.extras.join(", ") + " (+$" + extraCost(slot) + ")";
       details.push(desc);
@@ -1141,8 +1149,8 @@
   function closeModal() { document.getElementById("pickerModal").style.display = "none"; }
 
   function addPaquete1() {
-    const d = ["2 Pizzas Grandes Hawaianas"]; let price = 355;
-    [1, 2].forEach(function(n) { if (document.getElementById("p1o" + n).checked) { price += 30; d.push("Pizza " + n + ": Orilla de queso $30"); } });
+    const d = []; let price = 355;
+    [1, 2].forEach(function(n) { if (document.getElementById("p1o" + n).checked) { price += 30; d.push("Pizza " + n + ": Orilla de queso +$30"); } });
     addToCartDirect("PAQUETE 1", price, d);
     document.getElementById("p1o1").checked = false; document.getElementById("p1o2").checked = false;
   }
