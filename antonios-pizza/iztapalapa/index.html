@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Antonio's Pizza | Ordena en línea</title>
-<meta name="description" content="Antonio's Pizza, Sucursal Reforma Política, Iztapalapa.">
+<meta name="description" content="Antonio's Pizza, Sucursal Reforma Política, Iztapalapa. Pizzas especiales, 2×1 y paquetes. Domicilio sin costo extra. Ordena por WhatsApp.">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700;800;900&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -95,6 +95,7 @@
 
   .card-img { display:none; width:100%; aspect-ratio:16/9; object-fit:cover; background:#0a0d1a; border-bottom:1px solid rgba(255,255,255,.08); }
   .card-img.ok { display:block; }
+  .card-img { object-fit:contain; background:transparent; padding:6px 0; }
 
   /* tarjetas grandes (especiales y paquetes) */
   #especiales { background:linear-gradient(135deg,#07080d,#0c1430); }
@@ -308,6 +309,223 @@
     .visual-box.shape-circle { gap:10px; }
     .cart-bar { justify-content:space-between; gap:8px; font-size:.9rem; }
   }
+
+  /* ══════════ TEMA VOLANTE: azul brillante, rojo, blanco y amarillo ══════════ */
+  :root { --vazul:#1552ff; --vazul2:#0a3fd6; --vazul3:#0e2a7a; --vrojo:#f2121b; --vrojo2:#c00810; --vamar:#ffe600; --tinta:#13235a; }
+  body { background:var(--vazul); }
+
+  .hero {
+    background:
+      linear-gradient(118deg, transparent 0 58%, var(--vrojo) 58% 74%, transparent 74%),
+      linear-gradient(118deg, var(--vrojo) 0 16%, transparent 16%),
+      linear-gradient(180deg, var(--vazul) 0%, var(--vazul2) 100%);
+  }
+  .hero::after { display:none; }
+  .hero-pizza { opacity:1; filter:none; }
+  .tagline { color:#fff; background:var(--vazul2); border:2px solid #fff; border-radius:40px; text-shadow:none; box-shadow:0 4px 0 var(--vazul3); position:relative; z-index:2; }
+  .domicilio-banner { background:var(--vrojo); border:2px solid #fff; color:#fff; box-shadow:0 6px 0 var(--vrojo2); }
+  .domicilio-banner span { color:var(--vamar); }
+  .hero-info { background:#fff; border:4px solid var(--vrojo); color:var(--tinta); box-shadow:0 10px 0 var(--vazul3), 0 22px 50px rgba(0,0,0,.3); }
+  .hi-addr { color:var(--tinta); }
+  .hi-tel { background:var(--vazul); box-shadow:0 4px 0 var(--vazul3); }
+  .hi-tel.wa { background:var(--verde); box-shadow:0 4px 0 #128c4a; }
+  .hi-hor { color:var(--tinta); border-top-color:rgba(19,35,90,.15); }
+  .hi-hor strong { color:var(--vrojo); }
+  .chip { background:#fff; color:var(--vazul3); border:2px solid var(--vrojo); }
+  .chip:hover { background:var(--vamar); border-color:var(--vrojo); }
+
+  /* secciones: azul y rojo alternados, con puntitos */
+  #lealtad, #especiales, #paquetes {
+    background:linear-gradient(180deg,var(--vazul),var(--vazul2));
+  }
+  #dosxuno, #bebidas {
+    background:linear-gradient(180deg,var(--vrojo),var(--vrojo2));
+  }
+  .sec-title { color:#fff; text-shadow:3px 3px 0 var(--vrojo2), 0 0 2px rgba(0,0,0,.3); }
+  #dosxuno .sec-title, #bebidas .sec-title { text-shadow:3px 3px 0 var(--vazul3); }
+  .sec-title::after, .sec-title.oro::after { background:var(--vamar); height:5px; }
+  .sec-sub { color:#fff; font-weight:700; }
+
+  /* tarjetas blancas como las del volante */
+  .card { background:#fff; border:4px solid #fff; border-bottom:4px solid #fff; box-shadow:0 8px 0 rgba(14,42,122,.55), 0 18px 40px rgba(0,0,0,.3); }
+  .card-head.h-rojo, .card-head.h-oro, .card-head.h-verde { background:linear-gradient(90deg,var(--vrojo2),var(--vrojo)); }
+  .card-head.h-oro, .card-head.h-verde { background:linear-gradient(90deg,var(--vazul3),var(--vazul)); }
+  .card-head { border-radius:12px 12px 0 0; }
+  .card-price { color:var(--vamar); text-shadow:2px 2px 0 rgba(0,0,0,.35); }
+  .card-body li { color:var(--tinta); font-weight:600; }
+  .card-body li::before { color:var(--vrojo); }
+  .card-body li strong { color:var(--vrojo); }
+  .tag { background:var(--vamar); border-color:var(--vrojo); color:var(--vrojo2); }
+  .tag.rojo { background:var(--vrojo); border-color:var(--vrojo2); color:#fff; }
+  .order-btn { background:var(--vrojo); color:#fff; box-shadow:0 4px 0 var(--vrojo2); }
+  .order-btn.rojo { background:var(--vazul); box-shadow:0 4px 0 var(--vazul3); }
+
+  /* 2×1 en blanco sobre rojo */
+  .tam-card { background:#fff; border:4px solid #fff; box-shadow:0 8px 0 rgba(120,8,12,.6), 0 18px 40px rgba(0,0,0,.25); }
+  .tam-card:hover { border-color:var(--vamar); }
+  .tam-card::before { height:8px; background:linear-gradient(90deg,var(--vazul),var(--vazul2)); }
+  .tam-label { color:var(--vazul3); }
+  .tam-badge { background:var(--vazul); color:#fff; }
+  .tam-precio { color:var(--vrojo); text-shadow:2px 2px 0 var(--vamar); }
+  .tam-note { color:#4a5784; }
+  .tam-note strong { color:var(--tinta) !important; }
+  .tam-card .order-btn { background:var(--vazul); box-shadow:0 4px 0 var(--vazul3); }
+
+  /* lealtad: recuadro amarillo con borde rojo, como "PROMO" */
+  .loyal { background:var(--vamar); border:5px solid var(--vrojo); animation:none; box-shadow:0 10px 0 var(--vrojo2), 0 24px 60px rgba(0,0,0,.35); }
+  .loyal::before { display:none; }
+  .loyal-badge { background:var(--vrojo); color:#fff; }
+  .loyal-title { color:var(--vazul3); text-shadow:3px 3px 0 #fff; }
+  .loyal-title span { color:var(--vrojo); text-shadow:3px 3px 0 #fff; }
+  .loyal-text { color:var(--tinta); }
+  .loyal-text strong { background:#fff; color:var(--vrojo2); }
+  .loyal-stamps span { background:var(--vazul); color:#fff; border:2px dashed #fff; }
+  .loyal-stamps span.gift { background:#fff; border-color:var(--vrojo); }
+  .loyal-fine { color:var(--vrojo2); }
+
+  /* bebidas */
+  .beb-card { background:#fff; border:4px solid #fff; border-bottom:4px solid #fff; box-shadow:0 8px 0 rgba(120,8,12,.6); }
+  .beb-card h3 { color:var(--tinta); }
+  .beb-card .bp { color:var(--vrojo); }
+  .beb-card .order-btn { background:var(--vazul); box-shadow:0 4px 0 var(--vazul3); }
+
+  footer { background:var(--vazul3); color:rgba(255,255,255,.75); }
+  footer span { color:var(--vamar); }
+
+  /* ventanas (elegir sabores y carrito) en azul marino */
+  .modal { background:rgba(8,20,60,.94); }
+  .modal-content { background:linear-gradient(180deg,#16307f,#0b1d55); border:3px solid #fff; }
+  .modal-head h2 { color:var(--vamar); }
+  .modal .order-btn { background:var(--vrojo); box-shadow:0 4px 0 var(--vrojo2); }
+  .modal .order-btn.ghost { background:rgba(255,255,255,.12); box-shadow:none; }
+  .modal .order-btn.wa { background:var(--verde); color:#071007; box-shadow:0 4px 0 #128c4a; }
+  .flavor-list { background:#0a1745; }
+  .flavor-group { background:#122a72; color:var(--vamar); }
+  .option-row { border-left-color:var(--vrojo); }
+  .flavor-btn { background:var(--vamar); }
+  .modal input[type=text], .modal input[type=tel], .modal input[type=number], .modal textarea { background:#0a1745; border-color:rgba(255,255,255,.25); }
+  /* sin efecto de aparición: todo se ve con color completo desde el inicio */
+  .reveal, .reveal.visible { opacity:1 !important; transform:none !important; transition:none !important; }
+  /* tabla de precios 2×1 */
+  .price-table-wrap { margin-top:1.6rem; }
+  .price-table { width:100%; border-collapse:separate; border-spacing:0; background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 8px 0 rgba(120,8,12,.6); font-family:'Montserrat',sans-serif; }
+  .price-table th { background:var(--vazul); color:#fff; font-size:.78rem; padding:10px 6px; text-transform:uppercase; letter-spacing:.04em; }
+  .price-table td { color:var(--tinta); font-weight:800; font-size:.86rem; padding:10px 6px; text-align:center; border-top:1px solid #e3e7f3; }
+  .price-table td:first-child { text-align:left; padding-left:12px; font-size:.78rem; }
+  .price-table tr.hl td { background:var(--vamar); }
+  @media (max-width:600px) { .price-table th, .price-table td { font-size:.68rem; padding:8px 3px; } .price-table td:first-child { padding-left:8px; font-size:.66rem; } }
+  @media (max-width:600px) { .hi-phones .tel-ic { display:none; } .hi-tel:not(.wa) { font-size:clamp(.9rem,4vw,1.1rem); } }
+  /* complemento y opciones en renglón, con colores distintos */
+  .choice-box { display:flex; flex-wrap:wrap; align-items:center; gap:4px 16px; margin:0 0 10px; padding:10px 12px; border-radius:10px; background:rgba(255,230,0,.14); border:2px solid var(--vamar); }
+  .choice-title { font-family:'Montserrat',sans-serif; font-size:.74rem; font-weight:900; color:var(--vamar); text-transform:uppercase; letter-spacing:.04em; }
+  .choice-box .opt-line { margin:2px 0; white-space:nowrap; }
+  .choice-box .opt-line input { accent-color:var(--vamar); }
+  .extras-col { display:flex; flex-wrap:wrap; align-items:center; gap:4px 14px; padding:10px 12px; border-radius:10px; background:rgba(242,18,27,.16); border:2px solid var(--vrojo); }
+  .extras-col .extra-title { color:#fff; margin:0; font-size:.74rem; font-weight:900; }
+  .extras-col .opt-line { margin:2px 0; white-space:nowrap; }
+  .extras-col .opt-line input { accent-color:var(--vrojo); }
+  .choice-box .choice-title, .extras-col.one .extra-title { flex-basis:100%; }
+  .choice-box, .extras-col.one { flex-wrap:wrap; }
+  .choice-box .opt-line, .extras-col.one .opt-line { font-size:.72rem; gap:5px; }
+  .extras-col.one { column-gap:10px; }
+  .extras-col.one .opt-line input, .choice-box .opt-line input { width:16px; height:16px; }
+  .extras-col:not(.one) { flex-direction:column; align-items:flex-start; }
+  .extras-col:not(.one) .opt-line { white-space:normal; font-size:.72rem; }
+  @media (max-width:420px) { .extras-col.one .opt-line, .choice-box .opt-line { font-size:.62rem; gap:3px; letter-spacing:-.01em; } .extras-col.one { column-gap:6px; padding:9px 7px; } .extras-col.one .opt-line input { width:15px; height:15px; } }
+  /* complemento y opciones lado a lado, debajo de la pizza */
+  .opts-row { display:flex; gap:10px; align-items:stretch; margin:4px 0 12px; }
+  .opts-row > div { flex:1 1 0; min-width:0; }
+  .opts-row > #choiceArea:empty { display:none; }
+  .opts-row .extras-row { margin:0; }
+  .opts-row .choice-box { height:100%; margin:0; flex-direction:column; align-items:flex-start; flex-wrap:nowrap; }
+  .opts-row .extras-col.one { height:100%; flex-direction:column; align-items:flex-start; flex-wrap:nowrap; }
+  .opts-row .choice-box .opt-line, .opts-row .extras-col.one .opt-line { font-size:.78rem !important; white-space:normal; gap:6px; }
+  .opts-row .choice-box .opt-line input, .opts-row .extras-col.one .opt-line input { width:18px !important; height:18px !important; }
+  .opts-row .choice-title, .opts-row .extras-col.one .extra-title { flex-basis:auto; margin-bottom:2px; }
+  @media (max-width:420px) { .opts-row .choice-box .opt-line, .opts-row .extras-col.one .opt-line { font-size:.74rem !important; } }
+  /* varias pizzas: opciones compactas */
+  .extras-col:not(.one) { padding:8px 8px; gap:2px; }
+  .extras-col:not(.one) .extra-title { font-size:.68rem; }
+  .extras-col:not(.one) .opt-line { font-size:.7rem; gap:5px; margin:1px 0; white-space:nowrap; }
+  .extras-col:not(.one) .opt-line input { width:16px; height:16px; }
+  .visual-box.shape-circle { flex-wrap:nowrap; }
+  @media (max-width:380px) { .extras-col:not(.one) { padding:7px 5px; } .extras-col:not(.one) .opt-line { font-size:.62rem; gap:3px; } .extras-col:not(.one) .opt-line input { width:14px; height:14px; } }
+  #pickerSubtitle:empty { display:none; }
+  /* 3 pizzas en triángulo, hasta las orillas */
+  .visual-box.shape-circle.tri { flex-wrap:wrap; justify-content:space-between; gap:0; margin:4px 0 14px; }
+  .visual-box.shape-circle.tri .pizza-circle-wrap:nth-child(3) { width:100%; align-items:center; margin-top:calc(var(--s) * -0.14); }
+  .visual-box.shape-circle.tri .circle-fill { font-size:.82rem; }
+  #pickerTitle { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #pickerModal .modal-head > div { min-width:0; flex:1; }
+  #pickerModal .modal-head { align-items:center; }
+  /* 3 pizzas: opciones a los lados de la pizza 3 */
+  .visual-box.shape-circle.tri { position:relative; }
+  .side-opts { position:absolute; bottom:0; top:calc(var(--s) + 4px); width:calc((100% - var(--s)) / 2 - 3px); display:flex; }
+  .side-opts .extras-col { flex:1; justify-content:center; }
+  .side-opts.left { left:0; } .side-opts.right { right:0; }
+  .side-opts .extras-col { flex-direction:column; align-items:flex-start; padding:6px 5px; gap:1px; }
+  .side-opts .extra-title { font-size:.64rem !important; }
+  .side-opts .opt-line { font-size:.62rem !important; gap:3px !important; margin:1px 0; white-space:nowrap; }
+  .side-opts .opt-line input { width:13px !important; height:13px !important; }
+  .extras-col.inline { flex-direction:row !important; flex-wrap:nowrap; align-items:center; justify-content:center; column-gap:8px; padding:8px 6px; }
+  .extras-col.inline .extra-title { font-size:.66rem; }
+  .extras-col.inline .opt-line { font-size:.68rem !important; gap:4px; white-space:nowrap; }
+  @media (max-width:380px) { .extras-col.inline { column-gap:5px; } .extras-col.inline .opt-line { font-size:.6rem !important; } .extras-col.inline .extra-title { font-size:.6rem; } .side-opts .opt-line { font-size:.56rem !important; } }
+  /* tarjetas 2×1: foto opcional, 2×1 y precio en una línea */
+  .tam-card { display:flex; flex-direction:column; }
+  .tam-card .tam-img { margin:-1.6rem -1.1rem .8rem; width:calc(100% + 2.2rem); aspect-ratio:4/3; }
+  .tam-line { display:flex; align-items:center; justify-content:center; gap:.5rem; margin:.2rem 0 .2rem; }
+  .tam-line .tam-badge { margin:0; }
+  .tam-card .order-btn { margin-top:auto; }
+  .tam-card .tam-label { margin-bottom:.1rem; }
+  @media (max-width:600px) { .tam-line { gap:.35rem; } .tam-line .tam-precio { font-size:2.3rem; } .tam-line .tam-badge { font-size:.85rem; padding:.05rem .55rem; } .tam-card .tam-img { margin:-1.2rem -.7rem .7rem; width:calc(100% + 1.4rem); } }
+  /* opciones plegables */
+  .opts-toggle { display:flex; align-items:center; justify-content:space-between; width:100%; min-height:42px; padding:8px 14px; border-radius:10px; border:2px solid var(--vrojo); background:rgba(242,18,27,.16); color:#fff; font-family:'Montserrat',sans-serif; font-weight:800; font-size:.8rem; cursor:pointer; text-align:left; }
+  .opts-toggle small { font-weight:600; color:#d9dff5; font-size:.72rem; }
+  .opts-toggle b { color:var(--vamar); font-size:1.1rem; }
+  .opts-toggle.open { margin-top:8px; min-height:34px; background:transparent; border:1px solid rgba(255,255,255,.25); font-size:.72rem; }
+  .extras-grid { display:grid; gap:8px; }
+  .opts-row.collapsed { flex-direction:column; }
+  .option-row.compact { padding-top:8px; padding-bottom:8px; }
+  .option-row.compact .flavor-btn { width:36px; height:36px; font-size:1.15rem; }
+  .opts-row.collapsed .choice-box { flex-direction:row; flex-wrap:wrap; align-items:center; column-gap:18px; }
+  .opts-row.collapsed .choice-box .choice-title { flex-basis:100%; }
+  /* ══ Tarjetas negras solo en Pizzas Especiales y 2×1 ══ */
+  #especiales .card, #dosxuno .tam-card { background:#0b0b0f; border-color:#0b0b0f; }
+  #especiales .card-body li { color:#e9ecf5; }
+  #especiales .card-body li strong, #especiales .card-body li::before { color:var(--vamar); }
+  #dosxuno .tam-label { color:#fff; }
+  #dosxuno .tam-precio { color:var(--vamar); text-shadow:2px 2px 0 var(--vrojo); }
+  #dosxuno .price-table { background:#0b0b0f; }
+  #dosxuno .price-table td { color:#fff; border-top-color:#22242e; }
+  #dosxuno .price-table tr.hl td { color:#0b0b0f; }
+  /* ══ Fondo de franjas diagonales en toda la página (azul, blanco, rojo) ══ */
+  body { background:repeating-linear-gradient(118deg,
+      var(--vazul) 0 500px,
+      #fff 500px 514px,
+      var(--vrojo) 514px 690px,
+      #fff 690px 704px,
+      var(--vazul2) 704px 1080px); }
+  .hero { background:transparent !important; }
+  #lealtad, #especiales, #dosxuno, #paquetes, #bebidas { background:transparent !important; }
+  .sec-title { text-shadow:3px 3px 0 #0b0b0f !important; }
+  .sec-sub { display:inline-block; background:rgba(11,11,15,.72); padding:4px 10px; border-radius:8px; }
+  footer { background:#0b0b0f; }
+
+  /* tarjetas negras también en Paquetes y Bebidas */
+  #paquetes .card, #bebidas .beb-card { background:#0b0b0f; border-color:#0b0b0f; }
+  #paquetes .card-body li { color:#e9ecf5; }
+  #paquetes .card-body li strong, #paquetes .card-body li::before { color:var(--vamar); }
+  #bebidas .beb-card h3 { color:#fff; }
+  #bebidas .beb-card .bp { color:var(--vamar); }
+  .card, .tam-card, .beb-card { box-shadow:0 0 0 3px #fff, 0 10px 0 3px rgba(0,0,0,.35), 0 20px 40px rgba(0,0,0,.35) !important; }
+  .beb-img { display:block; height:120px; width:auto; max-width:150px; object-fit:contain; margin:0 auto .5rem; filter:drop-shadow(0 8px 14px rgba(0,0,0,.5)); }
+  .beb-img[alt="Espagueti"] { max-width:min(300px,90%); height:auto; max-height:170px; margin-top:-4px; margin-bottom:6px; }
+  /* recuadro de la portada en negro */
+  .hero-info { background:#0b0b0f !important; color:#fff !important; border:3px solid #fff !important; box-shadow:0 10px 0 rgba(0,0,0,.35), 0 22px 50px rgba(0,0,0,.35) !important; }
+  .hi-addr, .hi-hor { color:#fff !important; }
+  .hi-hor { border-top-color:rgba(255,255,255,.18) !important; }
+  .hi-hor strong { color:var(--vamar) !important; }
 </style>
 </head>
 <body>
@@ -317,27 +535,27 @@
 <header class="hero">
   <div class="logo-wrap">
     <div class="hero-pizza" aria-hidden="true"></div>
-    <img class="logo-img" src="images/logo.png" alt="Antonio's Pizza – Entrega a domicilio sin costo extra · Calidad garantizada" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+    <img class="logo-img" src="images/logo.png" alt="Antonio's Pizza – Entrega a domicilio gratis · Calidad garantizada" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
     <div class="logo-text" style="display:none"><div class="logo-main">Antonio's</div><div class="logo-pizza">Pizza</div></div>
   </div>
   <p class="tagline">Sucursal Reforma Política · Iztapalapa</p>
-  <div class="domicilio-banner">🛵 Domicilio <span>sin costo extra</span> · <span>sin límite de zona</span></div>
+  <div class="domicilio-banner">🛵 Entrega a domicilio <span>GRATIS</span> · <span>25 a 40 minutos</span></div>
   <div class="hero-info">
-    <div class="hi-addr"><span>📍</span><span>Sucursal Reforma Política, Iztapalapa</span></div>
+    <div class="hi-addr"><span>📍</span><span>Av. Pozos Reforma Política Mz. 31 Lt. 1, esq. Reforma Sindical, Col. Reforma Política, Iztapalapa</span></div>
     <div class="hi-phones">
-      <a class="hi-tel" href="tel:+525521270522">📞 55 2127 0522</a>
-      <a class="hi-tel" href="tel:+525574366728">📞 55 7436 6728</a>
-      <a class="hi-tel" href="tel:+525521270756">📞 55 2127 0756</a>
-      <a class="hi-tel wa" href="https://wa.me/525521270522" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#waIcon"/></svg> 55 2127 0522</a>
+      <a class="hi-tel" href="tel:+525556930418"><span class="tel-ic">📞 </span>55 5693 0418</a>
+      <a class="hi-tel" href="tel:+525556908731"><span class="tel-ic">📞 </span>55 5690 8731</a>
+      <a class="hi-tel" href="tel:+525584638406"><span class="tel-ic">📞 </span>55 8463 8406</a>
+      <a class="hi-tel wa" href="https://wa.me/525656403737" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#waIcon"/></svg> 56 5640 3737</a>
     </div>
-    <div class="hi-hor">🕐 Todos los días <strong>11:30 AM – 11:00 PM</strong> · Aceptamos tarjeta de débito y crédito</div>
+    <div class="hi-hor">🕐 Todos los días <strong>12:00 PM – 11:00 PM</strong><br>💳 Aceptamos tarjeta, transferencia y vales de despensa y de gasolina</div>
   </div>
   <nav class="hero-nav" aria-label="Menú">
     <a class="chip" href="#lealtad">🎟️ Pizza gratis</a>
     <a class="chip" href="#especiales">🍕 Especiales</a>
     <a class="chip" href="#dosxuno">2×1</a>
     <a class="chip" href="#paquetes">📦 Paquetes</a>
-    <a class="chip" href="#bebidas">🥤 Bebidas</a>
+    <a class="chip" href="#bebidas">🥤 Bebidas y extras</a>
   </nav>
 </header>
 
@@ -349,11 +567,11 @@
     <div class="loyal">
       <div class="loyal-badge">🎟️ Programa de lealtad</div>
       <div class="loyal-title">¡Tu pizza grande <span>GRATIS!</span></div>
-      <p class="loyal-text">Junta <strong>7 notas</strong> de tus pedidos y canjéalas por <strong>1 Pizza Grande totalmente gratis</strong> de cualquier especialidad.</p>
+      <p class="loyal-text">Junta <strong>8 notas</strong> de tus pedidos y te damos <strong>1 Pizza Grande gratis</strong>.</p>
       <div class="loyal-stamps" aria-hidden="true">
-        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span class="gift">🍕</span>
+        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span class="gift">🍕</span>
       </div>
-      <p class="loyal-fine">No aplica en especialidades de mariscos · Guarda tus notas de compra</p>
+      <p class="loyal-fine">Guarda tus notas de compra</p>
     </div>
   </div>
 </section>
@@ -362,61 +580,58 @@
 <section id="especiales">
   <div class="max-w reveal">
     <div class="sec-title">Pizzas Especiales</div>
-    <p class="sec-sub">Formatos grandes para compartir · Orilla rellena de queso crema incluida · Mariscos con costo extra · No aplica 2×1</p>
+    <p class="sec-sub">En estas promociones no aplica el 2×1</p>
     <div class="card-grid">
 
       <div class="card">
-        <div class="card-head h-oro"><div class="card-name">🍕 Big Toño<small>40×70 cm · 32 rebanadas</small></div><div class="card-price">$620</div></div>
-        <img class="card-img" src="images/big-tono.jpg" alt="Big Toño" onload="this.classList.add('ok')" onerror="this.remove()">
+        <div class="card-head h-oro"><div class="card-name">🍕 Gigante Don Toño<small>45×65 cm · 32 rebanadas</small></div><div class="card-price">$629</div></div>
+        <img class="card-img" src="images/gigante.png" alt="Pizza Gigante Don Toño" onload="this.classList.add('ok')" onerror="this.remove()">
         <div class="card-body">
           <ul>
             <li>4 especialidades a elegir</li>
-            <li>Mariscos con costo extra por sección (desde +$20)</li>
-            <li>Orilla rellena de queso crema</li>
-            <li>Refresco de 2 litros gratis</li>
+            <li>Orilla rellena de queso cubierta de ajonjolí</li>
+            <li>+ 1 refresco gratis</li>
           </ul>
           <div class="spacer"></div>
-          <button class="order-btn" onclick="order('bigtono')">Elegir sabores</button>
+          <button class="order-btn" onclick="order('gigante')">Elegir sabores</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-head h-oro"><div class="card-name">🍕 Mega Toño<small>38×52 cm · 24 rebanadas</small></div><div class="card-price">$440</div></div>
-        <img class="card-img" src="images/mega-tono.jpg" alt="Mega Toño" onload="this.classList.add('ok')" onerror="this.remove()">
+        <div class="card-head h-oro"><div class="card-name">🍕 Mega Antonio's<small>La original · 38×52 cm · 24 rebanadas</small></div><div class="card-price">$430</div></div>
+        <img class="card-img" src="images/mega.png" alt="Mega Antonio's" onload="this.classList.add('ok')" onerror="this.remove()">
         <div class="card-body">
           <ul>
             <li>4 especialidades a elegir</li>
-            <li>Mariscos con costo extra por sección (desde +$20)</li>
-            <li>Orilla rellena de queso crema</li>
-            <li>Refresco de 2 litros gratis</li>
+            <li>+ 1 refresco gratis</li>
           </ul>
           <div class="spacer"></div>
-          <button class="order-btn" onclick="order('megatono')">Elegir sabores</button>
+          <button class="order-btn" onclick="order('mega')">Elegir sabores</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-head h-rojo"><div class="card-name">🍕 Pizza C4<small>40×40 cm · 16 rebanadas</small></div><div class="card-price">$340</div></div>
-        <img class="card-img" src="images/pizza-c4.jpg" alt="Pizza C4" onload="this.classList.add('ok')" onerror="this.remove()">
+        <div class="card-head h-rojo"><div class="card-name">🍕 Pizza C-4<small>40×40 cm · 16 rebanadas</small></div><div class="card-price">$365</div></div>
+        <img class="card-img" src="images/pizza-c4.png" alt="Pizza C-4" onload="this.classList.add('ok')" onerror="this.remove()">
         <div class="card-body">
           <ul>
             <li>4 especialidades a elegir</li>
-            <li>Mariscos con costo extra por sección (desde +$20)</li>
-            <li>Orilla rellena de queso crema</li>
+            <li>Orilla rellena de queso cubierta de ajonjolí</li>
+            <li>+ 1 refresco de 1 litro gratis</li>
           </ul>
+          <div class="tags"><span class="tag rojo">¡Pruébala, es nueva!</span></div>
           <div class="spacer"></div>
           <button class="order-btn" onclick="order('c4')">Elegir sabores</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-head h-rojo"><div class="card-name">🍕 Pizza Barra<small>20×52 cm · 12 rebanadas</small></div><div class="card-price">$260</div></div>
-        <img class="card-img" src="images/pizza-barra.jpg" alt="Pizza Barra" onload="this.classList.add('ok')" onerror="this.remove()">
+        <div class="card-head h-rojo"><div class="card-name">🍕 Pizza Barra<small>12 rebanadas</small></div><div class="card-price">$315</div></div>
+        <img class="card-img" src="images/pizza-barra.png" alt="Pizza Barra" onload="this.classList.add('ok')" onerror="this.remove()">
         <div class="card-body">
           <ul>
             <li>2 especialidades a elegir</li>
-            <li>Mariscos con costo extra por sección (desde +$20)</li>
-            <li>Orilla rellena de queso crema</li>
+            <li>+ 1 refresco de 1 litro gratis</li>
           </ul>
           <div class="spacer"></div>
           <button class="order-btn" onclick="order('barra')">Elegir sabores</button>
@@ -424,12 +639,12 @@
       </div>
 
       <div class="card">
-        <div class="card-head h-cor"><div class="card-name">Pizza de Corazón ❤️<small>Forma de corazón</small></div><div class="card-price">$220</div></div>
-        <img class="card-img" src="images/pizza-corazon.jpg" alt="Pizza de Corazón" onload="this.classList.add('ok')" onerror="this.remove()">
+        <div class="card-head h-cor"><div class="card-name">Pizza de Corazón ❤️<small>Forma de corazón</small></div><div class="card-price">$265</div></div>
+        <img class="card-img" src="images/pizza-corazon.png" alt="Pizza de Corazón" onload="this.classList.add('ok')" onerror="this.remove()">
         <div class="card-body">
           <ul>
             <li>Elige tu especialidad favorita</li>
-            <li>Orilla rellena de queso crema incluida</li>
+            <li>+ 1 refresco gratis</li>
           </ul>
           <div class="spacer"></div>
           <button class="order-btn rojo" onclick="order('corazon')">Elegir sabor</button>
@@ -437,16 +652,15 @@
       </div>
 
       <div class="card">
-        <div class="card-head h-verde"><div class="card-name">Nueva Familiar 🍗<small>Pollo BBQ + Cochinita Pibil</small></div><div class="card-price">$270</div></div>
-        <img class="card-img" src="images/nueva-familiar.jpg" alt="Nueva Familiar" onload="this.classList.add('ok')" onerror="this.remove()">
+        <div class="card-head h-rojo"><div class="card-name">🍕 Pizzas Mini<small>2 pizzas mini por $105</small></div><div class="card-price">$105</div></div>
+        <img class="card-img" src="images/pizza-mini.jpg" alt="Pizza Mini" onload="this.classList.add('ok')" onerror="this.remove()">
         <div class="card-body">
           <ul>
-            <li>Mitad Pollo BBQ, mitad Cochinita Pibil</li>
-            <li>Orilla rellena de queso crema y ajonjolí</li>
+            <li>2 pizzas mini de cualquier especialidad</li>
+            <li>Excepto mariscos</li>
           </ul>
-          <div class="tags"><span class="tag rojo">¡Nueva!</span></div>
           <div class="spacer"></div>
-          <button class="order-btn" onclick="addDirect('nueva')">Agregar al carrito</button>
+          <button class="order-btn" onclick="order('mini')">Elegir sabores</button>
         </div>
       </div>
 
@@ -457,13 +671,25 @@
 <!-- ══ 2×1 ══ -->
 <section id="dosxuno">
   <div class="max-w reveal">
-    <div class="sec-title oro">Especialidades 2×1</div>
-    <p class="sec-sub">Dos pizzas de especialidad por el precio de una · Todas las especialidades aplican · Si eliges mariscos se cobra el precio de mariscos · Puedes pedir mitad y mitad y orilla de queso</p>
+    <div class="sec-title oro">2×1 Todos los días</div>
+    <p class="sec-sub">Dos pizzas de especialidad por el precio de una · Todas nuestras pizzas llevan extra queso · Te ponemos ajonjolí en la orilla sin costo extra</p>
     <div class="tam-grid">
-      <div class="tam-card"><div class="tam-label">Chica</div><div class="tam-badge">2×1</div><div class="tam-precio">$190</div><div class="tam-note"><strong style="color:#fff">o 1 pizza $114 (40% desc.)</strong><br>Mariscos $265 · Marinera Esp. $310<br>Orilla +$20 c/u</div><button class="order-btn" onclick="order('chica')">Elegir sabores</button></div>
-      <div class="tam-card"><div class="tam-label">Mediana</div><div class="tam-badge">2×1</div><div class="tam-precio">$260</div><div class="tam-note"><strong style="color:#fff">o 1 pizza $156 (40% desc.)</strong><br>Mariscos $360 · Marinera Esp. $390<br>Orilla +$25 c/u</div><button class="order-btn" onclick="order('mediana')">Elegir sabores</button></div>
-      <div class="tam-card"><div class="tam-label">Grande</div><div class="tam-badge">2×1</div><div class="tam-precio">$360</div><div class="tam-note"><strong style="color:#fff">o 1 pizza $216 (40% desc.)</strong><br>Mariscos $400 · Marinera Esp. $440<br>Orilla +$30 c/u</div><button class="order-btn" onclick="order('grande')">Elegir sabores</button></div>
-      <div class="tam-card"><div class="tam-label">Familiar</div><div class="tam-badge">2×1</div><div class="tam-precio">$410</div><div class="tam-note"><strong style="color:#fff">o 1 pizza $246 (40% desc.)</strong><br>Mariscos $500 · Marinera Esp. $560<br>Orilla +$35 c/u</div><button class="order-btn" onclick="order('familiar')">Elegir sabores</button></div>
+      <div class="tam-card"><img class="card-img tam-img" src="images/2x1-chica.jpg" alt="Chica 2×1" onload="this.classList.add('ok')" onerror="this.remove()"><div class="tam-label">Chica</div><div class="tam-line"><span class="tam-badge">2×1</span><span class="tam-precio">$210</span></div><button class="order-btn" onclick="order('chica')">Elegir sabores</button></div>
+      <div class="tam-card"><img class="card-img tam-img" src="images/2x1-mediana.jpg" alt="Mediana 2×1" onload="this.classList.add('ok')" onerror="this.remove()"><div class="tam-label">Mediana</div><div class="tam-line"><span class="tam-badge">2×1</span><span class="tam-precio">$290</span></div><button class="order-btn" onclick="order('mediana')">Elegir sabores</button></div>
+      <div class="tam-card"><img class="card-img tam-img" src="images/2x1-grande.jpg" alt="Grande 2×1" onload="this.classList.add('ok')" onerror="this.remove()"><div class="tam-label">Grande</div><div class="tam-line"><span class="tam-badge">2×1</span><span class="tam-precio">$365</span></div><button class="order-btn" onclick="order('grande')">Elegir sabores</button></div>
+      <div class="tam-card"><img class="card-img tam-img" src="images/2x1-familiar.jpg" alt="Familiar 2×1" onload="this.classList.add('ok')" onerror="this.remove()"><div class="tam-label">Familiar</div><div class="tam-line"><span class="tam-badge">2×1</span><span class="tam-precio">$415</span></div><button class="order-btn" onclick="order('familiar')">Elegir sabores</button></div>
+    </div>
+    <div class="price-table-wrap">
+      <table class="price-table">
+        <thead><tr><th>2×1</th><th>Chica</th><th>Mediana</th><th>Grande</th><th>Familiar</th></tr></thead>
+        <tbody>
+          <tr><td>Sencilla (1 ingrediente)</td><td>$185</td><td>$275</td><td>$325</td><td>$375</td></tr>
+          <tr class="hl"><td>Especialidades</td><td>$210</td><td>$290</td><td>$365</td><td>$415</td></tr>
+          <tr><td>Sencilla de mariscos</td><td>$240</td><td>$330</td><td>$385</td><td>$440</td></tr>
+          <tr><td>Marinera, Tropical, Campechana</td><td>$285</td><td>$385</td><td>$420</td><td>$480</td></tr>
+          <tr><td>Marinera Especial</td><td>$325</td><td>$405</td><td>$465</td><td>$520</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
@@ -472,69 +698,108 @@
 <section id="paquetes">
   <div class="max-w reveal">
     <div class="sec-title oro">Paquetes</div>
-    <p class="sec-sub">Combos especiales · Los sabores se eligen dentro de cada paquete</p>
+    <p class="sec-sub">En ninguna de estas promociones aplica el 2×1 ni pizzas de mariscos</p>
     <div class="card-grid">
 
       <div class="card">
-        <div class="card-head h-rojo"><div class="card-name">Paquete 1<small>Familiar + Dedos de Queso</small></div><div class="card-price">$290</div></div>
-        <img class="card-img" src="images/paquete-1.jpg" alt="Paquete 1" onload="this.classList.add('ok')" onerror="this.remove()">
+        <div class="card-head h-rojo"><div class="card-name">Promo<small>2 Pizzas Grandes</small></div><div class="card-price">$320</div></div>
+        <img class="card-img" src="images/promo.png" alt="Promo" onload="this.classList.add('ok')" onerror="this.remove()">
         <div class="card-body">
           <ul>
-            <li>1 pizza familiar de la especialidad que quieras (excepto mariscos)</li>
-            <li>+ Dedos de queso</li>
-            <li>+ Refresco de 2 litros</li>
+            <li>1 pizza grande <strong>Hawaiana</strong></li>
+            <li>1 pizza grande <strong>de Peperoni</strong></li>
           </ul>
           <div class="spacer"></div>
-          <button class="order-btn" onclick="order('paq1')">Elegir sabor</button>
+          <button class="order-btn" onclick="addDirect('promo')">Agregar al carrito</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-head h-oro"><div class="card-name">Paquete 2<small>2 Grandes Hawaianas</small></div><div class="card-price">$299</div></div>
-        <img class="card-img" src="images/paquete-2.jpg" alt="Paquete 2" onload="this.classList.add('ok')" onerror="this.remove()">
+        <div class="card-head h-oro"><div class="card-name">Pakt 1<small>1 Pizza Familiar</small></div><div class="card-price">$285</div></div>
+        <img class="card-img" src="images/pakt-1.png" alt="Pakt 1" onload="this.classList.add('ok')" onerror="this.remove()">
+        <div class="card-body">
+          <ul>
+            <li>1 pizza familiar de especialidad</li>
+            <li>+ 3 refrescos de lata <strong>o</strong> 1 espagueti</li>
+          </ul>
+          <div class="spacer"></div>
+          <button class="order-btn" onclick="order('pakt1')">Elegir sabor</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head h-rojo"><div class="card-name">Pakt 2<small>2 Pizzas Grandes Hawaianas</small></div><div class="card-price">$330</div></div>
+        <img class="card-img" src="images/pakt-2.png" alt="Pakt 2" onload="this.classList.add('ok')" onerror="this.remove()">
         <div class="card-body">
           <ul>
             <li>2 pizzas grandes <strong>Hawaianas</strong></li>
           </ul>
           <div class="spacer"></div>
-          <button class="order-btn" onclick="addDirect('paq2')">Agregar al carrito</button>
+          <button class="order-btn" onclick="addDirect('pakt2')">Agregar al carrito</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-head h-verde"><div class="card-name">Paquete 3<small>3 Grandes + Refresco</small></div><div class="card-price">$465</div></div>
-        <img class="card-img" src="images/paquete-3.jpg" alt="Paquete 3" onload="this.classList.add('ok')" onerror="this.remove()">
+        <div class="card-head h-oro"><div class="card-name">Pakt 3<small>2 Pizzas Grandes</small></div><div class="card-price">$395</div></div>
+        <img class="card-img" src="images/pakt-3.png" alt="Pakt 3" onload="this.classList.add('ok')" onerror="this.remove()">
         <div class="card-body">
           <ul>
-            <li>3 pizzas grandes de cualquier especialidad (excepto mariscos)</li>
-            <li>+ Refresco de 2 litros gratis</li>
+            <li>2 pizzas grandes de especialidad</li>
+            <li>+ 1 refresco de 2 litros</li>
           </ul>
           <div class="spacer"></div>
-          <button class="order-btn" onclick="order('paq3')">Elegir sabores</button>
+          <button class="order-btn" onclick="order('pakt3')">Elegir sabores</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head h-rojo"><div class="card-name">Pakt 4<small>1 Pizza Grande</small></div><div class="card-price">$280</div></div>
+        <img class="card-img" src="images/pakt-4.png" alt="Pakt 4" onload="this.classList.add('ok')" onerror="this.remove()">
+        <div class="card-body">
+          <ul>
+            <li>1 pizza grande con orilla rellena</li>
+            <li>+ 1 refresco gratis</li>
+          </ul>
+          <div class="spacer"></div>
+          <button class="order-btn" onclick="order('pakt4')">Elegir sabor</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head h-oro"><div class="card-name">Pakt 5<small>3 Pizzas Grandes</small></div><div class="card-price">$485</div></div>
+        <img class="card-img" src="images/pakt-5.png" alt="Pakt 5" onload="this.classList.add('ok')" onerror="this.remove()">
+        <div class="card-body">
+          <ul>
+            <li>3 pizzas grandes de especialidad</li>
+            <li>+ 1 refresco de 2 litros</li>
+          </ul>
+          <div class="spacer"></div>
+          <button class="order-btn" onclick="order('pakt5')">Elegir sabores</button>
         </div>
       </div>
 
     </div>
-
   </div>
 </section>
 
-<!-- ══ BEBIDAS ══ -->
+<!-- ══ BEBIDAS Y EXTRAS ══ -->
 <section id="bebidas">
   <div class="max-w reveal">
-    <div class="sec-title">Bebidas</div>
+    <div class="sec-title">Bebidas y extras</div>
     <div class="beb-grid">
-      <div class="beb-card"><div class="bic">🥤</div><h3>Refresco 2 litros</h3><div class="bp">$45</div><button class="order-btn mini" onclick="addDirect('ref2')">Agregar</button></div>
-      <div class="beb-card"><div class="bic">🥤</div><h3>Refresco 1 litro</h3><div class="bp">$35</div><button class="order-btn mini" onclick="addDirect('ref1')">Agregar</button></div>
-      <div class="beb-card"><div class="bic">🥫</div><h3>Refresco de lata</h3><div class="bp">$25</div><button class="order-btn mini" onclick="addDirect('lata')">Agregar</button></div>
+      <div class="beb-card"><img class="beb-img" src="images/spaghetti.png" alt="Espagueti" onerror="this.outerHTML='<div class=bic>🍝</div>'"><h3>Espagueti</h3><div class="bp">$125</div><button class="order-btn mini" onclick="addDirect('spag')">Agregar</button></div>
+      <div class="beb-card"><img class="beb-img" src="images/jarritos-pina-2l.png" alt="Refresco en botella" onerror="this.outerHTML='<div class=bic>🥤</div>'"><h3>Refresco en botella</h3><div class="bp">$35</div><button class="order-btn mini" onclick="addDirect('botella')">Agregar</button></div>
+      <div class="beb-card"><img class="beb-img" src="images/fanta-lata.png" alt="Refresco en lata" onerror="this.outerHTML='<div class=bic>🥫</div>'"><h3>Refresco en lata</h3><div class="bp">$30</div><button class="order-btn mini" onclick="addDirect('lata')">Agregar</button></div>
     </div>
   </div>
 </section>
 
 <footer>
-  <p>© 2026 <span>Antonio's Pizza</span> — Sucursal Reforma Política, Iztapalapa</p>
-  <p>Precios sujetos a cambio sin previo aviso · Servicio a domicilio sin costo extra</p>
+  <p>© 2026 <span>Antonio's Pizza</span> — Av. Pozos Reforma Política Mz. 31 Lt. 1, esq. Reforma Sindical, Col. Reforma Política, Iztapalapa</p>
+  <p>Todas las pizzas son preparadas en el momento en que las pides · Precios especiales para eventos y escuelas</p>
+  <p>Precios sujetos a cambio sin previo aviso</p>
 </footer>
+
 
 <!-- ══════════ MODAL: ELEGIR SABORES ══════════ -->
 <div id="pickerModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
@@ -548,8 +813,10 @@
     </div>
     <div id="singleArea"></div>
     <div id="visualPreview" class="visual-box"></div>
-    <div id="extrasRow" class="extras-row"></div>
-    <div id="pickingLabel" class="picking-label"></div>
+    <div class="opts-row">
+      <div id="choiceArea"></div>
+      <div id="extrasRow" class="extras-row"></div>
+    </div>
     <div id="flavorList" class="flavor-list"></div>
     <p id="pickerTotal" class="picker-total"></p>
     <button class="order-btn" type="button" onclick="confirmPicker()">Agregar al carrito</button>
@@ -610,92 +877,111 @@
 
 <script>
   // ══ CONFIGURACIÓN ══
-  const WHATSAPP = "525521270522";   // 52 + número a 10 dígitos (55 2127 0522)
+  const WHATSAPP = "525656403737";   // 52 + número a 10 dígitos (56 5640 3737)
   // ══ DATOS PARA TRANSFERENCIA ══  ⚠️ CAMBIA ESTOS 3 DATOS POR LOS REALES
   const BANK_CLABE = "0000 0000 0000 0000 00";   // CLABE de 18 dígitos
   const BANK_NAME = "Banco";                     // Nombre del banco
   const BANK_TITULAR = "Antonio's Pizza";        // Nombre del titular
   const MAX_CAMBIO = 50;
 
-  // ══ ESPECIALIDADES ══
+  // ══ MENÚ ══
+  // t = categoría de precio en el 2×1 (ver PRECIO_2X1)
+  // x = costo extra por sección en pizzas rectangulares (solo mariscos)
+  // g = grupo en la lista de sabores
   const NORMALES = [
-    {n:"ANTONIO'S ESPECIAL", i:"Jamón de pavo, atún, tocino, jitomate, aguacate y queso"},
-    {n:"MIXTA",              i:"Cebolla, chorizo, pimiento verde, tocino, aguacate y queso"},
-    {n:"SUPREMA",            i:"Salchicha, chorizo, tocino, cebolla, pimiento verde, aguacate y queso"},
-    {n:"PIRATA",             i:"Chipotle, cebolla, atún, aguacate y queso"},
-    {n:"ITALIANA",           i:"Salchicha, peperoni, cebolla, pollo, champiñones, jamón de pavo, poblano y queso"},
-    {n:"PASTOR",             i:"Salchicha, chorizo, tocino, pierna y queso"},
-    {n:"VERACRUZANA",        i:"Jamón de pavo, pollo, pimiento verde, elote, jalapeños y queso"},
-    {n:"HAWAIANA",           i:"Carne al pastor, piña, cebolla, chipotle y queso"},
-    {n:"COMBINADA",          i:"Jamón de pavo, piña, cereza, chorizo, champiñones, pimiento verde y queso"},
-    {n:"VEGETARIANA",        i:"Pimiento verde, cebolla, champiñones, elote y queso"},
-    {n:"MEXICANA",           i:"Pierna, pollo, chorizo, poblano, pimiento verde, aceituna y queso"},
-    {n:"AMERICANA",          i:"Peperoni, champiñones, pimiento verde, aceituna y queso"},
-    {n:"AZTECA",             i:"Jalapeños, frijoles, cebolla y queso"},
+    {n:"ANTONIO ESPECIAL",   i:"Atún, jitomate, jamón, tocino, pierna, aguacate y queso"},
+    {n:"HAWAIANA",           i:"Piña, jamón de pavo y queso"},
+    {n:"LA HAWAIANA CHERRY", i:"Piña, jamón de pavo, cereza y queso"},
+    {n:"COMBINADA",          i:"Jamón de pavo, salami, chorizo, champiñones, pimiento verde, cebolla y queso"},
+    {n:"MEXICANA ESPECIAL",  i:"Pierna, pollo, chorizo, jamón de pavo, chile poblano y queso"},
+    {n:"AZTECA",             i:"Chorizo, frijoles, cebolla, jalapeños y queso"},
     {n:"RANCHERA",           i:"Jalapeños, frijoles, chorizo, tocino, aguacate y queso"},
-    {n:"MÁGICA",             i:"Champiñones, pimiento verde, peperoni, jalapeños, piña y queso"},
-    {n:"CLÁSICA ANTON'S",    i:"Pimiento verde, champiñones, aceituna y queso"},
-    {n:"ORIENTAL",           i:"Champiñones y rajas"},
-    {n:"POBLANA",            i:"Pollo, champiñones, jalapeños y queso"},
-    {n:"HAWAIANA CHERRY",    i:"Piña, jamón de pavo y queso"}
-  ].map(function(x) { x.mar = false; return x; });
+    {n:"MEXICANA NORMAL",    i:"Pierna, pollo, jalapeños, aguacate y queso"},
+    {n:"CUBANA",             i:"Atún, jitomate, jalapeños, tocino, pierna, mayonesa, aguacate y queso"},
+    {n:"MAFIOSA",            i:"Jalapeños, salami, tocino, champiñones, aguacate y queso"},
+    {n:"PASTOR ESPECIAL",    i:"Carne al pastor, piña, cebolla, chipotle o jalapeños y queso"},
+    {n:"PASTOR TRADICIONAL", i:"Jamón de pavo, piña, chorizo, tocino y queso"},
+    {n:"CARNES FRÍAS",       i:"Tocino, jamón de pavo, salchicha, salami, pierna y queso"},
+    {n:"SUPREMA",            i:"Salchicha, chorizo, tocino, cebolla, pimiento verde, aguacate y queso"},
+    {n:"ORIENTAL",           i:"Pollo, elote, champiñones y queso"},
+    {n:"ITALIANA",           i:"Salchicha, peperoni, champiñones, pimiento verde, pollo y queso"},
+    {n:"AMERICANA",          i:"Champiñones, peperoni, pimiento verde, aceitunas y queso"},
+    {n:"POBLANA",            i:"Pollo, champiñones, aguacate, jalapeños y queso"},
+    {n:"VEGETARIANA",        i:"Pimiento verde, cebolla, piña, champiñones, elote y queso"},
+    {n:"MÁGICA",             i:"Champiñones, pimiento verde, peperoni, piña, jalapeños y queso"},
+    {n:"EXCÉNTRICA",         i:"Salchicha, jamón, tocino, pierna, jitomate, aguacate y queso"},
+    {n:"CAMPESTRE",          i:"Pimiento verde, champiñones, jamón y queso"},
+    {n:"BIENVENIDA",         i:"Salami, champiñones, pimiento verde, jalapeños y queso"},
+    {n:"MIXTA",              i:"Cebolla, chorizo, pimiento verde, tocino, aguacate y queso"},
+    {n:"MICHOACANA",         i:"Aceitunas, chipotle, cebolla, atún, aguacate y queso"},
+    {n:"VERACRUZANA",        i:"Atún, cebolla, pimiento verde, elote, jalapeños y queso"}
+  ].map(function(x) { x.mar = false; x.t = 1; x.g = "Especialidades"; return x; });
 
-  // t = categoría para precio 2×1 (1 = mariscos, 2 = Marinera Especial)
-  // x = costo extra por sección en pizzas rectangulares
-  const MARISCOS = [
-    {n:"LA MARINERA ESPECIAL", i:"Camarón, ostión, atún, mejillón, cebolla, aceituna, chipotle y queso", t:2, x:30},
-    {n:"MARINERA",             i:"Atún, camarón, aceitunas, cebolla y queso", t:1, x:25},
-    {n:"TROPICAL",             i:"Camarón, piña y queso", t:1, x:25},
-    {n:"CAMPECHANA",           i:"Ostión, camarón, champiñones y queso", t:1, x:25}
-  ].map(function(x) { x.mar = true; return x; });
-
-  // Sencillas de mariscos (solo en pizzas rectangulares, costo extra por sección)
-  const SENCILLAS_MAR = ["ATÚN", "CAMARÓN", "OSTIÓN", "MEJILLÓN"].map(function(n) {
-    return {n:"SENCILLA DE " + n, i:"1 ingrediente de mariscos y queso", mar:true, t:1, x:20};
+  // Escoge tu ingrediente favorito (sencilla de 1 ingrediente)
+  const SENCILLAS = ["CHAMPIÑÓN", "POLLO", "TOCINO", "JAMÓN", "SALCHICHA", "CHORIZO", "SALAMI", "PEPERONI", "PIERNA", "CARNE AL PASTOR", "ELOTE"].map(function(n) {
+    return {n:n, i:"", mar:false, t:0, g:"Sencillas (1 ingrediente)"};
   });
 
-  // Precios 2×1 por tamaño: [normal, mariscos, Marinera Especial]
-  const PRECIO_2X1 = {
-    chica:    [190, 265, 310],
-    mediana:  [260, 360, 390],
-    grande:   [360, 400, 440],
-    familiar: [410, 500, 560]
-  };
+  const MARISCOS = [
+    {n:"MARINERA NORMAL",   i:"Atún, camarón, aceitunas, cebolla y queso", t:3, x:25},
+    {n:"TROPICAL",          i:"Camarón y piña", t:3, x:25},
+    {n:"CAMPECHANA",        i:"Ostión y camarón", t:3, x:25},
+    {n:"MARINERA ESPECIAL", i:"Camarón, ostión, atún, mejillones, cebolla, aceitunas, aguacate y queso", t:4, x:30}
+  ].map(function(x) { x.mar = true; x.g = "Mariscos"; return x; });
 
-  function findFlavor(name) { return NORMALES.concat(MARISCOS, SENCILLAS_MAR).find(function(x) { return x.n === name; }) || {}; }
+  const SENCILLAS_MAR = ["MEJILLÓN", "OSTIÓN AHUMADO", "CAMARÓN", "ATÚN"].map(function(n) {
+    return {n:n, i:"", mar:true, t:2, x:20, g:"Sencillas de mariscos"};
+  });
+
+  // Precios 2×1 por tamaño, por categoría:
+  //            [sencilla, especialidad, sencilla mariscos, marinera/tropical/campechana, marinera especial]
+  const PRECIO_2X1 = {
+    chica:    [185, 210, 240, 285, 325],
+    mediana:  [275, 290, 330, 385, 405],
+    grande:   [325, 365, 385, 420, 465],
+    familiar: [375, 415, 440, 480, 520]
+  };
+  const TIER_NAMES = ["sencilla", "especialidad", "sencilla de mariscos", "mariscos", "Marinera Especial"];
+
+  const ALL_FLAVORS = NORMALES.concat(SENCILLAS, MARISCOS, SENCILLAS_MAR);
+  function findFlavor(name) { return ALL_FLAVORS.find(function(x) { return x.n === name; }) || {}; }
   function currentTier() {
-    let t = 0;
-    slots.forEach(function(s) { [s.sabor1, s.mitad ? s.sabor2 : ""].forEach(function(n) { if (n) t = Math.max(t, findFlavor(n).t || 0); }); });
-    return t;
+    let t = -1;
+    slots.forEach(function(s) { [s.sabor1, s.mitad ? s.sabor2 : ""].forEach(function(n) { if (n) t = Math.max(t, findFlavor(n).t); }); });
+    return t < 0 ? 1 : t;
   }
   function gridExtra(slot) { return slot.sabor1 ? (findFlavor(slot.sabor1).x || 0) : 0; }
 
-  const ORILLA = {chica:20, mediana:25, grande:30, familiar:35};
-  const MITAD = 10;
+  const ORILLA = {chica:20, mediana:25, grande:30, familiar:35};   // orilla rellena de queso (extra)
+  const MITAD = 10;                                                // mitad y mitad (extra)
 
   // ══ PRODUCTOS ══
-  // kind "circle": pizzas redondas (o corazón) con mitad y mitad / orilla opcional
-  // kind "grid": pizzas rectangulares/cuadradas por secciones, sin mariscos
+  // kind "circle": pizzas redondas (o corazón) · kind "grid": rectangulares/cuadradas por secciones
+  // pool: "todo" (2×1), "rect" (especialidades + mariscos con extra), "normal" (sin mariscos)
   const ITEMS = {
-    bigtono:  {kind:"grid", shape:"rect",   type:"Big Toño",   limit:4, price:620, details:["40×70 cm · 32 rebanadas", "Orilla rellena de queso crema", "Refresco 2 L gratis"]},
-    megatono: {kind:"grid", shape:"rect",   type:"Mega Toño",  limit:4, price:440, details:["38×52 cm · 24 rebanadas", "Orilla rellena de queso crema", "Refresco 2 L gratis"]},
-    c4:       {kind:"grid", shape:"square", type:"Pizza C4",   limit:4, price:340, details:["40×40 cm · 16 rebanadas", "Orilla rellena de queso crema"]},
-    barra:    {kind:"grid", shape:"rect barra", type:"Pizza Barra", limit:2, price:260, details:["20×52 cm · 12 rebanadas", "Orilla rellena de queso crema"]},
-    corazon:  {kind:"circle", shape:"heart", type:"Pizza de Corazón", limit:1, price:220, mar:true, mitad:true, orilla:false, details:["Orilla rellena de queso crema incluida"]},
-    chica:    {kind:"circle", type:"Chica 2×1",    limit:2, price:190, size:"chica",    mar:true, mitad:true, orilla:true, single:true, tiered:true},
-    mediana:  {kind:"circle", type:"Mediana 2×1",  limit:2, price:260, size:"mediana",  mar:true, mitad:true, orilla:true, single:true, tiered:true},
-    grande:   {kind:"circle", type:"Grande 2×1",   limit:2, price:360, size:"grande",   mar:true, mitad:true, orilla:true, single:true, tiered:true},
-    familiar: {kind:"circle", type:"Familiar 2×1", limit:2, price:410, size:"familiar", mar:true, mitad:true, orilla:true, single:true, tiered:true},
-    paq1:     {kind:"circle", type:"Paquete 1 – Familiar + Dedos de Queso", limit:1, price:290, size:"familiar", mar:false, mitad:true, orilla:true, details:["Dedos de queso", "Refresco 2 L"]},
-    paq3:     {kind:"circle", type:"Paquete 3 – 3 Pizzas Grandes",          limit:3, price:465, size:"grande",   mar:false, mitad:true, orilla:true, details:["Refresco 2 L gratis"]}
+    gigante:  {kind:"grid", shape:"rect",       type:"Gigante Don Toño", limit:4, price:629, pool:"rect"},
+    mega:     {kind:"grid", shape:"rect",       type:"Mega Antonio's",   limit:4, price:430, pool:"rect"},
+    c4:       {kind:"grid", shape:"square",     type:"Pizza C-4",        limit:4, price:365, pool:"rect"},
+    barra:    {kind:"grid", shape:"rect barra", type:"Pizza Barra",      limit:2, price:315, pool:"rect"},
+    corazon:  {kind:"circle", shape:"heart", type:"Pizza de Corazón", limit:1, price:265, pool:"normal", mitad:true},
+    mini:     {kind:"circle", type:"2 Pizzas Mini", limit:2, price:105, pool:"normal"},
+    chica:    {kind:"circle", type:"Chica 2×1",    limit:2, size:"chica",    pool:"todo", mitad:true, orilla:true, ajonjoli:true, single:true, tiered:true},
+    mediana:  {kind:"circle", type:"Mediana 2×1",  limit:2, size:"mediana",  pool:"todo", mitad:true, orilla:true, ajonjoli:true, single:true, tiered:true},
+    grande:   {kind:"circle", type:"Grande 2×1",   limit:2, size:"grande",   pool:"todo", mitad:true, orilla:true, ajonjoli:true, single:true, tiered:true},
+    familiar: {kind:"circle", type:"Familiar 2×1", limit:2, size:"familiar", pool:"todo", mitad:true, orilla:true, ajonjoli:true, single:true, tiered:true},
+    pakt1:    {kind:"circle", type:"Pakt 1 – 1 Pizza Familiar", limit:1, price:285, size:"familiar", pool:"normal", mitad:true, orilla:true, ajonjoli:true,
+               choices:["3 refrescos de lata", "1 espagueti"]},
+    pakt3:    {kind:"circle", type:"Pakt 3 – 2 Grandes + Ref.\u00a02\u00a0lts",       limit:2, price:395, size:"grande",   pool:"normal", mitad:true, orilla:true, ajonjoli:true},
+    pakt4:    {kind:"circle", type:"Pakt 4 – Grande c/orilla + Ref.", limit:1, price:280, size:"grande", pool:"normal", mitad:true, ajonjoli:true},
+    pakt5:    {kind:"circle", type:"Pakt 5 – 3 Grandes + Ref.\u00a02\u00a0lts",       limit:3, price:485, size:"grande",   pool:"normal", mitad:true, orilla:true, ajonjoli:true}
   };
 
   const DIRECT = {
-    paq2:  {type:"Paquete 2 – 2 Grandes Hawaianas", price:299, details:["Pizza Grande Hawaiana", "Pizza Grande Hawaiana"]},
-    nueva: {type:"Nueva Familiar – Pollo BBQ + Cochinita Pibil", price:270, details:[]},
-    ref2:  {type:"Refresco 2 L", price:45, details:[]},
-    ref1:  {type:"Refresco 1 L", price:35, details:[]},
-    lata:  {type:"Refresco de lata", price:25, details:[]}
+    promo:   {type:"Promo – 2 Pizzas Grandes", price:320, details:["Hawaiana", "Peperoni"]},
+    pakt2:   {type:"Pakt 2 – 2 Grandes Hawaianas", price:330, details:["Hawaiana", "Hawaiana"]},
+    spag:    {type:"Espagueti", price:125, details:[]},
+    botella: {type:"Refresco en botella", price:35, details:[]},
+    lata:    {type:"Refresco en lata", price:30, details:[]}
   };
 
   // ══ ESTADO ══
@@ -726,26 +1012,38 @@
     if (e.key === "Escape") document.querySelectorAll(".modal.open").forEach(function(m) { closeModal(m.id); });
   });
 
-  function newSlot() { return {sabor1:"", sabor2:"", mitad:false, orilla:false}; }
+  // "PASTOR ESPECIAL" -> "Pastor Especial"
+  function nice(n) {
+    return n.toLowerCase().split(" ").map(function(w, k) { return (k > 0 && ["de", "la", "y"].indexOf(w) >= 0) ? w : w.charAt(0).toUpperCase() + w.slice(1); }).join(" ");
+  }
+  function newSlot() { return {sabor1:"", sabor2:"", mitad:false, orilla:false, ajonjoli:false}; }
 
   // ══ ARMAR PIZZA ══
   function order(key) {
     const item = ITEMS[key];
-    cp = Object.assign({}, item, {isSingle:false, limit:item.limit, baseLimit:item.limit});
-    cp.pool = item.kind === "grid" ? NORMALES.concat(MARISCOS, SENCILLAS_MAR) : (item.mar ? NORMALES.concat(MARISCOS) : NORMALES);
+    cp = Object.assign({}, item, {isSingle:false, limit:item.limit, baseLimit:item.limit, choice:item.choices ? item.choices[0] : ""});
+    cp.pool = item.pool === "todo" ? NORMALES.concat(SENCILLAS, MARISCOS, SENCILLAS_MAR) : item.pool === "rect" ? NORMALES.concat(MARISCOS, SENCILLAS_MAR) : NORMALES;
     slots = [];
     for (let i = 0; i < cp.limit; i++) slots.push(newSlot());
     activePizza = 0; activeHalf = 1;
     document.getElementById("pickerTitle").textContent = cp.type;
     let sub;
-    if (cp.kind === "grid") sub = "Elige " + cp.limit + " especialidades. La orilla de queso ya va incluida. Los mariscos tienen costo extra por sección.";
-    else if (cp.tiered) sub = "Si eliges mariscos, se cobra el precio de mariscos.";
-    else if (cp.limit > 1) sub = cp.mar ? "" : "No aplica mariscos.";
-    else sub = "Elige tu especialidad." + (cp.mar ? "" : " No aplica mariscos.");
+    if (cp.kind === "grid") sub = "Elige " + cp.limit + " especialidades. Los mariscos tienen costo extra por sección.";
+    else if (cp.tiered) sub = "";
+    else sub = "";
     document.getElementById("pickerSubtitle").textContent = sub;
     renderPicker();
     openModal("pickerModal");
     document.getElementById("pickerModal").scrollTop = 0;
+    fitTitle();
+  }
+
+  // achica el título lo necesario para que quede en un solo renglón
+  function fitTitle() {
+    const el = document.getElementById("pickerTitle");
+    let size = 26;
+    el.style.fontSize = size + "px";
+    while (el.scrollWidth > el.clientWidth && size > 15) { size -= 1; el.style.fontSize = size + "px"; }
   }
 
   function toggleSingle() {
@@ -759,12 +1057,15 @@
 
   function renderPicker() {
     const single = document.getElementById("singleArea");
+    document.getElementById("choiceArea").innerHTML = cp.choices
+      ? '<div class="choice-box"><span class="choice-title">Elige tu complemento:</span>' +
+        cp.choices.map(function(c, k) { return '<label class="opt-line"><input type="radio" name="pkChoice" ' + (cp.choice === c ? "checked" : "") + ' onchange="cp.choice=cp.choices[' + k + ']"> ' + c + '</label>'; }).join("") + '</div>'
+      : "";
     single.innerHTML = cp.single
       ? '<label class="single-line"><input type="checkbox" id="singleChk" ' + (cp.isSingle ? "checked" : "") + ' onchange="toggleSingle()"> <span>O si prefieres, <strong style=\"color:#fff\">1 pizza con 40% de descuento</strong></span></label>'
       : "";
     renderVisual();
     renderExtras();
-    renderPickingLabel();
     renderFlavorList();
     document.getElementById("pickerTotal").textContent = totalText();
   }
@@ -788,31 +1089,27 @@
       });
       return;
     }
-    box.className = "visual-box shape-circle";
     const n = slots.length;
-    const size = n <= 1 ? 190 : n === 2 ? 150 : 118;
+    box.className = "visual-box shape-circle" + (n === 3 ? " tri" : "");
+    // tamaño según cuántas pizzas (3 pizzas = triángulo: 2 arriba, 1 abajo)
+    const size = n <= 1 ? "min(240px, calc(100vw - 120px))" : n === 2 ? "min(158px, calc((100vw - 84px) / 2))" : "min(230px, calc((100vw - 62px) / 2))";
+    if (n === 3) box.style.setProperty("--s", size);
     slots.forEach(function(slot, i) {
       const wrap = document.createElement("div");
       wrap.className = "pizza-circle-wrap";
       const circle = document.createElement("div");
       circle.className = "pizza-circle" + (cp.shape === "heart" ? " pizza-heart" : "");
-      circle.style.width = size + "px";
-      circle.style.height = size + "px";
+      circle.style.width = size;
+      circle.style.height = size;
       let host = circle;
       if (cp.shape === "heart") { host = document.createElement("div"); host.className = "heart-inner"; circle.appendChild(host); }
       if (slot.mitad) {
         host.appendChild(makeFill(i, 1, "top", slot.sabor1 || "Mitad 1"));
         host.appendChild(makeFill(i, 2, "bottom", slot.sabor2 || "Mitad 2"));
       } else {
-        host.appendChild(makeFill(i, 1, "", slot.sabor1 || (n > 1 ? "Sabor " + (i + 1) : "Elige sabor")));
+        host.appendChild(makeFill(i, 1, "", slot.sabor1 || (n > 1 ? "Pizza " + (i + 1) : "Elige sabor")));
       }
       wrap.appendChild(circle);
-      if (n > 1) {
-        const cap = document.createElement("span");
-        cap.className = "pizza-caption";
-        cap.textContent = "Pizza " + (i + 1);
-        wrap.appendChild(cap);
-      }
       box.appendChild(wrap);
     });
   }
@@ -832,17 +1129,41 @@
 
   function renderExtras() {
     const row = document.getElementById("extrasRow");
-    if (cp.kind !== "circle" || (!cp.mitad && !cp.orilla)) { row.style.display = "none"; row.innerHTML = ""; return; }
-    row.style.display = "grid";
-    row.style.gridTemplateColumns = "repeat(" + Math.min(slots.length, 3) + ", minmax(0,1fr))";
+    const wrap = row.parentNode;
+    if (cp.kind !== "circle" || (!cp.mitad && !cp.orilla && !cp.ajonjoli)) { row.style.display = "none"; row.innerHTML = ""; wrap.classList.remove("collapsed"); return; }
     const op = ORILLA[cp.size] || 0;
-    row.innerHTML = slots.map(function(slot, i) {
-      return '<div class="extras-col"><div class="extra-title">' + (slots.length > 1 ? "Pizza " + (i + 1) : "Opciones") + '</div>' +
-        (cp.mitad ? '<label class="opt-line"><input type="checkbox" ' + (slot.mitad ? "checked" : "") + ' onchange="toggleMitad(' + i + ', this.checked)"> Mitad y mitad +$' + MITAD + '</label>' : "") +
-        (cp.orilla && op ? '<label class="opt-line"><input type="checkbox" ' + (slot.orilla ? "checked" : "") + ' onchange="toggleOrilla(' + i + ', this.checked)"> Orilla de queso +$' + op + '</label>' : "") +
+    const many = slots.length > 1;
+    const names = [cp.mitad ? "½ y ½" : "", cp.orilla && op ? "orilla" : "", cp.ajonjoli ? "ajonjolí" : ""].filter(Boolean).join(" · ");
+    row.style.display = "block";
+    // cerradas: solo un botón que abre hacia abajo
+    if (!cp.optsOpen) {
+      wrap.classList.add("collapsed");
+      row.innerHTML = '<button type="button" class="opts-toggle" onclick="cp.optsOpen=true; renderPicker()"><span>Opciones <small>(' + names + ')</small></span><b>▾</b></button>';
+      return;
+    }
+    wrap.classList.remove("collapsed");
+    const col = function(slot, i, cls) {
+      return '<div class="extras-col' + cls + '"><span class="extra-title">' + (many ? "Pizza " + (i + 1) + ":" : "Opciones:") + '</span>' +
+        (cp.mitad ? '<label class="opt-line"><input type="checkbox" ' + (slot.mitad ? "checked" : "") + ' onchange="toggleMitad(' + i + ', this.checked)"> ' + (many ? '½ y ½' : 'Mitad y mitad') + ' +$' + MITAD + '</label>' : "") +
+        (cp.orilla && op ? '<label class="opt-line"><input type="checkbox" ' + (slot.orilla ? "checked" : "") + ' onchange="toggleOrilla(' + i + ', this.checked)"> ' + (many ? 'Orilla' : 'Orilla de queso') + ' +$' + op + '</label>' : "") +
+        (cp.ajonjoli ? '<label class="opt-line"><input type="checkbox" ' + (slot.ajonjoli ? "checked" : "") + ' onchange="slots[' + i + '].ajonjoli=this.checked"> ' + (many ? 'Ajonjolí' : 'Ajonjolí gratis') + '</label>' : "") +
         '</div>';
-    }).join("");
+    };
+    const head = '<button type="button" class="opts-toggle open" onclick="cp.optsOpen=false; renderPicker()"><span>Ocultar opciones</span><b>▴</b></button>';
+    // 3 pizzas: opciones de la 1 y la 2 a los lados de la pizza 3; las de la 3 abajo en un renglón
+    if (slots.length === 3) {
+      const box = document.getElementById("visualPreview");
+      const L = document.createElement("div"); L.className = "side-opts left"; L.innerHTML = col(slots[0], 0, "");
+      const R = document.createElement("div"); R.className = "side-opts right"; R.innerHTML = col(slots[1], 1, "");
+      box.appendChild(L); box.appendChild(R);
+      row.innerHTML = col(slots[2], 2, " inline") + head;
+      return;
+    }
+    row.innerHTML = '<div class="extras-grid" style="grid-template-columns:repeat(' + Math.min(slots.length, 3) + ', minmax(0,1fr))">' +
+      slots.map(function(slot, i) { return col(slot, i, slots.length === 1 ? " one" : ""); }).join("") + '</div>' + head;
   }
+
+
 
   function toggleMitad(i, on) {
     slots[i].mitad = on;
@@ -869,14 +1190,15 @@
     const row = function(x, idx) {
       let tagTxt = "";
       if (x.mar && cp.kind === "grid") tagTxt = "+$" + x.x + " por sección";
-      else if (x.mar && cp.tiered) tagTxt = (cp.isSingle ? "1 pizza " + money(Math.round(PRECIO_2X1[cp.size][x.t] * (1 - DESC_1_PIZZA))) : "2×1 " + money(PRECIO_2X1[cp.size][x.t]));
-      return '<div class="option-row' + (x.mar ? " mar" : "") + '"><div><strong>' + x.n + '</strong><small>' + x.i + '</small>' +
+      else if (cp.tiered && x.t !== 1) tagTxt = (cp.isSingle ? "1 pizza " + money(Math.round(PRECIO_2X1[cp.size][x.t] * (1 - DESC_1_PIZZA))) : "2×1 " + money(PRECIO_2X1[cp.size][x.t]));
+      return '<div class="option-row' + (x.mar ? " mar" : "") + (x.i ? "" : " compact") + '"><div><strong>' + x.n + '</strong>' + (x.i ? '<small>' + x.i + '</small>' : '') +
         (tagTxt ? '<span class="tier-price">' + tagTxt + '</span>' : '') + '</div>' +
         '<button class="flavor-btn" type="button" aria-label="Elegir ' + x.n.replace(/"/g, "") + '" onclick="selectFlavor(' + idx + ')">+</button></div>';
     };
-    let html = '<div class="flavor-group">🍕 Especialidades</div>';
+    const ICON = {"Especialidades":"🍕 ", "Sencillas (1 ingrediente)":"🧀 ", "Mariscos":"🌊 ", "Sencillas de mariscos":"🦐 "};
+    let html = "";
     cp.pool.forEach(function(x, idx) {
-      if (x.mar && (idx === 0 || !cp.pool[idx - 1].mar)) html += '<div class="flavor-group mar">🌊 Mariscos</div>';
+      if (idx === 0 || cp.pool[idx - 1].g !== x.g) html += '<div class="flavor-group' + (x.mar ? " mar" : "") + '">' + (ICON[x.g] || "") + x.g + '</div>';
       html += row(x, idx);
     });
     list.innerHTML = html;
@@ -914,7 +1236,7 @@
 
   function totalText() {
     const parts = [];
-    if (cp.tiered && currentTier() > 0) parts.push("Precio mariscos " + money(basePrice()));
+    if (cp.tiered && currentTier() !== 1) parts.push("Precio " + TIER_NAMES[currentTier()] + " " + money(basePrice()));
     if (cp.kind === "grid") slots.forEach(function(s, i) { if (gridExtra(s)) parts.push("S" + (i + 1) + ": mariscos +$" + gridExtra(s)); });
     if (cp.kind === "circle") {
       const op = ORILLA[cp.size] || 0;
@@ -937,13 +1259,12 @@
     if (cp.isSingle) details.push("1 pizza con 40% de descuento");
     const op = ORILLA[cp.size] || 0;
     slots.forEach(function(s, i) {
-      let d = cp.kind === "grid" ? "Sabor " + (i + 1) + ": " : (slots.length > 1 ? "Pizza " + (i + 1) + ": " : "Pizza: ");
-      d += s.mitad ? s.sabor1 + " / " + s.sabor2 + " (mitad y mitad +$" + MITAD + ")" : s.sabor1;
-      if (cp.kind === "grid" && gridExtra(s)) d += " (mariscos +$" + gridExtra(s) + ")";
-      if (s.orilla) d += " + orilla de queso $" + op;
+      let d = s.mitad ? nice(s.sabor1) + " ½ " + nice(s.sabor2) : nice(s.sabor1);
+      if (s.orilla) d += " + orilla rellena";
+      if (s.ajonjoli) d += " + ajonjolí";
       details.push(d);
     });
-    cart.push({type: cp.isSingle ? cp.type.replace(" 2×1", " – 1 pizza") : cp.type, flavors:details, price:pickerTotal()});
+    cart.push({type: cp.isSingle ? cp.type.replace(" 2×1", " – 1 pizza") : cp.type + (cp.choice ? " + " + cp.choice : ""), flavors:details, price:pickerTotal()});
     closeModal("pickerModal");
     updateStats();
     toast("✔ " + cp.type + " agregado al carrito");
@@ -974,7 +1295,7 @@
     } else {
       box.innerHTML = cart.map(function(item, i) {
         return '<div class="cart-item"><button class="cart-remove" type="button" aria-label="Quitar" onclick="removeItem(' + i + ')">✕</button><strong>' + item.type + '</strong> <span style="color:var(--oro);font-weight:800">' + money(item.price) + '</span>' +
-          (item.flavors.length ? '<div style="margin-top:6px">' + item.flavors.map(function(d) { return "<div>— " + d + "</div>"; }).join("") + "</div>" : "") + "</div>";
+          (item.flavors.length ? '<div style="margin-top:6px">' + item.flavors.map(function(d) { return "<div>• " + d + "</div>"; }).join("") + "</div>" : "") + "</div>";
       }).join("");
     }
     updateStats();
@@ -1074,7 +1395,7 @@
     lines.push("----------------");
     cart.forEach(function(item) {
       lines.push("• " + item.type + " " + money(item.price));
-      item.flavors.forEach(function(d) { lines.push("   – " + d); });
+      item.flavors.forEach(function(d) { lines.push("   • " + d); });
     });
     lines.push("----------------");
     lines.push("Pago: " + selectedPay);
