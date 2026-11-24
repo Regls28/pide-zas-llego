@@ -339,21 +339,20 @@
     .product.red::before { background: linear-gradient(90deg, var(--logo-green) 0 33.3%, #fff 33.3% 66.6%, var(--red) 66.6% 100%); }
 
     /* Foto de cada tarjeta (se carga desde la carpeta images) */
+    /* La foto va entre el nombre del paquete y la descripcion / boton */
     .product-img {
       display: block;
-      width: calc(100% + 34px);
-      margin: -17px -17px 2px;
-      aspect-ratio: 5 / 3;
-      object-fit: cover;
-      background: #072a14;
-      border-bottom: 1px solid var(--line);
+      width: 100%;
+      margin: 2px 0;
+      aspect-ratio: 5 / 3;   /* fotos de 1000 x 600 px */
+      object-fit: contain;
+      border-radius: 8px;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,.07), rgba(0,0,0,.18));
     }
 
     .product::before { z-index: 2; }
     .price { z-index: 3; }
 
-    .product.has-img .price { top: 14px; }
-    .product.has-img h3 { margin-right: 0; }
 
     .product h3 {
       margin: 10px 86px 0 0;
@@ -1909,7 +1908,9 @@
             img.className = "product-img";
             img.alt = title;
             img.loading = "lazy";
-            card.insertBefore(img, card.firstChild);
+            const h3 = card.querySelector("h3");
+            if (h3) h3.insertAdjacentElement("afterend", img);
+            else card.insertBefore(img, card.firstChild);
             card.classList.add("has-img");
           };
           img.onerror = function() { i++; tryNext(); };
