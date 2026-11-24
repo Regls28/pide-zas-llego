@@ -354,6 +354,37 @@
     .price { z-index: 3; }
 
 
+    /* ---------- Tarjetas 2x1 con dibujo de las 2 pizzas ---------- */
+    .card-2x1 { min-height: 0; gap: 8px; }
+    .card-2x1 h3 { white-space: nowrap; font-size: 1.02rem; margin-right: 74px; }
+    .card-2x1 .price { font-size: 1rem; padding: 5px 10px; }
+
+    .pizza-art {
+      display: flex;
+      justify-content: center;
+      gap: 6%;
+      padding: 12px 8px;
+      border-radius: 8px;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,.07), rgba(0,0,0,.25));
+    }
+
+    .pizza-art svg {
+      width: 47%;
+      max-width: 130px;
+      height: auto;
+      filter: drop-shadow(0 6px 8px rgba(0,0,0,.45));
+    }
+
+    .card-2x1.has-img .pizza-art { display: none; }
+
+    .card-2x1 .pizza-info {
+      text-align: center;
+      color: var(--cream);
+      font-size: .86rem;
+    }
+
+    .card-2x1 .btn { margin-top: auto; }
+
     .product h3 {
       margin: 10px 86px 0 0;
       color: #fff;
@@ -920,6 +951,12 @@
     @media (max-width: 860px) {
       .menu-grid, .menu-grid.two, .menu-grid.four { grid-template-columns: 1fr; }
 
+      .menu-grid.grid-2x1 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .card-2x1 { padding: 12px 10px; }
+      .card-2x1 h3 { margin: 6px 50px 0 0; font-size: clamp(.78rem, 3.5vw, 1rem); white-space: nowrap; letter-spacing: 0; }
+      .card-2x1 .price { top: 10px; right: 8px; padding: 4px 7px; font-size: .82rem; border-width: 1.5px; }
+      .card-2x1 .pizza-info { font-size: .76rem; }
+      .card-2x1 .btn { min-height: 42px; padding: 10px 6px; font-size: .86rem; }
     }
 
     @media (max-width: 560px) {
@@ -1002,35 +1039,35 @@
     <section id="dos-por-uno">
       <div class="section-title">
         <h2>Especialidades Richard al 2x1</h2>
-        <p>Elige 2 pizzas del mismo tamaño. También puedes llevar una sola pizza con 40% de descuento.</p>
+        <p>Llévate 2 pizzas del mismo tamaño y elige el sabor de cada una entre nuestras 21 especialidades.</p>
       </div>
-      <div class="menu-grid four">
-        <article data-img="2x1-chica" class="product">
+      <div class="menu-grid four grid-2x1">
+        <article data-img="2x1-chica" class="product card-2x1">
           <span class="price">$200</span>
           <h3>Chica 2x1</h3>
-          <p>Dos pizzas chicas de especialidad a elegir.</p>
-          <div class="meta"><span class="tag">2 sabores</span><span class="tag">2x1</span></div>
+          <div class="pizza-art" data-slices="6" aria-hidden="true"></div>
+          <p class="pizza-info">2 pizzas chicas</p>
           <button class="btn full" onclick="openTwoForOne('Chica', 200, 'chica')">Elegir sabores</button>
         </article>
-        <article data-img="2x1-mediana" class="product">
+        <article data-img="2x1-mediana" class="product card-2x1">
           <span class="price">$265</span>
           <h3>Mediana 2x1</h3>
-          <p>Dos pizzas medianas de especialidad a elegir.</p>
-          <div class="meta"><span class="tag">2 sabores</span><span class="tag">2x1</span></div>
+          <div class="pizza-art" data-slices="8" aria-hidden="true"></div>
+          <p class="pizza-info">2 pizzas medianas</p>
           <button class="btn full" onclick="openTwoForOne('Mediana', 265, 'mediana')">Elegir sabores</button>
         </article>
-        <article data-img="2x1-grande" class="product">
+        <article data-img="2x1-grande" class="product card-2x1">
           <span class="price">$320</span>
           <h3>Grande 2x1</h3>
-          <p>Dos pizzas grandes de especialidad a elegir.</p>
-          <div class="meta"><span class="tag">2 sabores</span><span class="tag">2x1</span></div>
+          <div class="pizza-art" data-slices="8" aria-hidden="true"></div>
+          <p class="pizza-info">2 pizzas grandes</p>
           <button class="btn full" onclick="openTwoForOne('Grande', 320, 'grande')">Elegir sabores</button>
         </article>
-        <article data-img="2x1-familiar" class="product">
+        <article data-img="2x1-familiar" class="product card-2x1">
           <span class="price">$380</span>
           <h3>Familiar 2x1</h3>
-          <p>Dos pizzas familiares de especialidad a elegir.</p>
-          <div class="meta"><span class="tag">2 sabores</span><span class="tag">2x1</span></div>
+          <div class="pizza-art" data-slices="10" aria-hidden="true"></div>
+          <p class="pizza-info">2 pizzas familiares</p>
           <button class="btn full" onclick="openTwoForOne('Familiar', 380, 'familiar')">Elegir sabores</button>
         </article>
       </div>
@@ -1943,6 +1980,33 @@
       });
     }
 
+    /* ---------- Dibujo de pizza (SVG) para las tarjetas 2x1 ---------- */
+    function pizzaSVG(slices) {
+      const c = 50, rCheese = 37, rCrust = 45;
+      let lines = "", peps = "";
+      for (let i = 0; i < slices; i++) {
+        const a = (2 * Math.PI * i) / slices - Math.PI / 2;
+        lines += '<line x1="50" y1="50" x2="' + (c + rCheese * Math.cos(a)).toFixed(1) + '" y2="' + (c + rCheese * Math.sin(a)).toFixed(1) + '" stroke="#8a3d12" stroke-width="1.2" stroke-opacity=".7"/>';
+        const m = a + Math.PI / slices;
+        const px = c + 23 * Math.cos(m), py = c + 23 * Math.sin(m);
+        peps += '<circle cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" r="5.2" fill="#c62a1c"/><circle cx="' + (px - 1.4).toFixed(1) + '" cy="' + (py - 1.4).toFixed(1) + '" r="1.4" fill="#e45a45"/>';
+      }
+      return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
+        '<circle cx="50" cy="50" r="' + rCrust + '" fill="#d8842d"/>' +
+        '<circle cx="50" cy="50" r="' + (rCrust - 2.5) + '" fill="#e9a54a"/>' +
+        '<circle cx="50" cy="50" r="' + rCheese + '" fill="#f6c64f"/>' +
+        '<circle cx="50" cy="50" r="' + (rCheese - 3) + '" fill="#f8d36a" fill-opacity=".6"/>' +
+        lines + peps + '</svg>';
+    }
+
+    function renderPizzaArt() {
+      document.querySelectorAll(".pizza-art").forEach(function(box) {
+        const svg = pizzaSVG(parseInt(box.getAttribute("data-slices"), 10) || 8);
+        box.innerHTML = svg + svg;
+      });
+    }
+
+    renderPizzaArt();
     loadCardImages();
     loadCart();
     updateStats();
