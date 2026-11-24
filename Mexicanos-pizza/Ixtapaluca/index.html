@@ -52,6 +52,8 @@ select,input:not([type=checkbox]),textarea{background:#0f0f0f;border-color:#3d3d
 .toast{background:#111;border-color:var(--verde)}.toast.error{background:#8d0010}
 footer{color:#9a9a9a;text-shadow:none;border-top:4px solid transparent;border-image:var(--tricolor) 1;margin-top:30px}
 .grid .card .title-row h3{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:clamp(15px,4.3vw,21px)}.title-row{gap:5px}.grid.two .title-row .price{font-size:.88rem;padding:2px 7px;border-width:1.5px}
+.contact-row{display:grid;grid-template-columns:3fr 2fr;gap:7px}.contact-row .btn{font-size:clamp(13px,3.6vw,16px);white-space:nowrap}
+.phones .btn{background:linear-gradient(#e30613,#a3000e);border:1px solid #ff5a5a;color:#fff}.phones .btn:hover{border-color:var(--dorado)}
 </style>
 </head>
 <body>
@@ -66,7 +68,7 @@ footer{color:#9a9a9a;text-shadow:none;border-top:4px solid transparent;border-im
 <p class="address">Pedido mínimo para domicilio: $163.</p>
 <p class="address">Ven y disfruta con tu familia nuestras pizzas recién horneadas.</p>
 <div class="phones"><a class="btn" href="tel:+525559725860">55 5972-5860</a><a class="btn" href="tel:+525559727647">55 5972-7647</a></div>
-<a class="btn wa" href="https://wa.me/525519727710" target="_blank" rel="noopener">WhatsApp · 55 1972-7710</a>
+<div class="contact-row"><a class="btn wa" href="https://wa.me/525519727710" target="_blank" rel="noopener">WhatsApp · 55 1972-7710</a><a class="btn blue" href="https://www.google.com/maps/dir/?api=1&amp;destination=Boulevard%20San%20Buenaventura%20esq.%20Capul%C3%ADn%2C%20La%20Venta%2C%20Ixtapaluca%2C%20Estado%20de%20M%C3%A9xico" target="_blank" rel="noopener">📍 Cómo llegar</a></div>
 </section>
 <div id="menu"></div>
 </main>
