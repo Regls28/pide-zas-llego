@@ -30,16 +30,15 @@
     }
 
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; background: #031a0c; }
+    html { scroll-behavior: smooth; background: #5c2e12; }
     body {
       margin: 0;
       min-height: 100vh;
       padding-bottom: 92px;
       background:
-        radial-gradient(circle at 15% 8%, rgba(255,255,255,.07), transparent 28%),
-        radial-gradient(circle at 88% 30%, rgba(247,181,0,.08), transparent 30%),
-        radial-gradient(rgba(255,255,255,.035) 1.5px, transparent 1.6px) 0 0 / 22px 22px,
-        linear-gradient(180deg, #0a3a1c 0%, var(--bg) 45%, #031a0c 100%);
+        linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.05) 30%, rgba(0,0,0,.25)),
+        url("images/madera.jpg") center top / 360px auto repeat,
+        #7a3f1a;
       color: var(--text);
       font-family: "Segoe UI", Arial, sans-serif;
     }
@@ -263,10 +262,11 @@
 
     .section-title {
       display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      align-items: end;
-      margin: 30px 0 14px;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin: 38px 0 18px;
+      text-align: center;
     }
 
     .section-title h2 {
@@ -277,16 +277,26 @@
       font-size: clamp(1.6rem, 3.4vw, 2.3rem);
       letter-spacing: .01em;
       text-transform: uppercase;
-      background: linear-gradient(90deg, var(--logo-green) 0 33.3%, #fff 33.3% 66.6%, var(--red) 66.6% 100%) left bottom / 90px 5px no-repeat;
+      padding: 0 10px 14px;
+      background: linear-gradient(90deg, var(--logo-green) 0 33.3%, #fff 33.3% 66.6%, var(--red) 66.6% 100%) center bottom / 120px 6px no-repeat;
+      color: #ffc61a;
+      line-height: 1.2;
+      letter-spacing: .045em;
+      /* Filo blanco con borde oscuro, como las letras del logo */
+      text-shadow:
+        2.5px 0.0px 0 #1a0a02, 2.3px 1.0px 0 #1a0a02, 1.8px 1.8px 0 #1a0a02, 1.0px 2.3px 0 #1a0a02, 0.0px 2.5px 0 #1a0a02, -1.0px 2.3px 0 #1a0a02, -1.8px 1.8px 0 #1a0a02, -2.3px 1.0px 0 #1a0a02, -2.5px 0.0px 0 #1a0a02, -2.3px -1.0px 0 #1a0a02, -1.8px -1.8px 0 #1a0a02, -1.0px -2.3px 0 #1a0a02, -0.0px -2.5px 0 #1a0a02, 1.0px -2.3px 0 #1a0a02, 1.8px -1.8px 0 #1a0a02, 2.3px -1.0px 0 #1a0a02,
+        5.0px 0.0px 0 #fff, 4.6px 1.9px 0 #fff, 3.5px 3.5px 0 #fff, 1.9px 4.6px 0 #fff, 0.0px 5.0px 0 #fff, -1.9px 4.6px 0 #fff, -3.5px 3.5px 0 #fff, -4.6px 1.9px 0 #fff, -5.0px 0.0px 0 #fff, -4.6px -1.9px 0 #fff, -3.5px -3.5px 0 #fff, -1.9px -4.6px 0 #fff, -0.0px -5.0px 0 #fff, 1.9px -4.6px 0 #fff, 3.5px -3.5px 0 #fff, 4.6px -1.9px 0 #fff,
+        0 7px 0 #1a0a02, 0 10px 18px rgba(0,0,0,.55);
     }
 
     .section-title p {
       max-width: 490px;
       margin: 0;
-      color: var(--muted);
+      color: #fff3e0;
+      text-shadow: 0 1px 3px rgba(0,0,0,.8);
       font-size: .94rem;
       line-height: 1.45;
-      text-align: right;
+      text-align: center;
     }
 
     .menu-grid {
@@ -422,10 +432,10 @@
     .btn.full { width: 100%; margin-top: 2px; }
 
     .notice {
-      border: 1px solid rgba(244,177,63,.34);
+      border: 1px solid rgba(244,177,63,.45);
       border-radius: 8px;
-      background: rgba(244,177,63,.08);
-      color: var(--muted);
+      background: rgba(0,0,0,.72);
+      color: #fff;
       padding: 14px;
       line-height: 1.45;
       font-size: .9rem;
@@ -902,8 +912,7 @@
 
     @media (max-width: 860px) {
       .menu-grid, .menu-grid.two, .menu-grid.four { grid-template-columns: 1fr; }
-      .section-title { display: block; }
-      .section-title p { text-align: left; margin-top: 6px; }
+
     }
 
     @media (max-width: 560px) {
@@ -1085,7 +1094,7 @@
     <section id="extras">
       <div class="section-title">
         <h2>Espaguetis y bebidas</h2>
-        <p>Ordenes para 2 personas y bebidas para completar el pedido.</p>
+        <p>Órdenes para 2 personas y bebidas para completar el pedido.</p>
       </div>
       <div class="menu-grid">
         <article data-img="espagueti-blanco" class="product">
