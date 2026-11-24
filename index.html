@@ -1,71 +1,181 @@
 <style>
-  .zas-portada {
+  #juego-pizza {
     box-sizing: border-box;
-    min-height: 100svh;
+    width: min(520px, calc(100% - 32px));
+    margin: 24px auto;
+    padding: 24px;
+    border: 1px solid #74503b;
+    border-radius: 22px;
+    background: #2e2018;
+    color: #fff6ea;
+    font: 1rem/1.5 system-ui, sans-serif;
+  }
+
+  #juego-pizza h2 { margin: 0 0 12px; color: #ffad73; }
+  #juego-pizza p { margin: 12px 0; }
+
+  #juego-pizza .pizza-marcador {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  #juego-pizza .pizza-ingredientes {
     display: grid;
-    place-items: center;
-    padding: 32px 20px;
-    color: #fff8ef;
-    background: #211711;
-    font-family: system-ui, sans-serif;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
-  .zas-tarjeta {
-    width: min(100%, 520px);
-    overflow: hidden;
-    border: 1px solid #604331;
-    border-radius: 24px;
-    background: #302018;
+  #juego-pizza button {
+    min-height: 44px;
+    padding: 8px;
+    border: 1px solid #a67a5c;
+    border-radius: 10px;
+    background: #443025;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    overflow-wrap: anywhere;
   }
 
-  .zas-foto {
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
+  #juego-pizza button:disabled { opacity: .55; cursor: default; }
+
+  #juego-pizza button[aria-pressed="true"],
+  #juego-pizza [data-accion] {
+    background: #ffad73;
+    color: #28160e;
+    font-weight: 700;
   }
 
-  .zas-texto {
-    padding: clamp(24px, 6vw, 40px);
-  }
-
-  .zas-marca {
-    margin: 0 0 12px;
-    color: #ff9a4d;
-    font-weight: 800;
-  }
-
-  .zas-texto h1 {
-    margin: 0 0 16px;
-    color: #fff8ef;
-    font-size: clamp(2.4rem, 8vw, 4rem);
-    line-height: 1;
-  }
-
-  .zas-mensaje {
-    margin: 0;
-    color: #eed9c9;
-    font-size: 1.05rem;
-    line-height: 1.6;
-  }
+  #juego-pizza [data-accion] { width: 100%; margin-top: 12px; }
+  #juego-pizza [data-aviso] { min-height: 1.5em; }
 </style>
 
-<main class="zas-portada">
-  <section class="zas-tarjeta" aria-labelledby="zas-titulo">
-    <!-- Cuando subas la foto, quita esta línea de comentario y la de cierre.
-    <img
-      class="zas-foto"
-      src="./images/disfrutando-pizza.jpg"
-      alt="Una persona sonriendo mientras disfruta una rebanada de pizza"
-    >
-    -->
-    <div class="zas-texto">
-      <p class="zas-marca">Pide. ZAS. Llegó.</p>
-      <h1 id="zas-titulo">Hoy se antoja pizza.</h1>
-      <p class="zas-mensaje">
-        Abre el enlace o escanea el código QR de tu pizzería favorita
-        para ver su menú y hacer tu pedido.
-      </p>
-    </div>
-  </section>
-</main>
+<section id="juego-pizza" aria-labelledby="titulo-juego-pizza">
+  <h2 id="titulo-juego-pizza">🍕 Arma la pizza en 30 segundos</h2>
+
+  <div class="pizza-marcador">
+    <span>Tiempo <strong data-tiempo>30 s</strong></span>
+    <span>Puntos <strong data-puntos>0</strong></span>
+  </div>
+
+  <p data-comanda aria-live="polite">
+    Elige los ingredientes de la comanda y manda la pizza al horno.
+  </p>
+
+  <div class="pizza-ingredientes" role="group" aria-label="Ingredientes">
+    <button type="button" data-ingrediente="pepperoni" aria-pressed="false" disabled>Pepperoni</button>
+    <button type="button" data-ingrediente="champiñones" aria-pressed="false" disabled>Champiñones</button>
+    <button type="button" data-ingrediente="extra queso" aria-pressed="false" disabled>Extra queso</button>
+    <button type="button" data-ingrediente="pimiento" aria-pressed="false" disabled>Pimiento</button>
+  </div>
+
+  <button type="button" data-accion>Empezar</button>
+  <p data-aviso role="status"></p>
+</section>
+
+<script>
+  (() => {
+    const juego = document.getElementById("juego-pizza");
+    const tiempo = juego.querySelector("[data-tiempo]");
+    const puntos = juego.querySelector("[data-puntos]");
+    const comanda = juego.querySelector("[data-comanda]");
+    const accion = juego.querySelector("[data-accion]");
+    const aviso = juego.querySelector("[data-aviso]");
+    const botones = [...juego.querySelectorAll("[data-ingrediente]")];
+
+    const recetas = [
+      ["pepperoni", "extra queso"],
+      ["champiñones", "pimiento"],
+      ["pepperoni", "champiñones", "extra queso"],
+      ["pepperoni", "pimiento"],
+      ["champiñones", "extra queso"]
+    ];
+
+    const seleccion = new Set();
+    let recetaActual = -1;
+    let puntuacion = 0;
+    let fin = 0;
+    let reloj;
+
+    function nuevaComanda() {
+      const salto = 1 + Math.floor(Math.random() * (recetas.length - 1));
+      recetaActual = (recetaActual + salto) % recetas.length;
+      comanda.textContent = "Comanda · " + recetas[recetaActual].join(" + ");
+      seleccion.clear();
+
+      for (const boton of botones) {
+        boton.setAttribute("aria-pressed", "false");
+      }
+    }
+
+    function actualizarTiempo() {
+      const segundos = Math.max(0, Math.ceil((fin - performance.now()) / 1000));
+      tiempo.textContent = segundos + " s";
+      if (segundos > 0) return;
+
+      clearInterval(reloj);
+      fin = 0;
+      const ingredienteEnFoco = botones.includes(document.activeElement);
+      for (const boton of botones) boton.disabled = true;
+
+      comanda.textContent = "¡Se acabó el tiempo!";
+      aviso.textContent = puntuacion === 1
+        ? "Preparaste 1 pizza."
+        : "Preparaste " + puntuacion + " pizzas.";
+      accion.textContent = "Volver a jugar";
+      if (ingredienteEnFoco) accion.focus();
+    }
+
+    for (const boton of botones) {
+      boton.addEventListener("click", () => {
+        if (!fin || performance.now() >= fin) return;
+
+        const ingrediente = boton.dataset.ingrediente;
+        if (seleccion.has(ingrediente)) seleccion.delete(ingrediente);
+        else seleccion.add(ingrediente);
+
+        boton.setAttribute("aria-pressed", String(seleccion.has(ingrediente)));
+        aviso.textContent = "";
+      });
+    }
+
+    accion.addEventListener("click", () => {
+      if (!fin) {
+        puntuacion = 0;
+        puntos.textContent = "0";
+        aviso.textContent = "";
+        nuevaComanda();
+        for (const boton of botones) boton.disabled = false;
+
+        accion.textContent = "Enviar al horno";
+        fin = performance.now() + 30000;
+        actualizarTiempo();
+        reloj = setInterval(actualizarTiempo, 100);
+        botones[0].focus();
+        return;
+      }
+
+      if (performance.now() >= fin) {
+        actualizarTiempo();
+        return;
+      }
+
+      const receta = recetas[recetaActual];
+      const correcta = seleccion.size === receta.length &&
+        receta.every(ingrediente => seleccion.has(ingrediente));
+
+      if (!correcta) {
+        aviso.textContent = "Revisa la comanda y ajusta los ingredientes.";
+        return;
+      }
+
+      puntuacion += 1;
+      puntos.textContent = puntuacion;
+      nuevaComanda();
+      aviso.textContent = "¡Pizza al horno! +1 punto.";
+      botones[0].focus();
+    });
+  })();
+</script>
