@@ -530,6 +530,11 @@
   .beb-img[alt^="Coca-Cola 1"] { height:100px; }
   @media (max-width:600px) { .beb-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .beb-card:first-child { grid-column:1 / -1; } .beb-card h3 { font-size:.78rem; } }
   .beb-card { display:flex; flex-direction:column; align-items:center; } .beb-card .order-btn { margin-top:auto; } .beb-card .bp { margin-bottom:.5rem; } .beb-img[alt^="Coca-Cola 1"] { margin-top:20px; margin-bottom:20px; }
+  /* que nada se salga de lado en el celular */
+  html, body { max-width:100%; overflow-x:hidden; }
+  @supports (overflow:clip) { html, body { overflow-x:clip; } }
+  .hero { overflow:hidden; }
+  .hero-pizza { width:min(560px,90vw); }
 </style>
 </head>
 <body>
