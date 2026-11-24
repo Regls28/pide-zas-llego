@@ -526,6 +526,10 @@
   .hi-addr, .hi-hor { color:#fff !important; }
   .hi-hor { border-top-color:rgba(255,255,255,.18) !important; }
   .hi-hor strong { color:var(--vamar) !important; }
+  .beb-img.sabor { max-width:200px; height:140px; }
+  .beb-img[alt^="Coca-Cola 1"] { height:100px; }
+  @media (max-width:600px) { .beb-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .beb-card:first-child { grid-column:1 / -1; } .beb-card h3 { font-size:.78rem; } }
+  .beb-card { display:flex; flex-direction:column; align-items:center; } .beb-card .order-btn { margin-top:auto; } .beb-card .bp { margin-bottom:.5rem; } .beb-img[alt^="Coca-Cola 1"] { margin-top:20px; margin-bottom:20px; }
 </style>
 </head>
 <body>
@@ -788,8 +792,10 @@
     <div class="sec-title">Bebidas y extras</div>
     <div class="beb-grid">
       <div class="beb-card"><img class="beb-img" src="images/spaghetti.png" alt="Espagueti" onerror="this.outerHTML='<div class=bic>🍝</div>'"><h3>Espagueti</h3><div class="bp">$125</div><button class="order-btn mini" onclick="addDirect('spag')">Agregar</button></div>
-      <div class="beb-card"><img class="beb-img" src="images/jarritos-pina-2l.png" alt="Refresco en botella" onerror="this.outerHTML='<div class=bic>🥤</div>'"><h3>Refresco en botella</h3><div class="bp">$35</div><button class="order-btn mini" onclick="addDirect('botella')">Agregar</button></div>
-      <div class="beb-card"><img class="beb-img" src="images/fanta-lata.png" alt="Refresco en lata" onerror="this.outerHTML='<div class=bic>🥫</div>'"><h3>Refresco en lata</h3><div class="bp">$30</div><button class="order-btn mini" onclick="addDirect('lata')">Agregar</button></div>
+      <div class="beb-card"><img class="beb-img" src="images/coca-cola.png" alt="Coca-Cola 2 litros" onerror="this.outerHTML='<div class=bic>🥤</div>'"><h3>Coca-Cola 2 litros</h3><div class="bp">$45</div><button class="order-btn mini" onclick="addDirect('coca2')">Agregar</button></div>
+      <div class="beb-card"><img class="beb-img" src="images/coca-cola.png" alt="Coca-Cola 1 litro" onerror="this.outerHTML='<div class=bic>🥤</div>'"><h3>Coca-Cola 1 litro</h3><div class="bp">$30</div><button class="order-btn mini" onclick="addDirect('coca1')">Agregar</button></div>
+      <div class="beb-card"><img class="beb-img sabor" src="images/refresco-sabor-2l.png" alt="Refresco de sabor 2 litros" onerror="this.outerHTML='<div class=bic>🥤</div>'"><h3>Refresco de sabor 2 litros</h3><div class="bp">$38</div><button class="order-btn mini" onclick="addDirect('sabor2')">Agregar</button></div>
+      <div class="beb-card"><img class="beb-img" src="images/fanta-lata.png" alt="Refresco de lata" onerror="this.outerHTML='<div class=bic>🥫</div>'"><h3>Refresco de lata</h3><div class="bp">$30</div><button class="order-btn mini" onclick="addDirect('lata')">Agregar</button></div>
     </div>
   </div>
 </section>
@@ -980,8 +986,10 @@
     promo:   {type:"Promo – 2 Pizzas Grandes", price:320, details:["Hawaiana", "Peperoni"]},
     pakt2:   {type:"Pakt 2 – 2 Grandes Hawaianas", price:330, details:["Hawaiana", "Hawaiana"]},
     spag:    {type:"Espagueti", price:125, details:[]},
-    botella: {type:"Refresco en botella", price:35, details:[]},
-    lata:    {type:"Refresco en lata", price:30, details:[]}
+    coca2:   {type:"Coca-Cola 2 litros", price:45, details:[]},
+    coca1:   {type:"Coca-Cola 1 litro", price:30, details:[]},
+    sabor2:  {type:"Refresco de sabor 2 litros", price:38, details:[]},
+    lata:    {type:"Refresco de lata", price:30, details:[]}
   };
 
   // ══ ESTADO ══
