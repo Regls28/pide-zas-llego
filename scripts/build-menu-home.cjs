@@ -19,8 +19,9 @@ function discoverMenus(root) {
   return menus.sort((a, b) => a.href.localeCompare(b.href, 'es'));
 }
 
-function renderHome(template, menus) {
+function renderHome(template, menus, {showDirectory = true} = {}) {
   const navigation = /<nav\b[^>]*aria-label="Pizzerías"[^>]*>[\s\S]*?<\/nav>/;
+  if (!showDirectory) return template.replace(navigation, '');
   const previous = new Map();
   const brands = new Map();
   for (const match of template.matchAll(/<a href="([^"]+)"><strong>([^<]+)<\/strong><span>([^<]+)<\/span><\/a>/g)) {
@@ -48,7 +49,7 @@ function buildSite(root) {
   root = path.resolve(root);
   const menus = discoverMenus(root);
   if (!menus.length) throw new Error('No se encontraron menús para publicar');
-  const home = renderHome(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), menus);
+  const home = renderHome(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), menus, {showDirectory: process.env.SHOW_MENU_DIRECTORY === 'true'});
   const output = path.join(root, '_site');
   // A fresh artifact prevents removed branches from surviving a later deployment.
   fs.mkdirSync(output);
