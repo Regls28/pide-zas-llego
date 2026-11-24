@@ -80,10 +80,10 @@
     /* Barra de contacto */
     .contact-row {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
       width: 100%;
-      max-width: 460px;
+      max-width: 620px;
       margin: 6px auto 0;
     }
 
@@ -735,6 +735,14 @@
       flex: 0 0 auto;
     }
 
+    .queso-select {
+      min-height: 34px;
+      margin: 2px 0 4px 23px;
+      width: calc(100% - 23px);
+      padding: 5px 8px;
+      font-size: .78rem;
+    }
+
     .chk-price {
       margin-left: auto;
       color: var(--gold);
@@ -918,7 +926,10 @@
       body { padding-bottom: 86px; }
       .form-grid { grid-template-columns: 1fr; display: grid; }
       .payment-methods { gap: 6px; }
-      .contact-btn { font-size: .9rem; }
+      .contact-row { gap: 5px; }
+      .promo-band { padding: 18px 12px; }
+      .contact-btn { font-size: min(.84rem, 3.6vw); padding: 9px 2px; }
+      .contact-row .tel-ico { display: none; }
       .promo-band span { font-size: 1.02rem; }
       .promo-band .status-pill { font-size: .78rem; }
       .pay-option { padding: 12px 2px; font-size: .8rem; }
@@ -951,8 +962,9 @@
       <span>Abierto de 12:00 pm a 10:30 pm</span>
       <small>Calle Norte 86 #5825, esquina con Oriente 115, Col. Gertrudis Sánchez 2da Sección.<br>Visítanos en nuestro servicio de mesa.</small>
       <div class="contact-row">
-        <a class="contact-btn" href="tel:5557609840">&#9742; 55 5760 9840</a>
-        <a class="contact-btn" href="tel:5557609744">&#9742; 55 5760 9744</a>
+        <a class="contact-btn" href="tel:5565310019"><span class="tel-ico">&#9742; </span>55 6531 0019</a>
+        <a class="contact-btn" href="tel:5557609840"><span class="tel-ico">&#9742; </span>55 5760 9840</a>
+        <a class="contact-btn" href="tel:5557609744"><span class="tel-ico">&#9742; </span>55 5760 9744</a>
         <a class="contact-btn wa" href="https://wa.me/525591213993" target="_blank" rel="noopener">WhatsApp 55 9121 3993</a>
         </div>
     </section>
@@ -1140,7 +1152,7 @@
       </label>
       <div id="visualPreview" class="visual-box"></div>
       <button id="extrasToggle" class="extras-toggle" type="button" onclick="toggleExtrasPanel()" aria-expanded="false" aria-controls="extrasRow">
-        <span>Mitad y mitad / Orilla rellena <small id="extrasCount"></small></span>
+        <span><span id="extrasLabel">Mitad y mitad / Orilla rellena</span> <small id="extrasCount"></small></span>
         <span class="chev" aria-hidden="true">&#8964;</span>
       </button>
       <div id="extrasRow" class="extras-row"></div>
@@ -1250,7 +1262,10 @@
       {n:"CHAMPERONI", i:"Champiñones y peperoni"}
     ];
 
-    const ORILLA = {chica: 20, mediana: 25, grande: 30, familiar: 35};
+    // Precios por pizza según tamaño (del menú del local)
+    const ORILLA = {chica: 25, mediana: 35, grande: 55, familiar: 70};
+    const MITAD  = {chica: 0,  mediana: 20, grande: 25, familiar: 30};   // la chica no entra en mitades
+    const QUESOS_ORILLA = ["Queso manchego", "Queso crema"];
     let cart = [];
     let currentPicker = null;
     let slots = [];
@@ -1266,7 +1281,7 @@
     function makeSlots(limit) {
       slots = [];
       for (let i = 0; i < limit; i++) {
-        slots.push({sabor1: "", sabor2: "", mitad: false, orilla: false});
+        slots.push({sabor1: "", sabor2: "", mitad: false, orilla: false, queso: QUESOS_ORILLA[0]});
       }
       activePizza = 0;
       activeHalf = 1;
@@ -1330,7 +1345,7 @@
       currentPicker.single = document.getElementById("singlePizza").checked;
       currentPicker.limit = currentPicker.single ? 1 : 2;
       slots = slots.slice(0, currentPicker.limit);
-      while (slots.length < currentPicker.limit) slots.push({sabor1: "", sabor2: "", mitad: false, orilla: false});
+      while (slots.length < currentPicker.limit) slots.push({sabor1: "", sabor2: "", mitad: false, orilla: false, queso: QUESOS_ORILLA[0]});
       activePizza = 0;
       activeHalf = 1;
       renderPicker();
@@ -1446,6 +1461,7 @@
       toggle.style.display = showExtras ? "flex" : "none";
       const used = slots.reduce(function(n, s) { return n + (s.mitad ? 1 : 0) + (s.orilla ? 1 : 0); }, 0);
       document.getElementById("extrasCount").innerText = used ? "(" + used + ")" : "";
+      document.getElementById("extrasLabel").innerText = (MITAD[currentPicker.sizeKey] || 0) ? "Mitad y mitad / Orilla rellena" : "Orilla rellena";
       toggle.classList.toggle("open", extrasOpen);
       toggle.setAttribute("aria-expanded", extrasOpen ? "true" : "false");
       row.style.display = showExtras && extrasOpen ? "grid" : "none";
@@ -1453,13 +1469,15 @@
       row.innerHTML = "";
       if (!showExtras || !extrasOpen) return;
       const orillaPrice = ORILLA[currentPicker.sizeKey] || 0;
+      const mitadPrice = MITAD[currentPicker.sizeKey] || 0;
       slots.forEach(function(slot, index) {
         const col = document.createElement("div");
         col.className = "extras-col";
         if (currentPicker.limit === 3 && index === 2) col.style.gridColumn = "1 / -1";
         col.innerHTML = (currentPicker.limit > 1 ? '<span class="pizza-name">Pizza ' + (index + 1) + '</span>' : "") +
-          '<div class="chk-row"><input type="checkbox" id="mitad-' + index + '" ' + (slot.mitad ? "checked" : "") + ' onchange="toggleMitad(' + index + ')"><label for="mitad-' + index + '">Mitad y mitad</label><span class="chk-price">+$10</span></div>' +
-          (orillaPrice ? '<div class="chk-row"><input type="checkbox" id="orilla-' + index + '" ' + (slot.orilla ? "checked" : "") + ' onchange="toggleOrilla(' + index + ')"><label for="orilla-' + index + '">Orilla rellena</label><span class="chk-price">+$' + orillaPrice + '</span></div>' : "");
+          (mitadPrice ? '<div class="chk-row"><input type="checkbox" id="mitad-' + index + '" ' + (slot.mitad ? "checked" : "") + ' onchange="toggleMitad(' + index + ')"><label for="mitad-' + index + '">Mitad y mitad</label><span class="chk-price">+$' + mitadPrice + '</span></div>' : "") +
+          (orillaPrice ? '<div class="chk-row"><input type="checkbox" id="orilla-' + index + '" ' + (slot.orilla ? "checked" : "") + ' onchange="toggleOrilla(' + index + ')"><label for="orilla-' + index + '">Orilla rellena</label><span class="chk-price">+$' + orillaPrice + '</span></div>' +
+            (slot.orilla ? '<select class="queso-select" aria-label="Queso de la orilla" onchange="setQueso(' + index + ', this.value)">' + QUESOS_ORILLA.map(function(q) { return '<option' + (slot.queso === q ? " selected" : "") + '>' + q + '</option>'; }).join("") + '</select>' : "") : "");
         row.appendChild(col);
       });
     }
@@ -1475,6 +1493,10 @@
       if (!slots[index].mitad) slots[index].sabor2 = "";
       if (activePizza === index) activeHalf = 1;
       renderPicker();
+    }
+
+    function setQueso(index, value) {
+      slots[index].queso = value;
     }
 
     function toggleOrilla(index) {
@@ -1543,8 +1565,9 @@
       total += currentPicker.cocaExtra || 0;
       if (currentPicker.mode === "normal") {
         const orillaPrice = ORILLA[currentPicker.sizeKey] || 0;
+        const mitadPrice = MITAD[currentPicker.sizeKey] || 0;
         slots.forEach(function(slot) {
-          if (slot.mitad) total += 10;
+          if (slot.mitad) total += mitadPrice;
           if (slot.orilla) total += orillaPrice;
         });
       }
@@ -1559,7 +1582,7 @@
         const orillaPrice = ORILLA[currentPicker.sizeKey] || 0;
         slots.forEach(function(slot, index) {
           const label = currentPicker.limit > 1 ? "P" + (index + 1) + ": " : "";
-          if (slot.mitad) parts.push(label + "Mitad +$10");
+          if (slot.mitad) parts.push(label + "Mitad +$" + (MITAD[currentPicker.sizeKey] || 0));
           if (slot.orilla) parts.push(label + "Orilla +$" + orillaPrice);
         });
       }
@@ -1582,7 +1605,7 @@
       slots.forEach(function(slot) {
         let desc = niceName(slot.sabor1);
         if (slot.mitad) desc += " 1/2 " + niceName(slot.sabor2);
-        if (slot.orilla) desc += " + orilla rellena";
+        if (slot.orilla) desc += " + orilla rellena de " + slot.queso.toLowerCase();
         details.push(desc);
       });
       if (currentPicker.hasRef && currentPicker.refresco === "Coca") details.push("Coca Cola 1.75 L (+$15)");
