@@ -535,6 +535,59 @@
   @supports (overflow:clip) { html, body { overflow-x:clip; } }
   .hero { overflow:hidden; }
   .hero-pizza { width:min(560px,90vw); }
+  .wa-send { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .wa-send .order-btn { margin-top:0; }
+  .wa-send span { display:flex; flex-direction:column; line-height:1.15; text-align:left; }
+  .wa-send small { font-size:.72rem; font-weight:700; opacity:.85; letter-spacing:0; }
+  @media (max-width:600px) { .hi-tel.wa { grid-column:auto; font-size:1.1rem; } .hi-phones { grid-template-columns:repeat(6,minmax(0,1fr)); } .hi-phones .hi-tel:not(.wa) { grid-column:span 2; } .hi-phones .hi-tel.wa { grid-column:span 3; } .wa-send .order-btn { font-size:.8rem; padding:.6rem .4rem; } }
+  .como-llegar { display:flex; align-items:center; justify-content:center; gap:.4rem; width:100%; margin-top:.6rem; padding:.75rem 1rem; border-radius:50px; background:#fff; color:#0b0b0f; font-family:'Montserrat',sans-serif; font-weight:900; font-size:1rem; text-transform:uppercase; letter-spacing:.04em; text-decoration:none; box-shadow:0 4px 0 #9aa3b8; }
+  .como-llegar:hover { filter:brightness(.95); }
+  /* ══ Portada: estado abierto/cerrado, domicilio destacado y botones 3×2 ══ */
+  .open-status { display:inline-flex; align-items:center; gap:.45rem; padding:.4rem 1rem; border-radius:40px; background:#fff; color:#0b0b0f; font-family:'Montserrat',sans-serif; font-weight:800; font-size:.85rem; margin-bottom:.8rem; }
+  .open-status .dot { width:11px; height:11px; border-radius:50%; background:#999; }
+  .open-status.abierto .dot { background:#1fbf4c; box-shadow:0 0 0 0 rgba(31,191,76,.6); animation:pulse 1.6s infinite; }
+  .open-status.abierto .txt { color:#11843a; }
+  .open-status.cerrado .dot { background:var(--vrojo); }
+  .open-status.cerrado .txt { color:#c00810; }
+  @keyframes pulse { 0% { box-shadow:0 0 0 0 rgba(31,191,76,.6); } 70% { box-shadow:0 0 0 9px rgba(31,191,76,0); } 100% { box-shadow:0 0 0 0 rgba(31,191,76,0); } }
+  .domicilio-big { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.2rem,9.5vw,3.6rem); line-height:.95; letter-spacing:.03em; color:#fff; text-transform:uppercase; text-shadow:3px 3px 0 var(--vrojo); }
+  .domicilio-big span { color:var(--vamar); text-shadow:3px 3px 0 var(--vrojo2); }
+  .domicilio-sub { margin:.5rem 0 .9rem; font-family:'Montserrat',sans-serif; font-weight:800; font-size:.86rem; color:var(--vamar); }
+  .hero-info .hi-addr { font-size:.86rem !important; font-weight:700; }
+  .hi-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.5rem; margin-top:.9rem; }
+  .hi-btn { display:flex; align-items:center; justify-content:center; gap:.35rem; min-height:54px; padding:.4rem .3rem; border-radius:14px; text-decoration:none; color:#fff; font-family:'Bebas Neue',sans-serif; font-size:clamp(.95rem,4.2vw,1.35rem); letter-spacing:.03em; line-height:1; white-space:nowrap; }
+  .hi-btn.tel { background:var(--vazul); box-shadow:0 4px 0 var(--vazul3); }
+  .hi-btn.wa { background:var(--verde); color:#04210f; box-shadow:0 4px 0 #128c4a; }
+  .hi-btn.map { background:#fff; color:#0b0b0f; box-shadow:0 4px 0 #9aa3b8; }
+  .hi-btn span { display:flex; flex-direction:column; align-items:flex-start; }
+  .hi-btn small { font-family:'Montserrat',sans-serif; font-size:.6rem; font-weight:800; letter-spacing:0; margin-top:2px; }
+  .hi-btn .wa-ico { width:1.3em; height:1.3em; }
+  @media (max-width:380px) { .hi-btn { font-size:.9rem; } .hi-btn small { font-size:.54rem; } }
+  .hi-btn { flex-direction:column; gap:3px; min-height:58px; padding:.45rem .25rem; overflow:hidden; }
+  .hi-btn .t { display:flex; align-items:center; gap:4px; font-family:'Montserrat',sans-serif; font-size:clamp(.56rem,2.6vw,.72rem); font-weight:800; letter-spacing:0; opacity:.92; }
+  .hi-btn .b { font-family:'Bebas Neue',sans-serif; font-size:clamp(.8rem,3.9vw,1.3rem); letter-spacing:.03em; white-space:nowrap; }
+  .hi-btn .wa-ico { width:1.25em; height:1.25em; }
+  .domicilio-big { font-size:clamp(2rem,8.5vw,3.4rem); }
+  .hi-btn .t { white-space:nowrap; } .hi-btn .t .wa-ico { width:1.1em; height:1.1em; }
+  /* domicilio en su propio cuadro y aviso de abierto más grande */
+  .open-status { font-size:1.05rem; padding:.6rem 1.4rem; gap:.6rem; margin:0 0 1rem; box-shadow:0 4px 0 rgba(0,0,0,.3); border:3px solid #fff; }
+  .open-status .dot { width:15px; height:15px; }
+  .domicilio-card { width:min(780px,100%); margin:0 0 1rem; padding:1.1rem 1rem 1rem; border-radius:20px; background:linear-gradient(180deg,var(--vrojo),var(--vrojo2)); border:3px solid #fff; box-shadow:0 10px 0 rgba(0,0,0,.35), 0 22px 50px rgba(0,0,0,.35); text-align:center; }
+  .domicilio-card .domicilio-big { text-shadow:3px 3px 0 #0b0b0f; }
+  .domicilio-card .domicilio-big span { color:var(--vamar); text-shadow:3px 3px 0 #0b0b0f; }
+  .domicilio-card .domicilio-sub { margin:.55rem 0 0; color:#fff; }
+  .hero-info .hi-addr { margin-top:.1rem; }
+  @media (max-width:600px) { .open-status { font-size:.95rem; padding:.55rem 1.1rem; } }
+  /* ══ barra de categorías fija al hacer scroll ══ */
+  body { overflow-x:visible !important; }
+  html { overflow-x:hidden; }
+  @supports (overflow:clip) { html { overflow-x:clip; } body { overflow-x:clip !important; } }
+  .cat-bar { position:sticky; top:0; z-index:2000; display:flex; gap:.5rem; overflow-x:auto; padding:.6rem .8rem; background:rgba(11,11,15,.94); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); border-bottom:3px solid var(--vamar); box-shadow:0 6px 20px rgba(0,0,0,.4); scrollbar-width:none; justify-content:flex-start; }
+  .cat-bar::-webkit-scrollbar { display:none; }
+  .cat-chip { flex:0 0 auto; padding:.5rem .95rem; border-radius:40px; background:#fff; color:var(--vazul3); border:2px solid var(--vrojo); font-family:'Montserrat',sans-serif; font-weight:900; font-size:.78rem; text-transform:uppercase; letter-spacing:.03em; text-decoration:none; white-space:nowrap; }
+  .cat-chip.active { background:var(--vrojo); color:#fff; border-color:#fff; }
+  @media (min-width:860px) { .cat-bar { justify-content:center; } }
+  section[id] { scroll-margin-top:64px; }
 </style>
 </head>
 <body>
@@ -548,25 +601,32 @@
     <div class="logo-text" style="display:none"><div class="logo-main">Antonio's</div><div class="logo-pizza">Pizza</div></div>
   </div>
   <p class="tagline">Sucursal Reforma Política · Iztapalapa</p>
-  <div class="domicilio-banner">🛵 Entrega a domicilio <span>GRATIS</span> · <span>25 a 40 minutos</span></div>
+  <div id="openStatus" class="open-status"><span class="dot"></span><span class="txt">Horario</span></div>
+  <div class="domicilio-card">
+    <div class="domicilio-big">Servicio a domicilio<br><span>sin costo extra</span></div>
+    <div class="domicilio-sub">🛵 Entrega de 25 a 40 minutos · Sin límite de zona</div>
+  </div>
   <div class="hero-info">
     <div class="hi-addr"><span>📍</span><span>Av. Pozos Reforma Política Mz. 31 Lt. 1, esq. Reforma Sindical, Col. Reforma Política, Iztapalapa</span></div>
-    <div class="hi-phones">
-      <a class="hi-tel" href="tel:+525556930418"><span class="tel-ic">📞 </span>55 5693 0418</a>
-      <a class="hi-tel" href="tel:+525556908731"><span class="tel-ic">📞 </span>55 5690 8731</a>
-      <a class="hi-tel" href="tel:+525584638406"><span class="tel-ic">📞 </span>55 8463 8406</a>
-      <a class="hi-tel wa" href="https://wa.me/525656403737" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#waIcon"/></svg> 56 5640 3737</a>
+    <div class="hi-grid">
+      <a class="hi-btn tel" href="tel:+525556930418"><span class="t">📞 Llamar</span><span class="b">55 5693 0418</span></a>
+      <a class="hi-btn tel" href="tel:+525556908731"><span class="t">📞 Llamar</span><span class="b">55 5690 8731</span></a>
+      <a class="hi-btn tel" href="tel:+525584638406"><span class="t">📞 Llamar</span><span class="b">55 8463 8406</span></a>
+      <a class="hi-btn wa" href="https://wa.me/525656403737" target="_blank" rel="noopener"><span class="t"><svg class="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#waIcon"/></svg> WhatsApp 1</span><span class="b">56 5640 3737</span></a>
+      <a class="hi-btn wa" href="https://wa.me/525545851122" target="_blank" rel="noopener"><span class="t"><svg class="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#waIcon"/></svg> WhatsApp 2</span><span class="b">55 4585 1122</span></a>
+      <a class="hi-btn map" href="https://www.google.com/maps/dir/?api=1&destination=Av.%20Pozos%2C%20Reforma%20Pol%C3%ADtica%20Mz.%2031%20Lt.%201%2C%20esquina%20Reforma%20Sindical%2C%20Col.%20Reforma%20Pol%C3%ADtica%2C%20Iztapalapa%2C%20Ciudad%20de%20M%C3%A9xico" target="_blank" rel="noopener"><span class="t">📍 Ubicación</span><span class="b">Cómo llegar</span></a>
     </div>
     <div class="hi-hor">🕐 Todos los días <strong>12:00 PM – 11:00 PM</strong><br>💳 Aceptamos tarjeta, transferencia y vales de despensa y de gasolina</div>
   </div>
-  <nav class="hero-nav" aria-label="Menú">
-    <a class="chip" href="#lealtad">🎟️ Pizza gratis</a>
-    <a class="chip" href="#especiales">🍕 Especiales</a>
-    <a class="chip" href="#dosxuno">2×1</a>
-    <a class="chip" href="#paquetes">📦 Paquetes</a>
-    <a class="chip" href="#bebidas">🥤 Bebidas y extras</a>
-  </nav>
 </header>
+
+<nav class="cat-bar" id="catBar" aria-label="Categorías">
+  <a class="cat-chip" href="#lealtad">🎟️ Pizza gratis</a>
+  <a class="cat-chip" href="#especiales">🍕 Especiales</a>
+  <a class="cat-chip" href="#dosxuno">2×1</a>
+  <a class="cat-chip" href="#paquetes">📦 Paquetes</a>
+  <a class="cat-chip" href="#bebidas">🥤 Bebidas y extras</a>
+</nav>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="waIcon" viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></symbol></svg>
 
@@ -873,7 +933,11 @@
     <div id="finalTotal" class="final-total">Total: $0</div>
     <p class="fine-print">Al enviar el pedido se abrirá WhatsApp con tu pedido listo. Si pagas por transferencia, envía también tu comprobante.</p>
     <div id="formError" class="form-error" role="alert"></div>
-    <button class="order-btn wa" type="button" onclick="sendWhatsApp()"><svg class="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#waIcon"/></svg> Enviar pedido por WhatsApp</button>
+    <p class="fine-print" style="margin-top:10px">Envía tu pedido a cualquiera de nuestros WhatsApp:</p>
+    <div class="wa-send">
+      <button class="order-btn wa" type="button" onclick="sendWhatsApp(0)"><svg class="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#waIcon"/></svg> <span>WhatsApp 1<small>56 5640 3737</small></span></button>
+      <button class="order-btn wa" type="button" onclick="sendWhatsApp(1)"><svg class="wa-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#waIcon"/></svg> <span>WhatsApp 2<small>55 4585 1122</small></span></button>
+    </div>
     <button class="order-btn ghost" type="button" style="margin-top:8px" onclick="closeModal('cartModal')">Seguir comprando</button>
   </div>
 </div>
@@ -888,7 +952,7 @@
 
 <script>
   // ══ CONFIGURACIÓN ══
-  const WHATSAPP = "525656403737";   // 52 + número a 10 dígitos (56 5640 3737)
+  const WHATSAPP = ["525656403737", "525545851122"];   // WhatsApp 1 (56 5640 3737) y WhatsApp 2 (55 4585 1122)
   // ══ DATOS PARA TRANSFERENCIA ══  ⚠️ CAMBIA ESTOS 3 DATOS POR LOS REALES
   const BANK_CLABE = "0000 0000 0000 0000 00";   // CLABE de 18 dígitos
   const BANK_NAME = "Banco";                     // Nombre del banco
@@ -1377,7 +1441,8 @@
 
   function val(id) { return document.getElementById(id).value.trim(); }
 
-  function sendWhatsApp() {
+  function sendWhatsApp(n) {
+    const numero = WHATSAPP[n || 0];
     const err = document.getElementById("formError");
     if (!cart.length) { err.textContent = "⚠️ Tu carrito está vacío."; err.style.display = "block"; return; }
     const missing = [];
@@ -1416,9 +1481,38 @@
     if (selectedPay === "Efectivo" && cashValue() >= total) lines.push("Paga con: " + money(cashValue()) + " (cambio " + money(cashValue() - total) + ")");
     if (selectedPay === "Transferencia") lines.push("Enviaré mi comprobante por este chat.");
     if (selectedPay === "Tarjeta") lines.push("💳 Favor de llevar la terminal.");
-    window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(lines.join("\n")), "_blank");
+    window.open("https://wa.me/" + numero + "?text=" + encodeURIComponent(lines.join("\n")), "_blank");
   }
 
+
+  // ══ ABIERTO / CERRADO (hora de Ciudad de México) ══
+  const ABRE = 12 * 60, CIERRA = 23 * 60;   // 12:00 pm a 11:00 pm
+  function updateOpenStatus() {
+    const el = document.getElementById("openStatus"); if (!el) return;
+    let h, m;
+    try {
+      const p = new Intl.DateTimeFormat("es-MX", {timeZone:"America/Mexico_City", hour:"2-digit", minute:"2-digit", hour12:false}).formatToParts(new Date());
+      h = +p.find(function(x) { return x.type === "hour"; }).value % 24; m = +p.find(function(x) { return x.type === "minute"; }).value;
+    } catch (e) { const d = new Date(); h = d.getHours(); m = d.getMinutes(); }
+    const now = h * 60 + m, open = now >= ABRE && now < CIERRA;
+    el.className = "open-status " + (open ? "abierto" : "cerrado");
+    el.querySelector(".txt").textContent = open ? "Abierto ahora · cierra 11:00 pm" : "Cerrado · abrimos a las 12:00 pm";
+  }
+  updateOpenStatus(); setInterval(updateOpenStatus, 60000);
+
+  // ══ categoría activa en la barra fija ══
+  (function() {
+    const chips = [].slice.call(document.querySelectorAll(".cat-chip"));
+    const bar = document.getElementById("catBar");
+    function mark() {
+      let cur = null;
+      chips.forEach(function(c) { const sec = document.querySelector(c.getAttribute("href")); if (sec && sec.getBoundingClientRect().top <= 90) cur = c; });
+      chips.forEach(function(c) { c.classList.toggle("active", c === cur); });
+      if (cur && bar) { const l = cur.offsetLeft - (bar.clientWidth - cur.offsetWidth) / 2; bar.scrollTo({left:l, behavior:"smooth"}); }
+    }
+    let t; window.addEventListener("scroll", function() { clearTimeout(t); t = setTimeout(mark, 80); }, {passive:true});
+    mark();
+  })();
   updateStats();
 
   // animación al hacer scroll
