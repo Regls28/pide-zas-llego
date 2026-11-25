@@ -1231,7 +1231,7 @@
       <div class="payment-methods">
         <div class="pay-option active" id="p-efe" onclick="setPay('Efectivo')">Efectivo</div>
         <div class="pay-option" id="p-tra" onclick="setPay('Transferencia')">Transferencia</div>
-        <div class="pay-option" id="p-tar" onclick="setPay('Tarjeta')">Tarjeta +4%</div>
+        <div class="pay-option" id="p-tar" onclick="setPay('Tarjeta')">Tarjeta </div>
       </div>
       <div id="cashArea">
         <label class="field-label" for="cashAmount">¿Con cuánto pagas? (el repartidor no lleva más de $50 de cambio)</label>
@@ -1843,7 +1843,7 @@
           '<button type="button" class="copy-btn" onclick="copyClabe(this)">Copiar CLABE</button>';
       } else {
         info.style.display = "block";
-        info.innerHTML = "<strong>Tarjeta:</strong> se agrega 4% al total.";
+        info.innerHTML = "<strong>Tarjeta:</strong> se agrega  al total.";
       }
       calculateFinalTotal();
     }
