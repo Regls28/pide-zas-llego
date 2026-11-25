@@ -954,8 +954,8 @@
   // ══ CONFIGURACIÓN ══
   const WHATSAPP = ["525656403737", "525545851122"];   // WhatsApp 1 (56 5640 3737) y WhatsApp 2 (55 4585 1122)
   // ══ DATOS PARA TRANSFERENCIA ══  ⚠️ CAMBIA ESTOS 3 DATOS POR LOS REALES
-  const BANK_CLABE = "0000 0000 0000 0000 00";   // CLABE de 18 dígitos
-  const BANK_NAME = "Banco";                     // Nombre del banco
+  const BANK_CLABE = "4027 6600 2102 3876";     // número de tarjeta para transferencia
+  const BANK_NAME = "Banco Azteca";              // Nombre del banco
   const BANK_TITULAR = "Antonio's Pizza";        // Nombre del titular
   const MAX_CAMBIO = 50;
 
@@ -998,10 +998,10 @@
   });
 
   const MARISCOS = [
-    {n:"MARINERA NORMAL",   i:"Atún, camarón, aceitunas, cebolla y queso", t:3, x:25},
-    {n:"TROPICAL",          i:"Camarón y piña", t:3, x:25},
-    {n:"CAMPECHANA",        i:"Ostión y camarón", t:3, x:25},
-    {n:"MARINERA ESPECIAL", i:"Camarón, ostión, atún, mejillones, cebolla, aceitunas, aguacate y queso", t:4, x:30}
+    {n:"MARINERA NORMAL",   i:"Atún, camarón, aceitunas, cebolla y queso", t:3, x:50},
+    {n:"TROPICAL",          i:"Camarón y piña", t:3, x:50},
+    {n:"CAMPECHANA",        i:"Ostión y camarón", t:3, x:50},
+    {n:"MARINERA ESPECIAL", i:"Camarón, ostión, atún, mejillones, cebolla, aceitunas, aguacate y queso", t:4, x:60}
   ].map(function(x) { x.mar = true; x.g = "Mariscos"; return x; });
 
   const SENCILLAS_MAR = ["MEJILLÓN", "OSTIÓN AHUMADO", "CAMARÓN", "ATÚN"].map(function(n) {
@@ -1027,8 +1027,8 @@
   }
   function gridExtra(slot) { return slot.sabor1 ? (findFlavor(slot.sabor1).x || 0) : 0; }
 
-  const ORILLA = {chica:20, mediana:25, grande:30, familiar:35};   // orilla rellena de queso (extra)
-  const MITAD = 10;                                                // mitad y mitad (extra)
+  const ORILLA = {chica:85, mediana:105, grande:125, familiar:145};   // orilla rellena de queso, precio por pizza
+  const MITAD = 0;                                                 // mitad y mitad: sin costo
 
   // ══ PRODUCTOS ══
   // kind "circle": pizzas redondas (o corazón) · kind "grid": rectangulares/cuadradas por secciones
@@ -1099,7 +1099,7 @@
   function order(key) {
     const item = ITEMS[key];
     cp = Object.assign({}, item, {isSingle:false, limit:item.limit, baseLimit:item.limit, choice:item.choices ? item.choices[0] : ""});
-    cp.pool = item.pool === "todo" ? NORMALES.concat(SENCILLAS, MARISCOS, SENCILLAS_MAR) : item.pool === "rect" ? NORMALES.concat(MARISCOS, SENCILLAS_MAR) : NORMALES;
+    cp.pool = item.pool === "todo" ? NORMALES.concat(SENCILLAS, MARISCOS, SENCILLAS_MAR) : item.pool === "rect" ? NORMALES.concat(MARISCOS) : NORMALES;
     slots = [];
     for (let i = 0; i < cp.limit; i++) slots.push(newSlot());
     activePizza = 0; activeHalf = 1;
@@ -1221,7 +1221,7 @@
     wrap.classList.remove("collapsed");
     const col = function(slot, i, cls) {
       return '<div class="extras-col' + cls + '"><span class="extra-title">' + (many ? "Pizza " + (i + 1) + ":" : "Opciones:") + '</span>' +
-        (cp.mitad ? '<label class="opt-line"><input type="checkbox" ' + (slot.mitad ? "checked" : "") + ' onchange="toggleMitad(' + i + ', this.checked)"> ' + (many ? '½ y ½' : 'Mitad y mitad') + ' +$' + MITAD + '</label>' : "") +
+        (cp.mitad ? '<label class="opt-line"><input type="checkbox" ' + (slot.mitad ? "checked" : "") + ' onchange="toggleMitad(' + i + ', this.checked)"> ' + '½ y ½' + (MITAD ? ' +$' + MITAD : '') + '</label>' : "") +
         (cp.orilla && op ? '<label class="opt-line"><input type="checkbox" ' + (slot.orilla ? "checked" : "") + ' onchange="toggleOrilla(' + i + ', this.checked)"> ' + (many ? 'Orilla' : 'Orilla de queso') + ' +$' + op + '</label>' : "") +
         (cp.ajonjoli ? '<label class="opt-line"><input type="checkbox" ' + (slot.ajonjoli ? "checked" : "") + ' onchange="slots[' + i + '].ajonjoli=this.checked"> ' + (many ? 'Ajonjolí' : 'Ajonjolí gratis') + '</label>' : "") +
         '</div>';
@@ -1319,7 +1319,6 @@
       const op = ORILLA[cp.size] || 0;
       slots.forEach(function(s, i) {
         const p = slots.length > 1 ? "P" + (i + 1) + ": " : "";
-        if (s.mitad) parts.push(p + "mitad +$" + MITAD);
         if (s.orilla) parts.push(p + "orilla +$" + op);
       });
     }
@@ -1392,7 +1391,7 @@
     } else if (method === "Transferencia") {
       info.style.display = "block";
       info.innerHTML = BANK_CLABE
-        ? "🏦 <strong>CLABE:</strong> " + BANK_CLABE + "<br>🏦 " + BANK_NAME + " (" + BANK_TITULAR + ")<br>Por favor envía la captura de tu pago.<br><button type=\"button\" class=\"order-btn mini\" style=\"width:auto;padding:8px 16px\" onclick=\"copyClabe(this)\">Copiar CLABE</button>"
+        ? "🏦 <strong>Tarjeta:</strong> " + BANK_CLABE + "<br>🏦 " + BANK_NAME + " (" + BANK_TITULAR + ")<br>Por favor envía la captura de tu pago.<br><button type=\"button\" class=\"order-btn mini\" style=\"width:auto;padding:8px 16px\" onclick=\"copyClabe(this)\">Copiar número</button>"
         : "";
     } else {
       info.style.display = "block";
@@ -1403,7 +1402,7 @@
 
   function copyClabe(btn) {
     const txt = BANK_CLABE.replace(/\s/g, "");
-    const done = function() { btn.textContent = "¡Copiada!"; setTimeout(function() { btn.textContent = "Copiar CLABE"; }, 1800); };
+    const done = function() { btn.textContent = "¡Copiado!"; setTimeout(function() { btn.textContent = "Copiar número"; }, 1800); };
     const fb = function() { const t = document.createElement("textarea"); t.value = txt; t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t); t.select(); try { document.execCommand("copy"); } catch (e) {} document.body.removeChild(t); done(); };
     if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(txt).then(done, fb); else fb();
   }
