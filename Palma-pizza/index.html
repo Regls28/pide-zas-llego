@@ -1,1 +1,505 @@
-README.md
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#232323">
+<title>Palma Pizza · Pedidos en línea</title>
+<meta name="description" content="Palma Pizza — ¡Realmente deliciosa! Pide en línea: especialidades al 2x1, pizzas rectangulares, paquetes y servicio a domicilio gratis.">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   1. COLORES Y BASE  (tomados del volante y del logo)
+   ========================================================= */
+:root{
+  --rojo:#e05a2a;          /* naranja-rojo de "PIZZA" en el logo y de las pastillas de precio */
+  --rojo-oscuro:#9e3414;   /* tono oscuro del principal (contornos y sombras 3D) */
+  --dorado:#f2c043;        /* amarillo/dorado del arco del logo y de los textos destacados */
+  --blanco:#ffffff;
+  --verde-wa:#25d366;      /* WhatsApp */
+  --azul-gps:#1677c8;      /* botón de GPS y pago con tarjeta */
+  --pizarra:#232323;       /* gris pizarrón para fondos oscuros */
+  --masa:#c98a3c;          /* borde de masa en las pizzas de la ventana */
+  --vacio:#6e1d10;         /* relleno de pizza sin sabor */
+  --fuente-titulo:'Oswald','Arial Narrow',Arial,sans-serif;
+}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;color:var(--blanco);font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  background-color:#3a2414;
+  background-image:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,0) 18%,rgba(0,0,0,0) 82%,rgba(0,0,0,.5)),url(images/madera.jpg);
+  background-size:100% 100%,360px auto;
+  min-height:100vh;
+}
+body.bloqueado{overflow:hidden}
+button{font:inherit;cursor:pointer}
+a{color:inherit}
+
+/* =========================================================
+   2. ENCABEZADO
+   ========================================================= */
+.encabezado{
+  position:relative;text-align:center;padding:22px 12px 18px;
+  background:var(--pizarra) url(images/pizarron.jpg) center/cover no-repeat;
+  border-bottom:4px solid var(--rojo);
+}
+.encabezado::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,0) 45%,rgba(0,0,0,.55) 100%)}
+.encabezado img{
+  position:relative;z-index:1;display:block;margin:0 auto;max-width:92%;max-height:270px;width:auto;height:auto;
+  /* primero un contorno oscuro fino (separa las letras blancas del filo), luego el filo blanco y la sombra */
+  filter:drop-shadow(1.5px 0 0 #1a1a1a) drop-shadow(-1.5px 0 0 #1a1a1a) drop-shadow(0 1.5px 0 #1a1a1a) drop-shadow(0 -1.5px 0 #1a1a1a)
+         drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 6px 8px rgba(0,0,0,.65));
+}
+
+/* =========================================================
+   3. MENÚ DE CATEGORÍAS (fijo arriba)
+   ========================================================= */
+.categorias{position:sticky;top:0;z-index:40;background:#141414;border-bottom:3px solid var(--rojo);
+  overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.categorias::-webkit-scrollbar{display:none}
+.categorias ul{list-style:none;display:flex;gap:8px;margin:0 auto;padding:9px 12px;width:max-content}
+.categorias a{display:block;white-space:nowrap;text-decoration:none;background:var(--rojo);border:2px solid var(--blanco);
+  border-radius:999px;padding:6px 15px;font:600 15px var(--fuente-titulo);text-transform:uppercase;letter-spacing:.04em}
+.categorias a:hover,.categorias a:focus-visible{background:var(--rojo-oscuro)}
+
+main{max-width:1200px;margin:0 auto;padding:18px 14px 10px}
+section{scroll-margin-top:70px;margin-bottom:38px}
+
+/* =========================================================
+   4. RECUADRO DE INFORMACIÓN
+   ========================================================= */
+.info{max-width:640px;margin:4px auto 34px;background:#000;border:3px solid var(--rojo);border-radius:12px;
+  padding:16px 16px 18px;text-align:center;box-shadow:0 8px 22px rgba(0,0,0,.6)}
+.estado{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;background:var(--blanco);border-radius:999px;
+  padding:4px 13px;font:700 14px var(--fuente-titulo);text-transform:uppercase;letter-spacing:.03em}
+.estado::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor}
+.estado.abierto{color:#14953f}
+.estado.cerrado{color:#d22a1a}
+.domicilio{margin:12px 0 4px;font:700 clamp(25px,7vw,38px)/1.1 var(--fuente-titulo);text-transform:uppercase;letter-spacing:.02em;
+  text-shadow:1px 1px 0 var(--rojo),2px 2px 0 var(--rojo),3px 3px 0 var(--rojo),4px 4px 0 var(--rojo-oscuro),5px 5px 6px rgba(0,0,0,.6)}
+.horario{color:var(--dorado);font:600 17px var(--fuente-titulo);text-transform:uppercase;margin:8px 0 6px}
+.direccion{font-size:13px;line-height:1.45;margin:0 0 12px}
+.icono-wa{width:28px;height:28px;flex:none}
+.telefonos{display:flex;gap:8px;justify-content:center;margin-bottom:10px}
+.telefonos a{flex:1 1 0;max-width:230px;text-decoration:none;background:var(--pizarra);border:2px solid var(--dorado);border-radius:8px;
+  padding:8px 4px;font:600 clamp(14px,4.4vw,18px) var(--fuente-titulo);white-space:nowrap;letter-spacing:.02em}
+.btn-wa{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--verde-wa);color:#fff;text-decoration:none;border:0;border-radius:9px;padding:12px;
+  font:700 19px var(--fuente-titulo);text-transform:uppercase;letter-spacing:.03em;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+
+/* =========================================================
+   5. TÍTULOS DE SECCIÓN (con filo como las letras del logo)
+   ========================================================= */
+.titulo{position:relative;z-index:0;margin:0 0 6px;text-align:center;color:var(--rojo);
+  font:700 clamp(30px,8vw,46px)/1.1 var(--fuente-titulo);text-transform:uppercase;letter-spacing:.045em;
+  -webkit-text-stroke:5px var(--rojo-oscuro);paint-order:stroke fill}
+.titulo::before{content:attr(data-texto);position:absolute;inset:0;z-index:-1;color:#fff;
+  text-shadow:6.0px 0.0px 0 #fff,5.5px 2.3px 0 #fff,4.2px 4.2px 0 #fff,2.3px 5.5px 0 #fff,0.0px 6.0px 0 #fff,-2.3px 5.5px 0 #fff,-4.2px 4.2px 0 #fff,-5.5px 2.3px 0 #fff,-6.0px 0.0px 0 #fff,-5.5px -2.3px 0 #fff,-4.2px -4.2px 0 #fff,-2.3px -5.5px 0 #fff,-0.0px -6.0px 0 #fff,2.3px -5.5px 0 #fff,4.2px -4.2px 0 #fff,5.5px -2.3px 0 #fff,0 9px 7px rgba(0,0,0,.75)}
+.descripcion{text-align:center;margin:0 auto 18px;max-width:640px;font-size:15px;line-height:1.4;text-shadow:0 1px 3px #000,0 0 8px rgba(0,0,0,.8)}
+
+/* =========================================================
+   6. REJILLAS Y TARJETAS
+   ========================================================= */
+.rejilla{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.rejilla-2x1{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:859px){
+  .rejilla{grid-template-columns:minmax(0,1fr)}
+  .rejilla-2x1{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+}
+.tarjeta{display:flex;flex-direction:column;gap:10px;background:linear-gradient(#111,#000);border:1px solid #333;border-radius:8px;
+  padding:12px;box-shadow:0 6px 16px rgba(0,0,0,.55)}
+.fila{display:flex;align-items:center;gap:9px}
+.nombre{flex:0 1 auto;max-width:36%;margin:0;font:700 19px/1.08 var(--fuente-titulo);text-transform:uppercase;letter-spacing:.02em}
+.detalle{flex:1 1 0;min-width:0;margin:0;font-size:11.5px;line-height:1.35;color:#cfcfcf;border-left:2px solid var(--rojo);padding-left:8px}
+.precio{flex:none;margin-left:auto;background:var(--rojo);border:2px solid var(--blanco);border-radius:999px;padding:3px 11px;
+  font:700 18px var(--fuente-titulo);white-space:nowrap}
+.foto{display:block;width:100%;aspect-ratio:5/3;object-fit:cover;border-radius:8px}
+.etiquetas{display:flex;flex-wrap:wrap;gap:5px;margin:0;padding:0;list-style:none}
+.etiquetas li{font-size:11px;background:#262626;border:1px solid #444;border-radius:999px;padding:3px 9px}
+.btn{display:block;width:100%;border:0;border-radius:8px;padding:11px;margin-top:auto;font:700 16px var(--fuente-titulo);
+  text-transform:uppercase;letter-spacing:.04em;background:var(--rojo);color:#fff}
+.btn.amarillo{background:var(--dorado);color:#1a1a1a}
+.btn:active{transform:translateY(1px)}
+
+/* Tarjetas compactas del 2x1 */
+.t2x1{padding:10px;gap:8px}
+.t2x1 .fila{justify-content:space-between;gap:6px}
+.t2x1 .nombre{max-width:none;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(14px,3.9vw,20px)}
+.t2x1 .precio{font-size:clamp(13px,3.6vw,18px);padding:2px 7px}
+.t2x1 .btn{white-space:nowrap;font-size:clamp(14px,3.9vw,16px);padding:10px 4px}
+.dibujo{background:#1b1b1b;border-radius:8px;padding:10px 6px;display:flex;justify-content:center;gap:6px}
+.dibujo svg{width:46%;max-width:110px;height:auto}
+.medidas{margin:0;text-align:center;font-size:11.5px;color:#cfcfcf}
+
+/* =========================================================
+   7. PIE DE PÁGINA
+   ========================================================= */
+.pie{background:#000;color:#9a9a9a;text-align:center;font-size:13px;line-height:1.6;padding:20px 14px calc(86px + env(safe-area-inset-bottom))}
+.pie p{margin:0}
+.pie strong{color:var(--dorado)}
+
+/* =========================================================
+   8. BARRA DEL CARRITO Y AVISOS FLOTANTES
+   ========================================================= */
+.barra-carrito{position:fixed;left:0;right:0;bottom:0;z-index:30;border:0;border-top:3px solid var(--dorado);background:var(--rojo);color:#fff;
+  padding:13px 12px calc(13px + env(safe-area-inset-bottom));font:700 18px var(--fuente-titulo);text-transform:uppercase;letter-spacing:.03em;
+  box-shadow:0 -4px 14px rgba(0,0,0,.5)}
+.barra-carrito b{color:var(--dorado)}
+.aviso-flotante{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));z-index:100;transform:translate(-50%,-20px);opacity:0;pointer-events:none;
+  max-width:calc(100% - 28px);background:#111;border:2px solid var(--verde-wa);border-radius:10px;padding:9px 16px;font-size:14px;
+  text-align:center;transition:opacity .2s,transform .2s;box-shadow:0 6px 18px rgba(0,0,0,.6)}
+.aviso-flotante.visible{opacity:1;transform:translate(-50%,0)}
+.aviso-flotante.error{background:#b3170c;border-color:#fff}
+.notice{background:rgba(0,0,0,.6);border:2px solid var(--rojo);color:#fff;border-radius:8px;padding:9px 11px;font-size:13px;line-height:1.4}
+
+/* =========================================================
+   9. VENTANAS (sabores y carrito)
+   ========================================================= */
+.capa{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:10px}
+.ventana{position:relative;width:100%;max-width:640px;max-height:calc(100vh - 20px);max-height:calc(100dvh - 20px);overflow-y:auto;
+  overscroll-behavior:contain;display:flex;flex-direction:column;gap:12px;background:#151515;border:2px solid var(--rojo);border-radius:12px;padding:12px}
+.ventana > *{flex-shrink:0}
+.v-cabeza{display:flex;align-items:center;gap:8px}
+.v-titulo{flex:1 1 auto;min-width:0;margin:0;color:var(--dorado);font:700 clamp(21px,6vw,28px)/1.1 var(--fuente-titulo);text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-shadow:1px 1px 0 var(--rojo-oscuro),2px 2px 0 var(--rojo-oscuro),3px 3px 0 var(--rojo-oscuro),4px 4px 5px rgba(0,0,0,.6)}
+.pill-40{flex:none;background:transparent;color:var(--dorado);border:2px solid var(--dorado);border-radius:999px;padding:4px 10px;font-size:13px;font-weight:700;white-space:nowrap}
+.pill-40[aria-pressed="true"]{background:var(--dorado);color:#1a1a1a}
+.cerrar{flex:none;width:38px;height:38px;border-radius:8px;background:#2c2c2c;border:1px solid #666;color:#fff;font-size:20px;line-height:1}
+
+.pizzas{display:flex;flex-wrap:nowrap;justify-content:center;gap:8px}
+.pz{flex:1 1 0;min-width:0;max-width:200px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pizzas.tres .pz{max-width:150px}
+.pz svg{width:100%;height:auto;display:block}
+.pz-num{font:600 14px var(--fuente-titulo);text-transform:uppercase}
+.opc{display:flex;align-items:center;gap:5px;font-size:13px;white-space:nowrap;cursor:pointer}
+.opc input{margin:0;width:16px;height:16px;accent-color:var(--dorado)}
+.pizzas.tres .opc{font-size:12px}
+.rect{width:100%;max-width:470px;margin:0 auto}
+.rect svg{width:100%;height:auto;display:block}
+svg .zona{cursor:pointer}
+svg .masa{fill:var(--masa)}
+svg .vacia{fill:var(--vacio)}
+svg .elegida{fill:var(--dorado)}
+svg .activa{fill:none;stroke:#ffe14d;stroke-width:9}
+svg .linea{stroke:#3b1608;stroke-width:3}
+svg text{font-family:var(--fuente-titulo);font-weight:700;text-transform:uppercase;pointer-events:none}
+
+.refresco{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 10px;font-size:14px;background:#202020;border-radius:8px;padding:8px}
+.refresco b{color:var(--dorado)}
+.refresco label{display:flex;align-items:center;gap:5px;cursor:pointer}
+
+.sabores{list-style:none;margin:0;padding:0 4px 0 0;max-height:42vh;max-height:42dvh;overflow-y:auto;border-top:1px solid #333;border-bottom:1px solid #333}
+.sabores li{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid #262626}
+.sabores li:last-child{border-bottom:0}
+.sabores div{flex:1;min-width:0}
+.sabores strong{display:block;font:600 16px var(--fuente-titulo);text-transform:uppercase;letter-spacing:.02em}
+.sabores span{font-size:12px;color:#bdbdbd}
+.mas{flex:none;width:38px;height:38px;border-radius:50%;border:0;background:var(--dorado);color:#1a1a1a;font-size:24px;font-weight:700;line-height:1}
+.total-vivo{text-align:center;font-size:13px;color:#ddd;line-height:1.5}
+.total-vivo b{color:var(--dorado);font:700 20px var(--fuente-titulo)}
+
+/* Carrito */
+.items{list-style:none;margin:0;padding:0}
+.item{border-bottom:1px solid #2e2e2e;padding:9px 0}
+.item-fila{display:flex;align-items:center;gap:8px}
+.item-nombre{flex:1;min-width:0;font:600 16px var(--fuente-titulo);text-transform:uppercase}
+.item-acciones{margin-top:6px}
+.item-acciones .quitar{margin-left:auto}
+.item-precio{font-weight:700;color:var(--dorado);white-space:nowrap}
+.cant{display:flex;align-items:center;gap:6px}
+.cant button,.quitar{width:30px;height:30px;border-radius:7px;border:1px solid #555;background:#2a2a2a;color:#fff;font-size:17px;line-height:1}
+.quitar{background:#4a1209;border-color:#8a2a1a}
+.item-detalles{list-style:none;margin:4px 0 0;padding:0;font-size:12.5px;color:#cfcfcf}
+.vacio-txt{text-align:center;color:#aaa;margin:10px 0}
+.subtitulo{margin:4px 0 0;color:var(--dorado);font:700 19px var(--fuente-titulo);text-transform:uppercase}
+.btn-gps{background:var(--azul-gps);color:#fff}
+.gps-estado{font-size:13px;margin:-4px 0 0;text-align:center}
+.campos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.campos label{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:#ddd}
+.campos .ancho{grid-column:1/-1}
+.campos input,.campos textarea,.efectivo input{width:100%;font:16px system-ui,sans-serif;padding:9px;border-radius:7px;border:1px solid #555;background:#0c0c0c;color:#fff}
+.campos textarea{min-height:58px;resize:vertical}
+@media (max-width:420px){.campos{grid-template-columns:1fr}}
+.pagos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pagos button{min-width:0;border:2px solid #555;background:#222;color:#fff;border-radius:8px;padding:10px 0;letter-spacing:0;
+  font:600 clamp(12px,3.4vw,16px) var(--fuente-titulo);text-transform:uppercase;white-space:nowrap}
+.pagos button[aria-pressed="true"]{border-color:var(--dorado);background:var(--dorado);color:#1a1a1a}
+.efectivo{display:flex;flex-direction:column;gap:5px;font-size:13px}
+.cambio-txt{font-size:13px}
+.cambio-txt.mal{color:#ff7a66;font-weight:700}
+.transferencia{background:#000;border:2px solid var(--dorado);border-radius:10px;padding:11px;font-size:14px;line-height:1.55}
+.transferencia p{margin:0}
+.btn-copiar{margin-top:8px;border:0;border-radius:7px;background:var(--dorado);color:#1a1a1a;padding:8px 14px;font-weight:700}
+.btn-mp{background:var(--azul-gps);color:#fff;text-decoration:none;text-align:center}
+.total-final{text-align:center;color:var(--dorado);font:700 30px var(--fuente-titulo);margin:4px 0 0}
+.nota{text-align:center;font-size:12.5px;color:#cfcfcf;margin:0}
+.btn-enviar{background:var(--verde-wa);color:#fff;font-size:19px;padding:14px}
+.btn-seguir{background:#333;color:#fff}
+</style>
+</head>
+<body>
+
+<!-- ===== Encabezado ===== -->
+<header class="encabezado">
+  <img src="images/logo.png" alt="Palma Pizza — ¡Realmente deliciosa!" width="700" height="519">
+</header>
+
+<!-- ===== Menú de categorías ===== -->
+<nav class="categorias" aria-label="Categorías del menú">
+  <ul>
+    <li><a href="#especiales">Pizzas especiales</a></li>
+    <li><a href="#dosxuno">2x1</a></li>
+    <li><a href="#paquetes">Paquetes</a></li>
+    <li><a href="#complementos">Complementos</a></li>
+  </ul>
+</nav>
+
+<main>
+  <!-- ===== Recuadro de información (se llena desde las constantes) ===== -->
+  <div class="info">
+    <span id="estado" class="estado">Revisando horario…</span>
+    <p class="domicilio">Servicio a domicilio gratis</p>
+    <p id="horario" class="horario"></p>
+    <p id="direccion" class="direccion"></p>
+    <div id="telefonos" class="telefonos"></div>
+    <a id="btnWa" class="btn-wa" href="#" target="_blank" rel="noopener" aria-label="Pedir por WhatsApp"><svg class="icono-wa" viewBox="0 0 32 32" aria-hidden="true"><path fill="#fff" d="M16 3C8.8 3 3 8.7 3 15.8c0 2.5.7 4.9 2 6.9L3 29l6.5-2c1.9 1 4.1 1.6 6.5 1.6 7.2 0 13-5.7 13-12.8S23.2 3 16 3zm0 23.3c-2.1 0-4.1-.6-5.8-1.7l-.4-.2-3.9 1.2 1.2-3.8-.3-.4c-1.2-1.7-1.8-3.7-1.8-5.7C5 9.9 9.9 5.2 16 5.2s11 4.7 11 10.6-4.9 10.5-11 10.5z"/><path fill="#fff" d="M22.1 18.6c-.3-.2-2-1-2.3-1.1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.7-1.7-1-.9-1.7-2-1.9-2.3-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-1-2.5c-.3-.7-.5-.6-.7-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.3 1.4 3.5c.2.2 2.4 3.7 5.8 5.1 2.9 1.1 3.5.9 4.1.8.6-.1 2-.8 2.3-1.6.3-.8.3-1.5.2-1.6-.1-.1-.3-.2-.6-.4z"/></svg><span id="numWa"></span></a>
+  </div>
+
+  <section id="especiales">
+    <h2 class="titulo" data-texto="Pizzas especiales">Pizzas especiales</h2>
+    <p class="descripcion">Rectangular, barra y cuadrada con orilla rellena de queso crema y cubierta de ajonjolí. Incluyen refresco de 1.75 L gratis. No aplica 2x1.</p>
+    <div id="gridEspeciales" class="rejilla"></div>
+  </section>
+
+  <section id="dosxuno">
+    <h2 class="titulo" data-texto="Especialidades 2x1">Especialidades 2x1</h2>
+    <p class="descripcion">¡Todos los días! Elige 2 pizzas del mismo tamaño con cualquiera de nuestras 24 especialidades.</p>
+    <div id="grid2x1" class="rejilla rejilla-2x1"></div>
+  </section>
+
+  <section id="paquetes">
+    <h2 class="titulo" data-texto="Paquetes">Paquetes</h2>
+    <p class="descripcion">Para compartir con la familia: varias pizzas y refresco de sabor de 1.75 L.</p>
+    <div id="gridPaquetes" class="rejilla"></div>
+  </section>
+
+  <section id="complementos">
+    <h2 class="titulo" data-texto="Complementos">Complementos</h2>
+    <p class="descripcion">Acompaña tu pedido.</p>
+    <div id="gridComplementos" class="rejilla"></div>
+  </section>
+</main>
+
+<!-- ===== Pie de página ===== -->
+<footer class="pie">
+  <p>© <span id="anio"></span> <strong>Palma Pizza</strong> — <span id="pieDireccion"></span></p>
+  <p>Precios sujetos a cambio sin previo aviso · Servicio a domicilio sin costo extra</p>
+</footer>
+
+<!-- ===== Barra del carrito ===== -->
+<button id="barraCarrito" class="barra-carrito" type="button">Mi carrito · <span id="barraCant">0 artículos</span> · <b id="barraTotal">$0</b></button>
+
+<!-- ===== Ventana para elegir sabores ===== -->
+<div id="capaSabores" class="capa" hidden>
+  <div class="ventana" role="dialog" aria-modal="true" aria-labelledby="vsTitulo">
+    <div class="v-cabeza">
+      <h3 id="vsTitulo" class="v-titulo"></h3>
+      <button id="pill40" class="pill-40" type="button" aria-pressed="false" hidden>☐ 1 pizza −40%</button>
+      <button class="cerrar" type="button" aria-label="Cerrar" data-cerrar>✕</button>
+    </div>
+    <div id="vsPizzas"></div>
+    <div id="vsRefresco" class="refresco" hidden></div>
+    <ul id="vsSabores" class="sabores"></ul>
+    <div id="vsTotal" class="total-vivo"></div>
+    <button id="vsAgregar" class="btn" type="button">Agregar al carrito</button>
+  </div>
+</div>
+
+<!-- ===== Ventana del carrito y confirmación ===== -->
+<div id="capaCarrito" class="capa" hidden>
+  <div class="ventana" role="dialog" aria-modal="true" aria-labelledby="vcTitulo">
+    <div class="v-cabeza">
+      <h3 id="vcTitulo" class="v-titulo">Mi carrito</h3>
+      <button class="cerrar" type="button" aria-label="Cerrar" data-cerrar>✕</button>
+    </div>
+    <ul id="items" class="items"></ul>
+    <p id="carritoVacio" class="vacio-txt" hidden>Tu carrito está vacío.</p>
+
+    <h4 class="subtitulo">Confirmar pedido</h4>
+    <button id="btnGps" class="btn btn-gps" type="button">📍 Compartir ubicación GPS</button>
+    <p id="gpsEstado" class="gps-estado" hidden></p>
+    <div class="campos">
+      <label class="ancho">Nombre completo *<input id="fNombre" autocomplete="name"></label>
+      <label>Teléfono a 10 dígitos *<input id="fTelefono" type="tel" inputmode="numeric" autocomplete="tel" maxlength="14"></label>
+      <label>Calle y número *<input id="fCalle" autocomplete="street-address"></label>
+      <label>Entre qué calles *<input id="fEntre"></label>
+      <label>Colonia *<input id="fColonia"></label>
+      <label>Color de zaguán<input id="fZaguan"></label>
+      <label>Color de fachada<input id="fFachada"></label>
+      <label class="ancho">Notas para la entrega<textarea id="fNotas"></textarea></label>
+    </div>
+
+    <h4 class="subtitulo">Forma de pago</h4>
+    <div class="pagos" role="group" aria-label="Forma de pago">
+      <button type="button" data-pago="Efectivo" aria-pressed="true">Efectivo</button>
+      <button type="button" data-pago="Transferencia" aria-pressed="false">Transferencia</button>
+      <button type="button" data-pago="Tarjeta" aria-pressed="false" id="btnPagoTarjeta">Tarjeta</button>
+    </div>
+    <div id="pagoEfectivo" class="efectivo">
+      <label for="fPagaCon" id="lblPagaCon"></label>
+      <input id="fPagaCon" type="number" inputmode="numeric" min="0" step="1">
+      <span id="cambioTxt" class="cambio-txt"></span>
+    </div>
+    <div id="pagoTransferencia" class="transferencia" hidden>
+      <p id="txtClabe"></p>
+      <p id="txtBanco"></p>
+      <p>Por favor enviar captura de tu pago.</p>
+      <button id="btnCopiar" class="btn-copiar" type="button">Copiar CLABE</button>
+    </div>
+    <div id="pagoTarjeta" hidden>
+      <p id="txtComision" class="notice"></p>
+      <a id="btnMp" class="btn btn-mp" href="#" target="_blank" rel="noopener" hidden>💳 Pagar con tarjeta (Mercado Pago)</a>
+    </div>
+
+    <p id="totalFinal" class="total-final">Total: $0</p>
+    <p class="nota">Al enviar el pedido se abrirá WhatsApp. Si pagas por transferencia o tarjeta, envía también tu comprobante.</p>
+    <button id="btnEnviar" class="btn btn-enviar" type="button">Enviar pedido por WhatsApp</button>
+    <button class="btn btn-seguir" type="button" data-cerrar>Seguir comprando</button>
+  </div>
+</div>
+
+<div id="aviso" class="aviso-flotante" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   1. DATOS DEL NEGOCIO  (cámbialos aquí)
+   ========================================================= */
+const NEGOCIO        = 'Palma Pizza';                       // Nombre del negocio
+const WHATSAPP       = '5627719555';                        // WhatsApp que recibe pedidos (10 dígitos, sin 52)
+const TELEFONOS      = ['5627720307', '5611790968'];        // Teléfonos para llamar
+const DIRECCION      = 'Av. Nacional esquina con Calle Revolución, Acuexcomac, Atenco';
+const TEXTO_EXTRA    = '';  // PENDIENTE: texto bajo la dirección (ej. "Aceptamos efectivo, transferencia y tarjeta."). Vacío = no se muestra.
+const CLABE          = 'PENDIENTE';                         // PENDIENTE: CLABE de 18 dígitos
+const BANCO          = 'PENDIENTE';                         // PENDIENTE: nombre del banco
+const TITULAR        = 'PENDIENTE';                         // PENDIENTE: titular de la cuenta
+const COMISION_TARJETA = 4;      // PENDIENTE confirmar: % que se agrega al pagar con tarjeta
+const LINK_PAGO      = '';       // PENDIENTE: enlace de Mercado Pago. Vacío = solo se cobra la comisión.
+const CAMBIO_MAXIMO  = 50;       // PENDIENTE confirmar: cambio máximo que lleva el repartidor ($)
+const PRECIO_ORILLA  = { chica: 25, mediana: 30, grande: 35, familiar: 40 }; // PENDIENTE confirmar: orilla rellena por tamaño
+const PRECIO_MITAD   = 10;       // PENDIENTE confirmar: mitad y mitad, por pizza (no aplica en chicas)
+const PRECIO_COCA    = null;     // PENDIENTE: el volante solo dice "refresco de sabor 1.75 L". Pon 15 para ofrecer cambio a Coca Cola (+$15).
+const OFRECE_40      = false;    // PENDIENTE: ¿el 2x1 se vende con 1 sola pizza al 40% de descuento? true = sí
+const ZONA_HORARIA   = 'America/Mexico_City';
+const OPEN_MIN       = 12 * 60;  // Hora de apertura en minutos desde medianoche (12:00 pm = 720)
+const CLOSE_MIN      = 22 * 60;  // Hora de cierre en minutos desde medianoche (10:00 pm = 1320)
+
+/* =========================================================
+   2. MENÚ (tomado del volante)
+   ========================================================= */
+// Especialidades (las mismas para 2x1, paquetes y pizzas especiales)
+const SABORES = [
+  { n: 'Hawaiana',          i: 'Jamón y piña' },
+  { n: 'Hawaiana Especial', i: 'Jamón, piña, durazno y cerezas' },
+  { n: 'Mexicana',          i: 'Pierna, jalapeños, pollo y aguacate' },
+  { n: 'Tres Quesos',       i: 'Mozzarella, manchego y asadero' },
+  { n: 'BBQ Pollo',         i: 'Pechuga de pollo y salsa BBQ' },
+  { n: 'Carnes Frías',      i: 'Pierna, salchicha, salami y pepperoni' },
+  { n: 'Oriental',          i: 'Champiñón, elote y pollo' },
+  { n: 'Champeroni',        i: 'Champiñón y pepperoni' },
+  { n: 'Mexicana Especial', i: 'Pierna, frijol, jalapeños, chorizo y aguacate' },
+  { n: 'Ranchera',          i: 'Frijol, cebolla, jalapeños, chorizo y aguacate' },
+  { n: 'Italiana',          i: 'Pierna, jamón, salami y chorizo' },
+  { n: 'Vegetariana',       i: 'Champiñón, cebolla, pimiento verde y elote' },
+  { n: 'Chistorra',         i: 'Champiñón, cebolla morada y chistorra' },
+  { n: 'Azteka',            i: 'Pierna, pollo, elote y jalapeños' },
+  { n: 'Clásica',           i: 'Champiñón, pimiento verde y pepperoni' },
+  { n: 'Chori Mix',         i: 'Piña, cebolla, rajas y chorizo' },
+  { n: 'Mafiosa',           i: 'Salami, jalapeños, champiñón y tocino' },
+  { n: 'Delicioza',         i: 'Champiñón, salchicha, salami y pepperoni' },
+  { n: 'Sabrosita',         i: 'Jamón, piña y chorizo' },
+  { n: 'Pastor Especial',   i: 'Carne al pastor, piña, cebolla y jalapeños' },
+  { n: 'Pepperoni',         i: 'Pepperoni y queso' },
+  { n: 'De Lujo',           i: 'Jamón, salami, pimiento verde, cebolla, champiñón y chorizo' },
+  { n: 'Suprema',           i: 'Jamón, piña, champiñón y pepperoni' },
+  { n: 'Toluqueña',         i: 'Chorizo, cebolla y jalapeño' }
+];
+
+// Pizzas especiales (rectangulares / cuadradas). forma: medidas para el dibujo y cuadros (columnas x filas)
+const ESPECIALES = [
+  { id: 'pizza-rectangular', nombre: 'Pizza Rectangular', precio: 365, refresco: true,
+    detalle: '4 especialidades a elegir, orilla rellena de queso crema y cubierta de ajonjolí. Más 1 refresco de 1.75 L gratis. No aplica 2x1.',
+    etiquetas: ['20 x 52 cm', '24 rebanadas', '4 especialidades', 'Orilla de queso crema', 'Refresco 1.75 L'],
+    forma: { w: 52, h: 40, cols: 2, filas: 2 } }, // PENDIENTE: el volante dice 20x52 (igual que la barra); el dibujo usa 52x40 por tener 24 rebanadas
+  { id: 'pizza-barra', nombre: 'Pizza Barra', precio: 235, refresco: true,
+    detalle: '2 especialidades a elegir, orilla rellena de queso crema y cubierta de ajonjolí. Más 1 refresco de 1.75 L gratis. No aplica 2x1.',
+    etiquetas: ['20 x 52 cm', '12 rebanadas', '2 especialidades', 'Orilla de queso crema', 'Refresco 1.75 L'],
+    forma: { w: 52, h: 20, cols: 2, filas: 1 } },
+  { id: 'pizza-cuadrada', nombre: 'Pizza Cuadrada', precio: 295, refresco: true,
+    detalle: '2 especialidades a elegir, orilla rellena de queso crema y cubierta de ajonjolí. Más 1 refresco de 1.75 L gratis. No aplica 2x1.',
+    etiquetas: ['40 x 40 cm', '16 rebanadas', '2 especialidades', 'Orilla de queso crema', 'Refresco 1.75 L'],
+    forma: { w: 40, h: 40, cols: 2, filas: 1 } }
+];
+
+// Especialidades al 2x1 (todos los días). cm: PENDIENTE (el volante no trae medidas).
+// rebanadas: solo para el dibujo, PENDIENTE confirmar.
+const DOSXUNO = [
+  { id: '2x1-chica',    tam: 'chica',    nombre: 'Chica 2x1',    precio: 170, cm: '', rebanadas: 6 },
+  { id: '2x1-mediana',  tam: 'mediana',  nombre: 'Mediana 2x1',  precio: 245, cm: '', rebanadas: 8 },
+  { id: '2x1-grande',   tam: 'grande',   nombre: 'Grande 2x1',   precio: 310, cm: '', rebanadas: 8 },
+  { id: '2x1-familiar', tam: 'familiar', nombre: 'Familiar 2x1', precio: 360, cm: '', rebanadas: 10 }
+];
+
+// Paquetes. pizzas = cuántas; sabores = lista limitada (si aplica); orillaIncluida = no se ofrece orilla extra
+const PAQUETES = [
+  { id: 'promo-1', nombre: 'Paquete 1', precio: 485, tam: 'familiar', pizzas: 3, refresco: true,
+    detalle: '3 familiares de cualquier especialidad + 1 refresco de sabor de 1.75 L.',
+    etiquetas: ['3 familiares', 'Cualquier especialidad', 'Refresco 1.75 L'] },
+  { id: 'promo-2', nombre: 'Paquete 2', precio: 400, tam: 'grande', pizzas: 3, refresco: true,
+    detalle: '3 grandes de cualquier especialidad + 1 refresco de sabor de 1.75 L.',
+    etiquetas: ['3 grandes', 'Cualquier especialidad', 'Refresco 1.75 L'] },
+  { id: 'promo-3', nombre: 'Paquete 3', precio: 300, tam: 'grande', pizzas: 2, refresco: true,
+    sabores: ['Hawaiana', 'Pepperoni'], predeterminados: ['Hawaiana', 'Pepperoni'],
+    detalle: '2 grandes: Hawaiana y Pepperoni + 1 refresco de sabor de 1.75 L.',
+    etiquetas: ['2 grandes', 'Hawaiana y Pepperoni', 'Refresco 1.75 L'] },
+  { id: 'promo-4', nombre: '1 Grande', precio: 215, tam: 'grande', pizzas: 1, refresco: true, orillaIncluida: true,
+    detalle: 'De cualquier especialidad, con orilla rellena de queso crema y cubierta de ajonjolí. Más 1 refresco de 1.75 L gratis. No aplica 2x1.',
+    etiquetas: ['1 grande', 'Orilla de queso crema', 'Cubierta de ajonjolí', 'Refresco 1.75 L'] }
+];
+
+// Complementos (se agregan directo)
+const COMPLEMENTOS = [
+  { id: 'espagueti', nombre: 'Espagueti Hawaiano', precio: 110, detalle: 'Porción para 2 personas.', etiquetas: ['2 personas'] }
+];
+
+/* =========================================================
+   3. UTILIDADES
+   ========================================================= */
+const $ = id => document.getElementById(id);
+const dinero = n => '$' + Math.round(n).toLocaleString('es-MX');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const telFormato = t => t.replace(/(\d{2})(\d{4})(\d{4})/, '$1 $2 $3');
+const hora12 = min => {
+  const h = Math.floor(min / 60) % 24, m = min % 60, sufijo = h < 12 ? 'am' : 'pm', h12 = h % 12 || 12;
+  return h12 + (m ? ':' + String(m).padStart(2, '0') : '') + ' ' + sufijo;
+};
+const urlWa = texto => 'https://wa.me/52' + WHATSAPP + (texto ? '?text=' + encodeURIComponent(texto) : '');
+
+// Aviso flotante (nunca alert)
+let temporizadorAviso;
+function avisar(texto, error = false) {
+  const a = $('aviso');
+  a.textContent = texto;
+  a.classList.toggle('error', error);
+  a.classList.add('visible');
+  clearTimeout(temporizadorAviso);
+  temporizadorAviso = setTimeout(() => a.classList.remove('visible'), 2600);
+}
+
+/*
