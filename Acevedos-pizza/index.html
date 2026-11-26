@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#262827">
+<meta name="description" content="Acevedo's Pizza · Pedidos en línea por WhatsApp. Hacemos la pizza que a ti te gusta.">
+<title>Acevedo's Pizza · Pedidos en línea</title>
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===================== 1. COLORES (tomados del logo y del volante) ===================== */
+:root{
+  --rojo:#a0201f;      /* color principal: rojo del óvalo del logo */
+  --rojo-osc:#6b1212;  /* tono oscuro del principal */
+  --dorado:#f2c240;    /* amarillo/dorado de las rebanadas del logo */
+  --blanco:#fff;
+  --verde:#25d366;     /* WhatsApp */
+  --azul:#1677c8;      /* botón de GPS y pago con tarjeta */
+  --pizarron:#262827;  /* gris pizarrón para fondos oscuros */
+  --masa:#c98a3c;      /* café dorado de la orilla en los dibujos de pizza */
+}
+
+/* ===================== 2. BASE ===================== */
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;color:var(--blanco);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  background-color:#3b2416; /* respaldo café oscuro si falta la madera */
+  background-image:
+    linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,0) 260px,rgba(0,0,0,0) calc(100% - 260px),rgba(0,0,0,.55)),
+    var(--fondo-madera, url(images/madera.jpg)); /* JS la cambia si la madera viene en otro formato */
+  background-size:100% 100%,360px auto;
+  background-repeat:no-repeat,repeat;
+}
+body.bloqueado{overflow:hidden}
+h1,h2,h3,.btn,.price,.nav a,.envio,.horario,.barra,.pz-label,.sab b,.c-name,.c-total,.pagos button,.chk40{
+  font-family:Oswald,"Arial Narrow",Arial,sans-serif;text-transform:uppercase;
+}
+button{font:inherit;color:inherit}
+.amarillo{color:var(--dorado)}
+.btn{
+  display:block;width:100%;border:0;border-radius:10px;padding:12px;
+  font-size:18px;font-weight:600;letter-spacing:.03em;line-height:1.15;
+  text-align:center;text-decoration:none;cursor:pointer;color:var(--blanco);
+}
+
+/* ===================== 3. ENCABEZADO ===================== */
+.hero{
+  position:relative;text-align:center;padding:24px 14px 20px;
+  background:var(--pizarron) var(--fondo-pizarron, url(images/pizarron.jpg)) center/cover no-repeat; /* JS la cambia si viene en otro formato */
+  border-bottom:4px solid var(--rojo);
+}
+.hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,0) 45%,rgba(0,0,0,.7) 100%);
+}
+.logo{
+  position:relative;z-index:1;display:block;margin:0 auto;
+  width:auto;height:auto;max-width:94%;max-height:270px;
+  filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 6px 8px rgba(0,0,0,.65));
+}
+
+/* ===================== 4. MENÚ DE CATEGORÍAS ===================== */
+.nav{
+  position:sticky;top:0;z-index:50;display:flex;gap:8px;overflow-x:auto;
+  padding:9px 12px;background:#151515;border-bottom:3px solid var(--rojo);
+  scrollbar-width:none;
+}
+.nav::-webkit-scrollbar{display:none}
+.nav a{
+  flex:0 0 auto;padding:6px 15px;border:2px solid var(--blanco);border-radius:999px;
+  background:var(--rojo);color:var(--blanco);text-decoration:none;font-size:15px;letter-spacing:.04em;
+}
+.nav a:first-child{margin-left:auto}
+.nav a:last-child{margin-right:auto}
+
+/* ===================== 5. CONTENEDOR Y RECUADRO DE INFORMACIÓN ===================== */
+main{max-width:1180px;margin:0 auto;padding:0 14px}
+.info{
+  max-width:640px;margin:18px auto 0;padding:16px 14px;text-align:center;
+  background:#000;border:3px solid var(--rojo);border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.6);
+}
+.estado{
+  display:inline-block;white-space:nowrap;padding:4px 12px;border-radius:999px;
+  font-size:13px;font-weight:700;background:#c62828;color:var(--blanco);
+}
+.estado.abierto{background:#1e9e4a}
+.envio{
+  margin:10px 0 6px;font-size:clamp(25px,7.4vw,40px);line-height:1.05;letter-spacing:.02em;
+  text-shadow:1px 1px 0 var(--rojo),2px 2px 0 var(--rojo),3px 3px 0 var(--rojo),4px 4px 0 var(--rojo-osc);
+}
+.horario{margin:0 0 6px;color:var(--dorado);font-size:18px;font-weight:500;letter-spacing:.03em}
+.dir{margin:2px 0;font-size:13px;line-height:1.4}
+.tels{display:flex;justify-content:center;gap:8px;margin:12px 0 10px}
+.tels .btn{flex:1 1 0;max-width:230px;min-width:0;padding:10px 6px;font-size:17px;background:#222;border:2px solid var(--blanco);white-space:nowrap}
+.btn-wa{background:var(--verde)}
+#waInfo{display:flex;align-items:center;justify-content:center;gap:10px;font-size:22px;letter-spacing:.04em}
+.wa-ico{width:28px;height:28px;flex:0 0 auto}
+
+/* ===================== 6. SECCIONES Y TÍTULOS CON FILO ===================== */
+.sec{scroll-margin-top:62px;margin:34px 0 0}
+.sec-title{
+  position:relative;z-index:0;margin:0 0 8px;text-align:center;
+  font-size:clamp(32px,8.6vw,48px);line-height:1.12;letter-spacing:.045em;
+  color:var(--rojo);-webkit-text-stroke:5px #1a0505;paint-order:stroke fill; /* contorno oscuro de 2.5 px por fuera */
+}
+.sec-title::before{
+  content:attr(data-text);position:absolute;left:0;right:0;top:0;z-index:-1;
+  color:var(--blanco);-webkit-text-stroke:15px var(--blanco); /* contorno blanco de 5 px por fuera del oscuro */
+  filter:drop-shadow(0 5px 4px rgba(0,0,0,.65));
+}
+.sec-desc{max-width:640px;margin:0 auto 16px;text-align:center;font-size:15px;line-height:1.45;text-shadow:0 2px 4px #000,0 0 2px #000}
+
+/* ===================== 7. REJILLA Y TARJETAS ===================== */
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.grid-2x1{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:860px){
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+  .grid-2x1{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+.card{
+  display:flex;flex-direction:column;gap:10px;padding:12px;
+  background:linear-gradient(#111,#000);border:1px solid #333;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.55);
+}
+.card-top{display:flex;align-items:center;gap:10px}
+.card-name{flex:0 1 36%;max-width:36%;margin:0;font-size:19px;line-height:1.1;letter-spacing:.02em}
+.card-desc{flex:1 1 0;min-width:0;margin:0;padding-left:8px;border-left:2px solid var(--rojo);font-size:11.5px;line-height:1.35;color:#ccc}
+.price{flex:0 0 auto;padding:3px 10px;border:2px solid var(--blanco);border-radius:999px;background:var(--rojo);font-size:17px;font-weight:700;white-space:nowrap}
+.foto{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{padding:3px 9px;border:1px solid #444;border-radius:999px;background:#1d1d1d;font-size:11.5px;color:#eee}
+.btn-card{margin-top:auto;background:var(--rojo);font-size:17px}
+.btn-card.amarillo{background:var(--dorado);color:#000}
+
+/* Tarjetas compactas del 2x1 */
+.card-2x1{gap:8px;padding:10px 8px}
+.c2-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.c2-top h3{margin:0;font-size:clamp(14px,4.1vw,17px);white-space:nowrap;letter-spacing:.01em}
+.card-2x1 .price{padding:1px 7px;font-size:clamp(13px,3.8vw,15px)}
+.c2-art{display:flex;justify-content:center;gap:6px;padding:10px 6px;background:#1b1b1b;border-radius:6px}
+.c2-art svg{width:46%;max-width:100px;height:auto}
+.c2-info{margin:0;text-align:center;font-size:12px;color:#ccc}
+
+/* ===================== 8. VENTANAS (sabores y carrito) ===================== */
+.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:8px;background:rgba(0,0,0,.75)}
+.modal-box{
+  display:flex;flex-direction:column;width:100%;max-width:620px;overflow:hidden;
+  max-height:calc(100vh - 16px);max-height:calc(100dvh - 16px);
+  background:#111;border:2px solid var(--rojo);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.7);
+}
+.m-head{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:10px 12px;background:#000;border-bottom:1px solid #333}
+.m-head h2{
+  flex:1 1 auto;min-width:0;margin:0;font-size:24px;letter-spacing:.03em;color:var(--dorado);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-shadow:1px 1px 0 var(--rojo-osc),2px 2px 0 var(--rojo-osc),3px 3px 0 var(--rojo-osc);
+}
+.x{flex:0 0 auto;width:38px;height:38px;border:1px solid #666;border-radius:8px;background:#2a2a2a;font-size:24px;line-height:1;cursor:pointer}
+.m-body{flex:1 1 auto;display:flex;flex-direction:column;gap:12px;padding:12px;overflow-y:auto;overscroll-behavior:contain}
+.m-body>*{flex-shrink:0}
+.m-foot{flex-shrink:0;padding:10px 12px;background:#000;border-top:1px solid #333}
+.chk40{flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:3px 10px;border:2px solid var(--dorado);border-radius:999px;color:var(--dorado);font-size:14px;cursor:pointer;white-space:nowrap}
+.chk40.on{background:var(--dorado);color:#000}
+.chk40 input{margin:0;accent-color:#000}
+
+/* Vista gráfica de las pizzas */
+.pz-row{display:flex;justify-content:center;gap:10px}
+.pz{flex:1 1 0;min-width:0;max-width:200px;text-align:center}
+.pz-row.tres{gap:6px}
+.pz-row.tres .pz{max-width:150px}
+.pz-row .pz-rect{max-width:340px}
+.pz svg{display:block;width:100%;height:auto}
+.slot{cursor:pointer}
+.m-masa{fill:var(--masa)}
+.m-vacio{fill:var(--rojo-osc)}
+.m-lleno{fill:var(--dorado)}
+.m-linea{stroke:var(--masa);stroke-width:2}
+.m-act{fill:none;stroke:var(--dorado);stroke-width:5}
+.m-lleno + .m-act{stroke:var(--blanco)} /* espacio activo que ya tiene sabor */
+.t-vacio{fill:var(--blanco)}
+.t-lleno{fill:#4a0d0d}
+.pz svg text{font-family:Oswald,"Arial Narrow",Arial,sans-serif;font-weight:600;pointer-events:none}
+.pz-label{margin:4px 0 2px;font-size:14px;letter-spacing:.04em}
+.opc{display:flex;align-items:center;justify-content:center;gap:5px;margin:4px 0;font-size:13px;white-space:nowrap;cursor:pointer}
+.opc input{width:17px;height:17px;margin:0;accent-color:var(--dorado)}
+.pz-row.tres .opc{font-size:12px;gap:3px}
+
+/* Refresco */
+.refresco{padding:8px 10px;background:#1b1b1b;border:1px solid #333;border-radius:8px;font-size:14px}
+.refresco p{margin:0 0 4px;font-weight:700}
+.refresco label{display:flex;align-items:center;gap:8px;padding:3px 0;cursor:pointer}
+
+/* Lista de sabores */
+.sab-list{max-height:min(44vh,420px);overflow-y:auto;overscroll-behavior:contain;background:#0b0b0b;border:1px solid #333;border-radius:8px}
+.sab{display:flex;align-items:center;gap:10px;padding:9px 10px;border-bottom:1px solid #222}
+.sab:last-child{border-bottom:0}
+.sab div{flex:1 1 auto;min-width:0}
+.sab b{display:block;font-size:16px;font-weight:600;letter-spacing:.02em}
+.sab small{display:block;font-size:12px;line-height:1.3;color:#bbb}
+.mas{flex:0 0 auto;width:38px;height:38px;border:0;border-radius:50%;background:var(--dorado);color:#000;font:700 24px/1 Arial,sans-serif;cursor:pointer}
+
+/* Total y botón de agregar */
+.m-total{margin:0 0 8px;text-align:center;font-size:13px;line-height:1.5;color:#ddd}
+.m-total b{font-size:20px;color:var(--dorado)}
+.btn-add{background:var(--rojo);border:2px solid var(--blanco);font-size:19px}
+
+/* ===================== 9. CARRITO Y CONFIRMACIÓN ===================== */
+.barra{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;width:100%;cursor:pointer;
+  padding:12px 12px calc(12px + env(safe-area-inset-bottom));
+  background:var(--rojo);border:0;border-top:3px solid var(--dorado);
+  font-size:18px;font-weight:600;letter-spacing:.03em;
+}
+.barra b{color:var(--dorado)}
+.c-vacio{margin:6px 0;text-align:center;color:#bbb}
+.c-item{padding:8px 0;border-bottom:1px solid #333}
+.c-row{display:flex;align-items:center;gap:8px}
+.c-name{flex:1 1 auto;min-width:0;font-size:16px;font-weight:600}
+.c-price{font-weight:700;color:var(--dorado)}
+.c-det{margin:4px 0 6px;padding:0;list-style:none;font-size:13px;line-height:1.4;color:#ccc}
+.c-del{flex:0 0 auto;width:34px;height:34px;border:1px solid #555;border-radius:8px;background:#222;font-size:19px;line-height:1;cursor:pointer}
+.c-sub{margin:6px 0 0;text-align:center;font-size:21px;color:var(--dorado)}
+.btn-gps{background:var(--azul);font-size:17px}
+.gps-msg{margin:0;text-align:center;font-size:13px}
+.campo{display:flex;flex-direction:column;gap:4px;font-size:13px}
+.campo input,.campo textarea{
+  width:100%;padding:10px;border:1px solid #444;border-radius:8px;background:#1a1a1a;color:var(--blanco);font:16px/1.3 inherit;font-family:inherit;
+}
+.campo textarea{resize:vertical;min-height:62px}
+.pagos{display:flex;justify-content:center;gap:6px}
+.pagos button{flex:1 1 0;min-width:0;max-width:180px;padding:10px 3px;border:2px solid #555;border-radius:8px;background:#1a1a1a;font-size:15px;white-space:nowrap;cursor:pointer}
+.pagos button.on{background:var(--rojo);border-color:var(--dorado)}
+.notice{margin:6px 0 0;padding:8px 10px;background:rgba(0,0,0,.6);border:2px solid var(--rojo);border-radius:8px;color:var(--blanco);font-size:13px;line-height:1.4}
+.transfer{display:flex;flex-direction:column;gap:6px;padding:12px;background:#000;border:2px solid var(--dorado);border-radius:10px;font-size:14px;line-height:1.45}
+.transfer p{margin:0}
+.btn-amarillo{background:var(--dorado);color:#000;font-size:16px;padding:10px}
+.btn-azul{background:var(--azul);font-size:16px;margin-top:8px}
+.c-total{margin:0;text-align:center;font-size:32px;font-weight:700;color:var(--dorado)}
+.c-nota{margin:0;text-align:center;font-size:12.5px;line-height:1.4;color:#ccc}
+.btn-sec{background:#2a2a2a;border:1px solid #666;font-size:16px}
+
+/* ===================== 10. AVISO FLOTANTE Y PIE ===================== */
+.toast{
+  position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));z-index:200;transform:translateX(-50%);max-width:92vw;
+  padding:10px 18px;border-radius:999px;background:#1e7a3a;color:var(--blanco);
+  font-size:14px;font-weight:600;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.55);
+}
+.toast.error{background:#c62828}
+footer{margin-top:44px;padding:22px 14px calc(78px + env(safe-area-inset-bottom));background:#000;text-align:center;font-size:13px;line-height:1.5;color:#aaa}
+footer p{margin:4px 0}
+</style>
+</head>
+<body>
+
+<!-- 1. ENCABEZADO -->
+<header class="hero">
+  <img class="logo" src="images/logo.png" alt="Acevedo's Pizza" width="700" height="442">
+</header>
+
+<!-- 2. MENÚ DE CATEGORÍAS (se llena desde JavaScript) -->
+<nav class="nav" id="nav" aria-label="Categorías del menú"></nav>
+
+<main>
+  <!-- 3. RECUADRO DE INFORMACIÓN -->
+  <section class="info" aria-label="Información del negocio">
+    <span class="estado" id="estado">Revisando horario…</span>
+    <h1 class="envio" id="envio"></h1>
+    <p class="horario" id="horario"></p>
+    <p class="dir" id="dir"></p>
+    <p class="dir" id="extra"></p>
+    <div class="tels" id="tels"></div>
+    <a class="btn btn-wa" id="waInfo" target="_blank" rel="noopener"><svg class="wa-ico" viewBox="0 0 32 32" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" d="M16 3.5a12.5 12.5 0 0 0-10.8 18.8L3.5 28.5l6.4-1.7A12.5 12.5 0 1 0 16 3.5z"/><path fill="currentColor" d="M11.6 9.2c.3 0 .6 0 .8.5l1.1 2.6c.1.3.1.5-.1.8l-.8 1c-.2.2-.2.4 0 .7 1 1.7 2.4 3 4.2 3.8.3.1.5.1.7-.1l1-1.2c.2-.3.5-.3.8-.2l2.5 1.2c.3.2.5.3.5.5 0 .9-.4 2-1.4 2.5-.9.5-2 .6-3.4.1-3-1.1-5.4-3.4-6.8-6.2-.7-1.5-.6-2.8.1-3.8.4-.6.8-.9 1.1-1h.7z"/></svg><span id="waNum"></span></a>
+  </section>
+
+  <!-- 4. SECCIONES DEL MENÚ (se generan desde los datos) -->
+  <div id="menu"></div>
+</main>
+
+<!-- 5. PIE DE PÁGINA -->
+<footer>
+  <p>© <span id="pieAnio"></span> <b class="amarillo" id="pieNombre"></b> — <span id="pieDir"></span></p>
+  <p>Precios sujetos a cambio sin previo aviso · Servicio a domicilio sin costo extra</p>
+</footer>
+
+<!-- BARRA DEL CARRITO -->
+<button class="barra" id="barra" type="button">Mi carrito · <span id="bN">0 artículos</span> · <b id="bTotal">$0</b></button>
+
+<!-- VENTANA PARA ELEGIR SABORES -->
+<div class="modal" id="mSab" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="mTitulo">
+    <div class="m-head">
+      <h2 id="mTitulo"></h2>
+      <label class="chk40" id="m40" hidden><input type="checkbox" id="m40chk"> 1 pizza −40%</label>
+      <button class="x" type="button" aria-label="Cerrar">×</button>
+    </div>
+    <div class="m-body">
+      <div class="pz-row" id="mPizzas"></div>
+      <div class="refresco" id="mRef" hidden></div>
+      <div class="sab-list" id="mLista"></div>
+    </div>
+    <div class="m-foot">
+      <p class="m-total" id="mTotal"></p>
+      <button class="btn btn-add" id="mAgregar" type="button">Agregar al carrito</button>
+    </div>
+  </div>
+</div>
+
+<!-- VENTANA DEL CARRITO Y CONFIRMACIÓN DEL PEDIDO -->
+<div class="modal" id="mCarrito" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="cTitulo">
+    <div class="m-head">
+      <h2 id="cTitulo">Mi carrito</h2>
+      <button class="x" type="button" aria-label="Cerrar">×</button>
+    </div>
+    <div class="m-body">
+      <div id="cItems"></div>
+
+      <h3 class="c-sub">Confirmar pedido</h3>
+      <button class="btn btn-gps" id="gps" type="button">📍 Compartir ubicación GPS</button>
+      <p class="gps-msg" id="gpsMsg" aria-live="polite"></p>
+
+      <label class="campo">Nombre completo *<input id="fNombre" autocomplete="name"></label>
+      <label class="campo">Teléfono a 10 dígitos *<input id="fTel" type="tel" inputmode="numeric" maxlength="14" autocomplete="tel-national"></label>
+      <label class="campo">Calle y número *<input id="fCalle" autocomplete="address-line1"></label>
+      <label class="campo">Entre qué calles *<input id="fEntre"></label>
+      <label class="campo">Colonia *<input id="fColonia"></label>
+      <label class="campo">Color de zaguán<input id="fZaguan"></label>
+      <label class="campo">Color de fachada<input id="fFachada"></label>
+      <label class="campo">Notas para la entrega<textarea id="fNotas" rows="2"></textarea></label>
+
+      <div class="pagos" id="pagos">
+        <button type="button" data-pago="efectivo" class="on">Efectivo</button>
+        <button type="button" data-pago="transferencia">Transferencia</button>
+        <button type="button" data-pago="tarjeta" id="btnTarjeta">Tarjeta</button>
+      </div>
+
+      <div id="pEfectivo">
+        <label class="campo" id="pagaLabel">¿Con cuánto pagas?<input id="paga" type="number" inputmode="numeric" min="0" step="1"></label>
+        <p class="notice" id="cambioMsg" hidden></p>
+      </div>
+
+      <div class="transfer" id="pTransfer" hidden>
+        <p>🏦 CLABE: <b id="tClabe"></b></p>
+        <p>🏦 <span id="tBanco"></span></p>
+        <p>Por favor enviar captura de tu pago.</p>
+        <button class="btn btn-amarillo" id="copiar" type="button">Copiar CLABE</button>
+      </div>
+
+      <div id="pTarjeta" hidden>
+        <p class="notice" id="tarjMsg"></p>
+        <a class="btn btn-azul" id="linkPago" target="_blank" rel="noopener" hidden>💳 Pagar con tarjeta (Mercado Pago)</a>
+      </div>
+
+      <p class="c-total">Total: <span id="cTotal">$0</span></p>
+      <p class="c-nota">Al enviar el pedido se abrirá WhatsApp. Si pagas por transferencia o tarjeta, envía también tu comprobante.</p>
+      <button class="btn btn-wa" id="enviar" type="button">Enviar pedido por WhatsApp</button>
+      <button class="btn btn-sec" id="seguir" type="button">Seguir comprando</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+'use strict';
+
+/* =====================================================================
+   1. DATOS DEL NEGOCIO  (cambia aquí; "PENDIENTE" = dato por confirmar)
+   ===================================================================== */
+const NEGOCIO = "Acevedo's Pizza";
+const WHATSAPP = '2412225895';                 // número que recibe pedidos, 10 dígitos (el enlace le pone 52)
+const TELEFONOS = ['2412225895', 'PENDIENTE']; // PENDIENTE: el volante solo trae un número; falta el segundo
+const DIRECCION = 'Adolfo López Mateos #5, Col. Centro, San Cosme Xalostoc'; // PENDIENTE: entre calles y municipio/estado
+const TEXTO_EXTRA = 'PENDIENTE';               // texto bajo la dirección, ej. "Aceptamos efectivo, transferencia y tarjeta."
+const DIAS_ABIERTO = 'PENDIENTE';              // ej. 'todos los días' (el volante no dice los días)
+const ZONA_HORARIA = 'America/Mexico_City';
+const OPEN_MIN = 12 * 60;                      // hora de apertura en minutos: 12:00 pm = 720
+const CLOSE_MIN = 22 * 60;                     // hora de cierre en minutos: 10:00 pm = 1320
+const CLABE = 'PENDIENTE';                     // 18 dígitos sin espacios
+const BANCO = 'PENDIENTE';
+const TITULAR = 'PENDIENTE';
+const COMISION_TARJETA = 4;                    // % que se cobra con tarjeta (PENDIENTE confirmar)
+const LINK_PAGO_TARJETA = '';                  // enlace de Mercado Pago; vacío = solo se cobra la comisión
+const CAMBIO_MAXIMO = 50;                      // cambio máximo que lleva el repartidor (PENDIENTE confirmar)
+const ENVIO_GRATIS = true;                     // servicio a domicilio gratis (PENDIENTE confirmar)
+const ORILLA_PRECIO = { chica: 25, mediana: 30, grande: 38, familiar: 44 }; // orilla rellena extra (del volante)
+const MITAD_PRECIO = 10;                       // mitad y mitad por pizza (PENDIENTE confirmar)
+const CAMBIO_COCA = { nombre: 'Coca Cola 1.75 L', precio: 15 }; // cambio del refresco 2 L (PENDIENTE: el volante maneja Pepsi)
+const UNA_PIZZA_40 = false;                    // 2x1 con 1 sola pizza al 40% de descuento (PENDIENTE: SÍ / NO)
+
+/* =====================================================================
+   2. MENÚ (tomado del volante)
+   ===================================================================== */
+// Tamaños: rebanadas y medidas NO vienen en el volante (PENDIENTE confirmar)
+const TAMANOS = {
+  chica:    { nombre: 'Chica',    rebanadas: 6,  medida: 'PENDIENTE' },
+  mediana:  { nombre: 'Mediana',  rebanadas: 8,  medida: 'PENDIENTE' },
+  grande:   { nombre: 'Grande',   rebanadas: 8,  medida: 'PENDIENTE' },
+  familiar: { nombre: 'Familiar', rebanadas: 10, medida: 'PENDIENTE' }
+};
+
+// Especialidades (nombre e ingredientes como vienen en el volante)
+const SABORES = [
+  { nombre: 'Hawaiana',               ing: 'Jamón, Piña (Tocino o Cereza)' },
+  { nombre: 'Choriqueso',             ing: 'Chorizo y Queso' },
+  { nombre: 'Carnes Frías',           ing: 'Peperoni, Lomo canadiense, Tocino, Pierna y Salchicha' },
+  { nombre: 'Champironi',             ing: 'Champiñones y Peperoni' },
+  { nombre: "Acevedo's Especial",     ing: 'Pierna, Lomo, Pollo, Salchicha, Chipotle, Peperoni, Tocino y Chorizo' },
+  { nombre: 'Vegetariana',            ing: 'Champiñones, Pimiento verde, Cebolla y Granos de Elote' },
+  { nombre: 'Cubana',                 ing: 'Pierna, Atún, Jitomate, Cebolla, Tocino, Aguacate y Jalapeños' },
+  { nombre: 'Ranchera',               ing: 'Cebolla, Frijoles, Jalapeños, Tocino, Aguacate y Chorizo' },
+  { nombre: 'Peperoni con Jalapeños', ing: 'Peperoni y Jalapeños' },
+  { nombre: 'Peperoni',               ing: 'Peperoni y Queso' },
+  { nombre: 'Mexicana',               ing: 'Pierna, Pollo, Jalapeños y Aguacate' },
+  { nombre: 'Combinada Esp.',         ing: 'Cebolla, Pimiento verde, Champiñones, Salami, Chorizo y Peperoni' },
+  { nombre: 'Picabrosa',              ing: 'Pechuga de Pollo al Búfalo, Cebolla y Habanero' },
+  { nombre: 'Al Pastor',              ing: 'Piña, Cebolla, Carne al Pastor y Chipotle' },
+  { nombre: 'Mafiosa',                ing: 'Champiñones, Jalapeños, Salami y Tocino' },
+  { nombre: 'Atún Deluxe',            ing: 'Champiñones, Atún, Cebolla, Chipotle y Aguacate' },
+  { nombre: 'Boneles',                ing: 'Bonel y Aderezo Ranchero' }
+];
+
+// Secciones de la página, en orden
+const SECCIONES = [
+  { id: 'paquetes',     nav: 'Paquetes',       titulo: 'Paquetes',           desc: 'Pizza, refresco y algo más a precio especial.' },
+  { id: 'dosxuno',      nav: '2x1',            titulo: 'Especialidades 2x1', desc: 'Llévate 2 pizzas del mismo tamaño con la especialidad que tú quieras.' },
+  { id: 'orilla',       nav: 'Orilla rellena', titulo: 'Orilla rellena',     desc: 'Tu especialidad favorita con la orilla rellena de queso.' },
+  { id: 'complementos', nav: 'Complementos',   titulo: 'Complementos',       desc: 'Spaguetti, alitas, papas y refrescos para acompañar.' }
+];
+
+/* Productos. Campos:
+   sec: sección · img: nombre de la foto (images/[img].jpg) · tipo: 'redonda' | 'rect' | 'simple'
+   tam: tamaño · pizzas: cuántas pizzas o especialidades · es2x1 · orillaIncluida · especial (botón amarillo)
+   refresco2L: incluye refresco de 2 L (muestra el selector) · sabores: lista limitada · medida: proporción del rectángulo */
+const PRODUCTOS = [
+  { sec: 'dosxuno', img: '2x1-chica',    nombre: 'Chica 2x1',    precio: 169, tipo: 'redonda', tam: 'chica',    pizzas: 2, es2x1: true },
+  { sec: 'dosxuno', img: '2x1-mediana',  nombre: 'Mediana 2x1',  precio: 252, tipo: 'redonda', tam: 'mediana',  pizzas: 2, es2x1: true },
+  { sec: 'dosxuno', img: '2x1-grande',   nombre: 'Grande 2x1',   precio: 329, tipo: 'redonda', tam: 'grande',   pizzas: 2, es2x1: true },
+  { sec: 'dosxuno', img: '2x1-familiar', nombre: 'Familiar 2x1', precio: 409, tipo: 'redonda', tam: 'familiar', pizzas: 2, es2x1: true },
+
+  { sec: 'orilla', img: 'orilla-mediana',  nombre: 'Mediana con orilla',  precio: 169, tipo: 'redonda', tam: 'mediana',  pizzas: 1, orillaIncluida: true,
+    desc: 'Pizza mediana de la especialidad que quieras con orilla rellena de queso.',  tags: ['Mediana', 'Orilla de queso'] },
+  { sec: 'orilla', img: 'orilla-grande',   nombre: 'Grande con orilla',   precio: 225, tipo: 'redonda', tam: 'grande',   pizzas: 1, orillaIncluida: true,
+    desc: 'Pizza grande de la especialidad que quieras con orilla rellena de queso.',   tags: ['Grande', 'Orilla de queso'] },
+  { sec: 'orilla', img: 'orilla-familiar', nombre: 'Familiar con orilla', precio: 259, tipo: 'redonda', tam: 'familiar', pizzas: 1, orillaIncluida: true,
+    desc: 'Pizza familiar de la especialidad que quieras con orilla rellena de queso.', tags: ['Familiar', 'Orilla de queso'] },
+
+  { sec: 'paquetes', img: 'ac-4', nombre: 'AC-4 Rectangular', precio: 399, tipo: 'rect', pizzas: 4, medida: [52, 38], especial: true, refresco2L: true,
+    desc: 'Pizza rectangular con 4 especialidades a tu gusto + 1 refresco de 2 L.', tags: ['4 especialidades', 'Refresco 2 L', 'No incluye 2x1'] },
+  { sec: 'paquetes', img: 'paquete-2-grandes', nombre: 'Paquete 2 Grandes', precio: 312, tipo: 'redonda', tam: 'grande', pizzas: 2, refresco2L: true,
+    sabores: ['Hawaiana', 'Peperoni'],
+    desc: '2 pizzas grandes Hawaiana y Peperoni. Gratis 1 refresco de 2 L.', tags: ['2 grandes', 'Hawaiana y Peperoni', 'Refresco 2 L gratis'] },
+  { sec: 'paquetes', img: 'paquete-1-grande', nombre: 'Paquete 1 Grande', precio: 229, tipo: 'redonda', tam: 'grande', pizzas: 1,
+    desc: '1 pizza grande de cualquier especialidad + papas + 1 refresco de 1.5 L.', tags: ['1 grande', 'Papas', 'Refresco 1.5 L'] },
+
+  { sec: 'complementos', img: 'spaguetti',    nombre: 'Spaguetti Gratinado', precio: 90, tipo: 'simple', desc: 'Crema, Jamón, Queso y Tocino.', tags: ['Orden para 2 personas'] },
+  { sec: 'complementos', img: 'alitas',       nombre: 'Orden de Alitas',     precio: 90, tipo: 'simple', desc: 'Orden de alitas.' },
+  { sec: 'complementos', img: 'papas',        nombre: 'Orden de Papas',      precio: 45, tipo: 'simple', desc: 'Orden de papas.' },
+  { sec: 'complementos', img: 'jarrito',      nombre: 'Jarrito 2 L',         precio: 38, tipo: 'simple', desc: 'Refresco Jarrito de 2 litros.', tags: ['2 L'] },
+  { sec: 'complementos', img: 'pepsi',        nombre: 'Pepsi 1.5 L',         precio: 32, tipo: 'simple', desc: 'Refresco Pepsi de 1.5 litros.', tags: ['1.5 L'] },
+  { sec: 'complementos', img: 'refresco-400', nombre: 'Refresco 400 ml',     precio: 20, tipo: 'simple', desc: 'Refresco individual de 400 ml.', tags: ['400 ml'] }
+];
+
+/* =====================================================================
+   3. UTILIDADES
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const pendiente = v => v === 'PENDIENTE' || v === '';
+const dinero = n => '$' + n.toLocaleString('es-MX');
+const fmtTel = t => t.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+const enlaceWA = texto => `https://wa.me/52${WHATSAPP}?text=${encodeURIComponent(texto)}`;
+
+// 720 -> "12:00 pm"; con corto=true -> "12 pm"
+function fmtHora(min, corto) {
+  const h = Math.floor(min / 60) % 24, m = min % 60;
+  const h12 = h % 12 || 12, ap = h < 12 ? 'am' : 'pm';
+  return corto && !m ? `${h12} ${ap}` : `${h12}:${String(m).padStart(2, '0')} ${ap}`;
+}
+
+// Aviso flotante (nunca alert)
+let toastTimer;
+function toast(msg, error) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.toggle('error', !!error);
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, 2600);
+}
+
+/* =====================================================================
+   4. HORARIO ABIERTO / CERRADO (hora de la zona del negocio)
+   ===================================================================== */
+function minutosAhora() {
+  const partes = new Intl.DateTimeFormat('en-US', { timeZone: ZONA_HORARIA, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+  const val = tipo => Number(partes.find(p => p.type === tipo).value);
+  return (val('hour') % 24) * 60 + val('minute');
+}
+function estaAbierto() {
+  const n = minutosAhora();
+  return OPEN_MIN < CLOSE_MIN ? n >= OPEN_MIN && n < CLOSE_MIN : n >= OPEN_MIN || n < CLOSE_MIN;
+}
+function revisarHorario() {
+  const abierto = estaAbierto(), e = $('#estado');
+  e.textContent = abierto ? 'Abierto ahora' : `Cerrado · abrimos ${fmtHora(OPEN_MIN, true)}`;
+  e.classList.toggle('abierto', abierto);
+}
+
+/* =====================================================================
+   5. INFORMACIÓN DEL NEGOCIO Y PIE
+   ===================================================================== */
+function llenarInfo() {
+  $('#envio').textContent = ENVIO_GRATIS ? 'Servicio a domicilio gratis' : 'Servicio a domicilio';
+  $('#horario').textContent = `Abierto ${pendiente(DIAS_ABIERTO) ? '' : DIAS_ABIERTO + ' '}de ${fmtHora(OPEN_MIN)} a ${fmtHora(CLOSE_MIN)}`;
+  $('#dir').textContent = DIRECCION;
+  $('#extra').textContent = TEXTO_EXTRA;
+  $('#extra').hidden = pendiente(TEXTO_EXTRA);
+  $('#tels').innerHTML = TELEFONOS.filter(t => !pendiente(t))
+    .map(t => `<a class="btn" href="tel:+52${t}">📞 ${fmtTel(t)}</a>`).join('');
+  $('#waInfo').href = enlaceWA('Hola, quiero hacer un pedido.');
+  $('#waInfo').setAttribute('aria-label', `Pedir por WhatsApp al ${fmtTel(WHATSAPP)}`);
+  $('#waNum').textContent = fmtTel(WHATSAPP);
+  $('#pieAnio').textContent = new Date().getFullYear();
+  $('#pieNombre').textContent = NEGOCIO;
+  $('#pieDir').textContent = DIRECCION;
+}
+
+/* =====================================================================
+   6. TARJETAS DEL MENÚ (se generan desde los datos)
+   ===================================================================== */
+// Dibujo de pizza en blanco y negro para el 2x1
+function miniPizza(rebanadas) {
+  let s = '<svg viewBox="-50 -50 100 100" aria-hidden="true"><circle r="48" fill="#d6d6d6" stroke="#222" stroke-width="2"/><circle r="39" fill="#fff" stroke="#222" stroke-width="2"/>';
+  for (let k = 0; k < rebanadas; k++) {
+    const a = 2 * Math.PI * k / rebanadas - Math.PI / 2, b = a + Math.PI / rebanadas;
+    s += `<line x2="${(39 * Math.cos(a)).toFixed(1)}" y2="${(39 * Math.sin(a)).toFixed(1)}" stroke="#222" stroke-width="1.6"/>`;
+    s += `<circle cx="${(25 * Math.cos(b)).toFixed(1)}" cy="${(25 * Math.sin(b)).toFixed(1)}" r="5" fill="#111"/>`;
+  }
+  return s + '</svg>';
+}
+
+function tarjeta2x1(p, i) {
+  const t = TAMANOS[p.tam];
+  const info = [pendiente(t.medida) ? '' : t.medida, `${t.rebanadas} rebanadas c/u`].filter(Boolean).join(' · ');
+  return `<article class="card card-2x1" data-img="${p.img}">
+    <div class="c2-top"><h3>${p.nombre}</h3><span class="price">${dinero(p.precio)}</span></div>
+    <div class="c2-art">${miniPizza(t.rebanadas)}${miniPizza(t.rebanadas)}</div>
+    <p class="c2-info">${info}</p>
+    <button class="btn btn-card" type="button" data-i="${i}">Elegir sabores</button>
+  </article>`;
+}
+
+function tarjeta(p, i) {
+  const tags = p.tags ? `<div class="tags">${p.tags.map(t => `<span>${t}</span>`).join('')}</div>` : '';
+  return `<article class="card" data-img="${p.img}">
+    <div class="card-top"><h3 class="card-name">${p.nombre}</h3><p class="card-desc">${p.desc}</p><span class="price">${dinero(p.precio)}</span></div>
+    ${tags}
+    <button class="btn btn-card${p.especial ? ' amarillo' : ''}" type="button" data-i="${i}">${p.tipo === 'simple' ? 'Agregar' : 'Elegir sabores'}</button>
+  </article>`;
+}
+
+function renderMenu() {
+  SECCIONES.forEach(sec => {
+    $('#nav').insertAdjacentHTML('beforeend', `<a href="#${sec.id}">${sec.nav}</a>`);
+    const cards = PRODUCTOS.map((p, i) => p.sec !== sec.id ? '' : (p.es2x1 ? tarjeta2x1(p, i) : tarjeta(p, i))).join('');
+    $('#menu').insertAdjacentHTML('beforeend', `<section class="sec" id="${sec.id}">
+      <h2 class="sec-title" data-text="${sec.titulo}">${sec.titulo}</h2>
+      <p class="sec-desc">${sec.desc}</p>
+      <div class="grid${sec.id === 'dosxuno' ? ' grid-2x1' : ''}">${cards}</div>
+    </section>`);
+  });
+  $('#menu').addEventListener('click', e => {
+    const b = e.target.closest('[data-i]');
+    if (!b) return;
+    const p = PRODUCTOS[b.dataset.i];
+    if (p.tipo === 'simple') agregarCarrito(p.nombre, p.precio, []);
+    else abrirSabores(p);
+  });
+}
+
+/* =====================================================================
+   7. IMÁGENES EN CUALQUIER FORMATO (jpg, jpeg, png o webp, en minúsculas o MAYÚSCULAS)
+   ===================================================================== */
+const EXTENSIONES = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG', 'WEBP'];
+
+// Prueba images/[nombre].[extensión] en orden; si alguna existe, llama a alEncontrar(img)
+function buscarImagen(nombre, alEncontrar) {
+  const img = new Image();
+  let k = 0;
+  img.decoding = 'async';
+  img.onload = () => alEncontrar(img);
+  img.onerror = () => {
+    if (++k < EXTENSIONES.length) img.src = `images/${nombre}.${EXTENSIONES[k]}`;
+    else img.onerror = null;                       // no existe en ningún formato: se queda como está
+  };
+  img.src = `images/${nombre}.${EXTENSIONES[0]}`;
+}
+
+// Fondos: pizarron.* para el encabezado y madera.* para la página
+function cargarFondos() {
+  const poner = variable => img => document.documentElement.style.setProperty(variable, `url("${img.src}")`);
+  buscarImagen('pizarron', poner('--fondo-pizarron'));
+  buscarImagen('madera', poner('--fondo-madera'));
+}
+
+// Fotos de las tarjetas
+function buscarFoto(card) {
+  buscarImagen(card.dataset.img, img => {
+    img.className = 'foto';
+    img.alt = card.querySelector('h3').textContent;
+    const dibujo = card.querySelector('.c2-art');
+    if (dibujo) dibujo.replaceWith(img);             // en el 2x1 la foto reemplaza al dibujo
+    else card.querySelector('.card-top').after(img); // en las demás va debajo de nombre/precio
+  });
+}
+function cargarFotos() {
+  const cards = document.querySelectorAll('[data-img]');
+  if (!('IntersectionObserver' in window)) { cards.forEach(buscarFoto); return; }
+  // Carga diferida: solo busca la foto cuando la tarjeta está por aparecer
+  const io = new IntersectionObserver(entradas => entradas.forEach(en => {
+    if (en.isIntersecting) { io.unobserve(en.target); buscarFoto(en.target); }
+  }), { rootMargin: '400px 0px' });
+  cards.forEach(c => io.observe(c));
+}
+
+/* =====================================================================
+   8. VENTANAS: abrir / cerrar
+   ===================================================================== */
+function abrir(id) { $(id).hidden = false; document.body.classList.add('bloqueado'); }
+function cerrar(id) {
+  $(id).hidden = true;
+  if (!document.querySelector('.modal:not([hidden])')) document.body.classList.remove('bloqueado');
+}
+document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => {
+  if (e.target === m || e.target.closest('.x')) cerrar('#' + m.id);
+}));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal:not([hidden])').forEach(m => cerrar('#' + m.id));
+});
+
+/* =====================================================================
+   9. VENTANA PARA ELEGIR SABORES
+   ===================================================================== */
+let sel = null; // { p: producto, pizzas: [{mitad, orilla, s:[sabor1, sabor2]}], act: {p, h}, coca, una }
+
+function abrirSabores(p) {
+  sel = {
+    p, coca: false, una: false, act: { p: 0, h: 0 },
+    pizzas: Array.from({ length: p.pizzas }, () => ({ mitad: false, orilla: false, s: [null, null] }))
+  };
+  $('#mTitulo').textContent = p.nombre;
+  $('#m40').hidden = !(p.es2x1 && UNA_PIZZA_40);
+  $('#m40').classList.remove('on');
+  $('#m40chk').checked = false;
+  const lista = p.sabores ? SABORES.filter(s => p.sabores.includes(s.nombre)) : SABORES;
+  $('#mLista').innerHTML = lista.map(s => `<div class="sab"><div><b>${s.nombre}</b><small>${s.ing}</small></div>
+    <button class="mas" type="button" data-sabor="${s.nombre}" aria-label="Elegir ${s.nombre}">+</button></div>`).join('');
+  $('#mLista').scrollTop = 0;
+  dibujar();
+  abrir('#mSab');
+}
+
+const pizzasVisibles = () => sel.una ? sel.pizzas.slice(0, 1) : sel.pizzas;
+
+// Espacios por elegir, en orden (cada pizza; con mitad y mitad, sus dos mitades)
+function espacios() {
+  const out = [];
+  pizzasVisibles().forEach((pz, i) => { out.push({ p: i, h: 0 }); if (pz.mitad) out.push({ p: i, h: 1 }); });
+  return out;
+}
+
+// Parte un nombre en renglones cortos para que quepa dentro del dibujo
+function partir(txt, max) {
+  const lineas = [];
+  txt.split(' ').forEach(w => {
+    const u = lineas.length - 1;
+    if (u >= 0 && (lineas[u] + ' ' + w).length <= max) lineas[u] += ' ' + w; else lineas.push(w);
+  });
+  return lineas;
+}
+function textoSVG(nombre, x, y, fs, max) {
+  const lineas = partir(nombre ? nombre.toUpperCase() : 'ELEGIR', max);
+  const y0 = y - (lineas.length - 1) * fs * 0.55;
+  return `<text class="${nombre ? 't-lleno' : 't-vacio'}" x="${x}" y="${y0}" font-size="${fs}" text-anchor="middle" dominant-baseline="middle">${
+    lineas.map((l, k) => `<tspan x="${x}" dy="${k ? fs * 1.1 : 0}">${l}</tspan>`).join('')}</text>`;
+}
+
+// Un espacio clicable: figura + borde amarillo si está activo + texto
+function slot(p, h, figura, activo, texto) {
+  const sabor = sel.pizzas[p].s[h];
+  const esActivo = sel.act.p === p && sel.act.h === h;
+  return `<g class="slot" data-slot="${p},${h}">${figura.replace('/>', ` class="${sabor ? 'm-lleno' : 'm-vacio'}"/>`)}${esActivo ? activo : ''}${texto(sabor)}</g>`;
+}
+
+function svgCirculo(pz, i) {
+  const R = 41, r = R - 2.5;
+  let s = `<svg viewBox="-50 -50 100 100" role="img" aria-label="Pizza ${i + 1}"><circle r="48" class="m-masa"/>`;
+  if (!pz.mitad) {
+    s += slot(i, 0, `<circle r="${R}"/>`, `<circle r="${r}" class="m-act"/>`, n => textoSVG(n, 0, 0, 12, 10));
+  } else {
+    s += slot(i, 0, `<path d="M-${R} 0A${R} ${R} 0 0 1 ${R} 0Z"/>`, `<path d="M-${r} -2.5A${r} ${r} 0 0 1 ${r} -2.5Z" class="m-act"/>`, n => textoSVG(n, 0, -19, 9, 10));
+    s += slot(i, 1, `<path d="M${R} 0A${R} ${R} 0 0 1 -${R} 0Z"/>`, `<path d="M${r} 2.5A${r} ${r} 0 0 1 -${r} 2.5Z" class="m-act"/>`, n => textoSVG(n, 0, 19, 9, 10));
+    s += `<line x1="-${R}" x2="${R}" class="m-linea"/>`;
+  }
+  return s + '</svg>';
+}
+
+function svgRect() {
+  const n = sel.p.pizzas, [w, h] = sel.p.medida;
+  const W = w * 2 + 8, H = h * 2 + 8, cols = n <= 2 ? n : 2, rows = Math.ceil(n / cols);
+  const cw = (W - 8) / cols, ch = (H - 8) / rows;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Pizza rectangular"><rect width="${W}" height="${H}" rx="7" class="m-masa"/>`;
+  for (let k = 0; k < n; k++) {
+    const x = 4 + (k % cols) * cw, y = 4 + Math.floor(k / cols) * ch;
+    s += slot(k, 0,
+      `<rect x="${x + 1}" y="${y + 1}" width="${cw - 2}" height="${ch - 2}" rx="2"/>`,
+      `<rect x="${x + 3.5}" y="${y + 3.5}" width="${cw - 7}" height="${ch - 7}" class="m-act"/>`,
+      nom => textoSVG(nom, x + cw / 2, y + ch / 2, 10, 12));
+  }
+  return s + '</svg>';
+}
+
+function opciones(pz, i, n) {
+  const corto = n >= 3, t = sel.p.tam;
+  let h = '';
+  if (t !== 'chica') // las chicas NO tienen mitad y mitad
+    h += `<label class="opc"><input type="checkbox" data-op="mitad" data-p="${i}"${pz.mitad ? ' checked' : ''}> ${corto ? 'Mitad' : 'Mitad y mitad'} +${dinero(MITAD_PRECIO)}</label>`;
+  if (!sel.p.orillaIncluida)
+    h += `<label class="opc"><input type="checkbox" data-op="orilla" data-p="${i}"${pz.orilla ? ' checked' : ''}> ${corto ? 'Orilla' : 'Orilla rellena'} +${dinero(ORILLA_PRECIO[t])}</label>`;
+  return h;
+}
+
+function calcular() {
+  const base = sel.una ? Math.round(sel.p.precio * 0.6) : sel.p.precio, extras = [];
+  pizzasVisibles().forEach((pz, i) => {
+    if (pz.mitad) extras.push([`P${i + 1}: Mitad`, MITAD_PRECIO]);
+    if (pz.orilla) extras.push([`P${i + 1}: Orilla`, ORILLA_PRECIO[sel.p.tam]]);
+  });
+  if (sel.coca) extras.push(['Coca Cola', CAMBIO_COCA.precio]);
+  return { extras, total: base + extras.reduce((a, e) => a + e[1], 0) };
+}
+
+function dibujar() {
+  const pzs = pizzasVisibles(), n = pzs.length, fila = $('#mPizzas');
+  fila.className = 'pz-row' + (n === 3 ? ' tres' : '');
+  fila.innerHTML = sel.p.tipo === 'rect'
+    ? `<div class="pz pz-rect">${svgRect()}<p class="pz-label">${n} especialidades</p></div>`
+    : pzs.map((pz, i) => `<div class="pz">${svgCirculo(pz, i)}<p class="pz-label">Pizza ${i + 1}</p>${opciones(pz, i, n)}</div>`).join('');
+
+  const ref = $('#mRef');
+  ref.hidden = !sel.p.refresco2L;
+  if (sel.p.refresco2L) ref.innerHTML = `<p>Refresco 2 L:</p>
+    <label><input type="radio" name="ref" value="0"${sel.coca ? '' : ' checked'}> Sabor disponible</label>
+    <label><input type="radio" name="ref" value="1"${sel.coca ? ' checked' : ''}> Cambiar a ${CAMBIO_COCA.nombre} (+${dinero(CAMBIO_COCA.precio)})</label>`;
+
+  const { extras, total } = calcular();
+  $('#mTotal').innerHTML = extras.map(e => `${e[0]} +${dinero(e[1])}`).join(' | ') + (extras.length ? ' -> ' : '') + `Total: <b>${dinero(total)}</b>`;
+}
+
+// Tocar un círculo, mitad o cuadro lo vuelve el espacio activo
+$('#mPizzas').addEventListener('click', e => {
+  const g = e.target.closest('[data-slot]');
+  if (!g) return;
+  const [p, h] = g.dataset.slot.split(',').map(Number);
+  sel.act = { p, h };
+  dibujar();
+});
+// Casillas de mitad y mitad / orilla
+$('#mPizzas').addEventListener('change', e => {
+  const c = e.target.closest('[data-op]');
+  if (!c) return;
+  const pz = sel.pizzas[c.dataset.p], i = Number(c.dataset.p);
+  pz[c.dataset.op] = c.checked;
+  if (c.dataset.op === 'mitad') {
+    if (c.checked) sel.act = { p: i, h: pz.s[0] ? 1 : 0 };
+    else { pz.s[1] = null; if (sel.act.p === i) sel.act = { p: i, h: 0 }; }
+  }
+  dibujar();
+});
+// Refresco
+$('#mRef').addEventListener('change', e => { sel.coca = e.target.value === '1'; dibujar(); });
+// 1 pizza al 40%
+$('#m40chk').addEventListener('change', e => {
+  sel.una = e.target.checked;
+  $('#m40').classList.toggle('on', sel.una);
+  if (sel.una) sel.act = { p: 0, h: sel.act.p === 0 ? sel.act.h : 0 };
+  dibujar();
+});
+// Botón "+" de cada sabor: llena el espacio activo y salta al siguiente vacío
+$('#mLista').addEventListener('click', e => {
+  const b = e.target.closest('[data-sabor]');
+  if (!b) return;
+  const { p, h } = sel.act;
+  sel.pizzas[p].s[h] = b.dataset.sabor;
+  const esp = espacios(), idx = esp.findIndex(x => x.p === p && x.h === h);
+  const sig = [...esp.slice(idx + 1), ...esp.slice(0, idx)].find(x => !sel.pizzas[x.p].s[x.h]);
+  if (sig) sel.act = sig;
+  dibujar();
+});
+// Agregar al carrito
+$('#mAgregar').addEventListener('click', () => {
+  const rect = sel.p.tipo === 'rect';
+  const falta = espacios().find(x => !sel.pizzas[x.p].s[x.h]);
+  if (falta) {
+    sel.act = falta;
+    dibujar();
+    toast(rect ? `Elige la especialidad ${falta.p + 1}` : `Elige el sabor de la Pizza ${falta.p + 1}`, true);
+    return;
+  }
+  const det = pizzasVisibles().map(pz => (pz.mitad ? `${pz.s[0]} 1/2 ${pz.s[1]}` : pz.s[0]) + (pz.orilla ? ' + orilla rellena' : ''));
+  if (sel.coca) det.push(`${CAMBIO_COCA.nombre} (+${dinero(CAMBIO_COCA.precio)})`);
+  const nombre = sel.una ? `${TAMANOS[sel.p.tam].nombre} (1 pizza -40%)` : sel.p.nombre;
+  agregarCarrito(nombre, calcular().total, det);
+  cerrar('#mSab');
+});
+
+/* =====================================================================
+   10. CARRITO (se guarda en el navegador)
+   ===================================================================== */
+const LS_CLAVE = 'acevedos-pizza-carrito';
+let carrito = [];
+try {
+  carrito = JSON.parse(localStorage.getItem(LS_CLAVE)) || [];
+  if (!Array.isArray(carrito)) carrito = [];
+} catch (e) { carrito = []; }
+function guardar() { try { localStorage.setItem(LS_CLAVE, JSON.stringify(carrito)); } catch (e) { /* sin almacenamiento */ } }
+
+const subtotal = () => carrito.reduce((a, it) => a + it.precio * it.cant, 0);
+
+function agregarCarrito(nombre, precio, det) {
+  const clave = [nombre, precio, ...det].join('|');
+  const it = carrito.find(x => x.clave === clave);
+  if (it) it.cant++; else carrito.push({ clave, nombre, precio, det, cant: 1 });
+  guardar();
+  actualizarBarra();
+  toast(`${nombre} agregado al carrito`);
+}
+
+function actualizarBarra() {
+  const n = carrito.reduce((a, it) => a + it.cant, 0);
+  $('#bN').textContent = `${n} ${n === 1 ? 'artículo' : 'artículos'}`;
+  $('#bTotal').textContent = dinero(subtotal());
+}
+
+function renderCarrito() {
+  $('#cItems').innerHTML = !carrito.length ? '<p class="c-vacio">Tu carrito está vacío.</p>' : carrito.map((it, i) => `<div class="c-item">
+    <div class="c-row"><span class="c-name">${it.cant > 1 ? it.cant + ' x ' : ''}${it.nombre}</span><span class="c-price">${dinero(it.precio * it.cant)}</span>
+      <button class="c-del" type="button" data-del="${i}" aria-label="Quitar ${it.nombre} del carrito">×</button></div>
+    ${it.det.length ? `<ul class="c-det">${it.det.map(d => `<li>• ${d}</li>`).join('')}</ul>` : ''}
+  </div>`).join('');
+  actualizarBarra();
+  actualizarTotal();
+}
+
+$('#cItems').addEventListener('click', e => {
+  const d = e.target.closest('[data-del]');
+  if (!d) return;
+  carrito.splice(d.dataset.del, 1);
+  guardar();
+  renderCarrito();
+});
+$('#barra').addEventListener('click', () => { renderCarrito(); abrir('#mCarrito'); });
+$('#seguir').addEventListener('click', () => cerrar('#mCarrito'));
+
+/* =====================================================================
+   11. CONFIRMAR PEDIDO: GPS, forma de pago y total
+   ===================================================================== */
+let gpsLink = '';
+$('#gps').addEventListener('click', () => {
+  const m = $('#gpsMsg');
+  if (!navigator.geolocation) { m.textContent = 'Tu navegador no permite compartir la ubicación.'; return; }
+  m.textContent = 'Obteniendo ubicación...';
+  navigator.geolocation.getCurrentPosition(pos => {
+    gpsLink = `https://maps.google.com/?q=${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`;
+    m.textContent = 'Ubicación capturada correctamente.';
+  }, err => {
+    m.textContent = err.code === 1
+      ? 'No diste permiso para usar tu ubicación. Puedes enviar el pedido sin ella.'
+      : 'No se pudo obtener tu ubicación. Intenta de nuevo.';
+  }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+});
+
+let pago = 'efectivo';
+const comision = () => pago === 'tarjeta' ? Math.round(subtotal() * COMISION_TARJETA / 100) : 0;
+
+function actualizarTotal() {
+  const s = subtotal(), c = comision();
+  $('#cTotal').textContent = dinero(s + c);
+  $('#tarjMsg').textContent = `Al pagar con tarjeta se agrega ${COMISION_TARJETA}% al total (${dinero(s)} + ${dinero(c)})`;
+  revisarCambio();
+}
+
+function revisarCambio() {
+  const v = parseFloat($('#paga').value), msg = $('#cambioMsg'), total = subtotal() + comision();
+  msg.hidden = !v;
+  if (!v) return;
+  const cambio = v - total;
+  msg.textContent = cambio < 0
+    ? `La cantidad es menor al total (${dinero(total)}).`
+    : cambio > CAMBIO_MAXIMO
+      ? `Tu cambio sería de ${dinero(cambio)}. El repartidor no lleva más de ${dinero(CAMBIO_MAXIMO)} de cambio.`
+      : `Tu cambio: ${dinero(cambio)}`;
+}
+$('#paga').addEventListener('input', revisarCambio);
+
+$('#pagos').addEventListener('click', e => {
+  const b = e.target.closest('[data-pago]');
+  if (!b) return;
+  pago = b.dataset.pago;
+  document.querySelectorAll('#pagos button').forEach(x => x.classList.toggle('on', x === b));
+  $('#pEfectivo').hidden = pago !== 'efectivo';
+  $('#pTransfer').hidden = pago !== 'transferencia';
+  $('#pTarjeta').hidden = pago !== 'tarjeta';
+  actualizarTotal();
+});
+
+function llenarPagos() {
+  $('#btnTarjeta').textContent = `Tarjeta +${COMISION_TARJETA}%`;
+  $('#pagaLabel').firstChild.textContent = `¿Con cuánto pagas? (el repartidor no lleva más de ${dinero(CAMBIO_MAXIMO)} de cambio)`;
+  $('#tClabe').textContent = pendiente(CLABE) ? CLABE : CLABE.replace(/(\d{4})(?=\d)/g, '$1 ');
+  $('#tBanco').textContent = `${BANCO} (${TITULAR})`;
+  $('#copiar').hidden = pendiente(CLABE);
+  $('#linkPago').hidden = !LINK_PAGO_TARJETA;
+  if (LINK_PAGO_TARJETA) $('#linkPago').href = LINK_PAGO_TARJETA;
+}
+
+$('#copiar').addEventListener('click', () => {
+  const b = $('#copiar');
+  const listo = () => { b.textContent = '¡Copiada!'; setTimeout(() => { b.textContent = 'Copiar CLABE'; }, 2000); };
+  const respaldo = () => {
+    const t = document.createElement('textarea');
+    t.value = CLABE; document.body.appendChild(t); t.select();
+    try { document.execCommand('copy'); listo(); } catch (e) { toast('No se pudo copiar', true); }
+    t.remove();
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(CLABE).then(listo, respaldo); else respaldo();
+});
+
+/* =====================================================================
+   12. ENVIAR PEDIDO POR WHATSAPP
+   ===================================================================== */
+$('#enviar').addEventListener('click', () => {
+  if (!carrito.length) return toast('Tu carrito está vacío', true);
+  if (!estaAbierto()) return toast(`Estamos cerrados. Abrimos de ${fmtHora(OPEN_MIN)} a ${fmtHora(CLOSE_MIN)}.`, true);
+
+  const val = id => $('#' + id).value.trim().replace(/\s*\n\s*/g, ' ');
+  const obligatorios = [['fNombre', 'tu nombre completo'], ['fTel', 'tu teléfono'], ['fCalle', 'la calle y número'], ['fEntre', 'entre qué calles'], ['fColonia', 'tu colonia']];
+  for (const [id, txt] of obligatorios) {
+    if (!val(id)) { $('#' + id).focus(); return toast(`Escribe ${txt}`, true); }
+  }
+  const tel = val('fTel').replace(/\D/g, '');
+  if (tel.length !== 10) { $('#fTel').focus(); return toast('El teléfono debe tener 10 dígitos', true); }
+
+  const total = subtotal() + comision();
+  const paga = parseFloat($('#paga').value);
+  if (pago === 'efectivo') {
+    if (!paga) { $('#paga').focus(); return toast('Escribe con cuánto pagas', true); }
+    if (paga < total) { $('#paga').focus(); return toast('La cantidad con la que pagas es menor al total', true); }
+  }
+
+  const o = v => v || '-'; // campos opcionales vacíos
+  const L = [
+    `*${NEGOCIO.toUpperCase()} - PEDIDO*`,
+    `Cliente: ${val('fNombre')}`,
+    `Teléfono: ${tel}`,
+    `Dirección: ${val('fCalle')}`,
+    `Entre calles: ${val('fEntre')}`,
+    `Colonia: ${val('fColonia')}`,
+    `Zaguán: ${o(val('fZaguan'))} | Fachada: ${o(val('fFachada'))}`,
+    `GPS: ${gpsLink || 'No enviada'}`,
+    `Notas: ${o(val('fNotas'))}`,
+    '----------------'
+  ];
+  carrito.forEach(it => {
+    L.push(`- ${it.cant > 1 ? it.cant + ' x ' : ''}${it.nombre} ${dinero(it.precio * it.cant)}`);
+    it.det.forEach(d => L.push(`   • ${d}`));
+  });
+  L.push('----------------');
+  L.push(`Pago: ${{ efectivo: 'Efectivo', transferencia: 'Transferencia', tarjeta: 'Tarjeta' }[pago]}`);
+  if (pago === 'efectivo') L.push(`Paga con: ${dinero(paga)} (cambio ${dinero(paga - total)})`);
+  if (pago === 'tarjeta') L.push(`Comisión tarjeta ${COMISION_TARJETA}%: +${dinero(comision())}`);
+  L.push(`*TOTAL: ${dinero(total)}*`);
+  if (pago !== 'efectivo') L.push('Enviaré mi comprobante por este chat.');
+
+  const url = enlaceWA(L.join('\n'));
+  if (!window.open(url, '_blank')) location.href = url;
+});
+
+/* =====================================================================
+   13. INICIO
+   ===================================================================== */
+llenarInfo();
+renderMenu();
+llenarPagos();
+cargarFondos();
+cargarFotos();
+actualizarBarra();
+revisarHorario();
+setInterval(revisarHorario, 60000); // revisa el horario cada minuto sin recargar
+</script>
+</body>
+</html>
