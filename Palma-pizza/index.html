@@ -502,4 +502,506 @@ function avisar(texto, error = false) {
   temporizadorAviso = setTimeout(() => a.classList.remove('visible'), 2600);
 }
 
-/*
+/* =========================================================
+   4. HORARIO ABIERTO / CERRADO (hora de México, no del celular)
+   ========================================================= */
+function minutosAhora() {
+  const partes = new Intl.DateTimeFormat('en-GB', { timeZone: ZONA_HORARIA, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+  const v = t => +partes.find(p => p.type === t).value;
+  return v('hour') * 60 + v('minute');
+}
+function estaAbierto() {
+  const m = minutosAhora();
+  return m >= OPEN_MIN && m < CLOSE_MIN;
+}
+function actualizarEstado() {
+  const abierto = estaAbierto(), e = $('estado');
+  e.className = 'estado ' + (abierto ? 'abierto' : 'cerrado');
+  e.textContent = abierto ? 'Abierto ahora' : 'Cerrado · abrimos ' + hora12(OPEN_MIN);
+}
+
+/* =========================================================
+   5. INFORMACIÓN DEL NEGOCIO EN LA PÁGINA
+   ========================================================= */
+function pintarInfo() {
+  $('horario').textContent = 'Abierto todos los días de ' + hora12(OPEN_MIN) + ' a ' + hora12(CLOSE_MIN);
+  $('direccion').innerHTML = esc(DIRECCION) + (TEXTO_EXTRA ? '<br>' + esc(TEXTO_EXTRA) : '');
+  $('telefonos').innerHTML = TELEFONOS.map(t => `<a href="tel:+52${t}">📞 ${telFormato(t)}</a>`).join('');
+  $('btnWa').href = urlWa('Hola, quiero hacer un pedido.');
+  $('numWa').textContent = telFormato(WHATSAPP);
+  $('anio').textContent = new Date().getFullYear();
+  $('pieDireccion').textContent = DIRECCION;
+  $('lblPagaCon').textContent = `¿Con cuánto pagas? (el repartidor no lleva más de ${dinero(CAMBIO_MAXIMO)} de cambio)`;
+  $('btnPagoTarjeta').textContent = 'Tarjeta +' + COMISION_TARJETA + '%';
+  const clabe = CLABE.replace(/\s/g, '');
+  const clabeValida = /^\d{18}$/.test(clabe);
+  $('txtClabe').textContent = '🏦 CLABE: ' + (clabeValida ? clabe.replace(/(\d{4})(?=\d)/g, '$1 ') : CLABE);
+  $('btnCopiar').hidden = !clabeValida;   // sin CLABE real no se muestra el botón de copiar
+  $('txtBanco').textContent = `🏦 ${BANCO} (${TITULAR})`;
+  if (LINK_PAGO) { $('btnMp').href = LINK_PAGO; $('btnMp').hidden = false; }
+}
+
+/* =========================================================
+   6. TARJETAS DEL MENÚ (se generan desde los datos)
+   ========================================================= */
+function htmlEtiquetas(lista) {
+  return '<ul class="etiquetas">' + lista.map(e => `<li>${esc(e)}</li>`).join('') + '</ul>';
+}
+function htmlTarjeta(p, tipo, textoBoton, amarillo) {
+  return `<article class="tarjeta" data-img="${p.id}">
+    <div class="fila">
+      <h3 class="nombre">${esc(p.nombre)}</h3>
+      <p class="detalle">${esc(p.detalle)}</p>
+      <span class="precio">${dinero(p.precio)}</span>
+    </div>
+    ${htmlEtiquetas(p.etiquetas)}
+    <button class="btn${amarillo ? ' amarillo' : ''}" type="button" data-tipo="${tipo}" data-id="${p.id}">${textoBoton}</button>
+  </article>`;
+}
+// Dibujo blanco y negro de una pizza redonda con sus rebanadas y un pepperoni por rebanada
+function svgPizzaChica(rebanadas) {
+  let lineas = '', pepp = '';
+  for (let k = 0; k < rebanadas; k++) {
+    const a = 2 * Math.PI * k / rebanadas, am = a + Math.PI / rebanadas;
+    lineas += `<line x1="50" y1="50" x2="${(50 + 40 * Math.cos(a)).toFixed(1)}" y2="${(50 + 40 * Math.sin(a)).toFixed(1)}" stroke="#222" stroke-width="1.6"/>`;
+    pepp += `<circle cx="${(50 + 26 * Math.cos(am)).toFixed(1)}" cy="${(50 + 26 * Math.sin(am)).toFixed(1)}" r="4.2" fill="#111"/>`;
+  }
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#cfcfcf"/><circle cx="50" cy="50" r="40" fill="#fff" stroke="#222" stroke-width="2"/>${lineas}${pepp}</svg>`;
+}
+function htmlTarjeta2x1(p) {
+  const medidas = [p.cm, p.rebanadas ? p.rebanadas + ' rebanadas' : ''].filter(Boolean).join(' · ');
+  return `<article class="tarjeta t2x1" data-img="${p.id}">
+    <div class="fila"><h3 class="nombre">${esc(p.nombre)}</h3><span class="precio">${dinero(p.precio)}</span></div>
+    <div class="dibujo">${svgPizzaChica(p.rebanadas)}${svgPizzaChica(p.rebanadas)}</div>
+    <p class="medidas">${esc(medidas)}</p>
+    <button class="btn" type="button" data-tipo="2x1" data-id="${p.id}">Elegir sabores</button>
+  </article>`;
+}
+function pintarMenu() {
+  $('gridEspeciales').innerHTML = ESPECIALES.map(p => htmlTarjeta(p, 'especial', 'Elegir sabores', true)).join('');
+  $('grid2x1').innerHTML = DOSXUNO.map(htmlTarjeta2x1).join('');
+  $('gridPaquetes').innerHTML = PAQUETES.map(p => htmlTarjeta(p, 'paquete', 'Elegir sabores', false)).join('');
+  $('gridComplementos').innerHTML = COMPLEMENTOS.map(p => htmlTarjeta(p, 'complemento', 'Agregar', false)).join('');
+}
+
+/* =========================================================
+   7. FOTOS OPCIONALES (images/[data-img].jpg|jpeg|png|webp)
+   ========================================================= */
+const EXTENSIONES = ['jpg', 'jpeg', 'png', 'webp'];
+function buscarFoto(tarjeta, i = 0) {
+  if (i >= EXTENSIONES.length) return;            // no hay foto: la tarjeta se queda como está
+  const ruta = `images/${tarjeta.dataset.img}.${EXTENSIONES[i]}`;
+  const prueba = new Image();
+  prueba.onload = () => {
+    const img = document.createElement('img');
+    img.className = 'foto'; img.src = ruta; img.loading = 'lazy'; img.decoding = 'async';
+    img.alt = tarjeta.querySelector('.nombre').textContent;
+    const dibujo = tarjeta.querySelector('.dibujo');
+    if (dibujo) dibujo.replaceWith(img); else tarjeta.querySelector('.fila').after(img);
+  };
+  prueba.onerror = () => buscarFoto(tarjeta, i + 1);
+  prueba.src = ruta;
+}
+function activarFotos() {
+  const tarjetas = document.querySelectorAll('[data-img]');
+  if (!('IntersectionObserver' in window)) { tarjetas.forEach(t => buscarFoto(t)); return; }
+  const obs = new IntersectionObserver(entradas => entradas.forEach(e => {
+    if (e.isIntersecting) { obs.unobserve(e.target); buscarFoto(e.target); }
+  }), { rootMargin: '300px' });
+  tarjetas.forEach(t => obs.observe(t));
+}
+
+/* =========================================================
+   8. VENTANAS: abrir / cerrar (X, fuera, Escape)
+   ========================================================= */
+function abrirCapa(capa) { capa.hidden = false; document.body.classList.add('bloqueado'); }
+function cerrarCapa(capa) {
+  capa.hidden = true;
+  if ($('capaSabores').hidden && $('capaCarrito').hidden) document.body.classList.remove('bloqueado');
+}
+document.querySelectorAll('.capa').forEach(capa => {
+  capa.addEventListener('click', e => { if (e.target === capa || e.target.closest('[data-cerrar]')) cerrarCapa(capa); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.capa:not([hidden])').forEach(cerrarCapa);
+});
+
+/* =========================================================
+   9. VENTANA PARA ELEGIR SABORES
+   ========================================================= */
+let sel = null; // estado de la ventana abierta
+
+function abrirSabores(tipo, id) {
+  const lista = { especial: ESPECIALES, '2x1': DOSXUNO, paquete: PAQUETES }[tipo];
+  const p = lista.find(x => x.id === id);
+  const rect = tipo === 'especial';
+  const cantidad = rect ? p.forma.cols * p.forma.filas : (p.pizzas || 2);
+  sel = {
+    p, tipo, rect, una: false, coca: false, activo: { i: 0, h: 'a' },
+    espacios: Array.from({ length: cantidad }, (_, k) => ({ mitad: false, orilla: false, a: (p.predeterminados || [])[k] || null, b: null }))
+  };
+  $('vsTitulo').textContent = p.nombre;
+  const pill = $('pill40');
+  pill.hidden = !(tipo === '2x1' && OFRECE_40);
+  pill.setAttribute('aria-pressed', 'false'); pill.textContent = '☐ 1 pizza −40%';
+  // Lista de sabores (limitada si el producto lo indica)
+  const sabores = p.sabores ? SABORES.filter(s => p.sabores.includes(s.n)) : SABORES;
+  $('vsSabores').innerHTML = sabores.map(s => `<li><div><strong>${esc(s.n)}</strong><span>${esc(s.i)}</span></div>
+    <button class="mas" type="button" data-sabor="${esc(s.n)}" aria-label="Elegir ${esc(s.n)}">+</button></li>`).join('');
+  $('vsSabores').scrollTop = 0;
+  pintarRefresco();
+  pintarPizzas();
+  abrirCapa($('capaSabores'));
+}
+
+// Opciones disponibles según el producto
+const permiteMitad = () => !sel.rect && sel.p.tam !== 'chica';
+const permiteOrilla = () => !sel.rect && !sel.p.orillaIncluida;
+
+// Texto de sabor partido en renglones para el SVG
+function textoSvg(txt, x, y, tam, color) {
+  const palabras = txt.toUpperCase().split(' '), renglones = [];
+  palabras.forEach(w => {
+    const u = renglones.length - 1;
+    if (u >= 0 && (renglones[u] + ' ' + w).length <= 9) renglones[u] += ' ' + w; else renglones.push(w);
+  });
+  const y0 = y - (renglones.length - 1) * tam * 0.55;
+  return `<text x="${x}" y="${y0}" font-size="${tam}" fill="${color}" text-anchor="middle" dominant-baseline="middle">` +
+    renglones.map((r, k) => `<tspan x="${x}" dy="${k ? tam * 1.1 : 0}">${esc(r)}</tspan>`).join('') + '</text>';
+}
+
+function svgRedonda(e, i) {
+  const c = 100, R = 96, r = 82, act = sel.activo;
+  let s = `<svg viewBox="0 0 200 200" role="img" aria-label="Pizza ${i + 1}"><circle class="masa" cx="${c}" cy="${c}" r="${R}"/>`;
+  const relleno = v => v ? 'elegida' : 'vacia';
+  const letra = v => v ? '#3a1600' : '#fff';
+  if (!e.mitad) {
+    s += `<g class="zona" data-i="${i}" data-h="a"><circle class="${relleno(e.a)}" cx="${c}" cy="${c}" r="${r}"/>` +
+      textoSvg(e.a || 'Elegir', c, c, e.a ? 22 : 26, letra(e.a)) + '</g>';
+    if (act.i === i) s += `<circle class="activa" cx="${c}" cy="${c}" r="${r - 4.5}"/>`;
+  } else {
+    s += `<g class="zona" data-i="${i}" data-h="a"><path class="${relleno(e.a)}" d="M${c - r},${c} A${r},${r} 0 0 1 ${c + r},${c} Z"/>` +
+      textoSvg(e.a || 'Elegir', c, c - 38, 18, letra(e.a)) + '</g>';
+    s += `<g class="zona" data-i="${i}" data-h="b"><path class="${relleno(e.b)}" d="M${c + r},${c} A${r},${r} 0 0 1 ${c - r},${c} Z"/>` +
+      textoSvg(e.b || 'Elegir', c, c + 38, 18, letra(e.b)) + '</g>';
+    s += `<line class="linea" x1="${c - r}" y1="${c}" x2="${c + r}" y2="${c}"/>`;
+    if (act.i === i) {
+      const q = r - 4.5;
+      s += act.h === 'a'
+        ? `<path class="activa" d="M${c - q},${c - 4.5} A${q},${q} 0 0 1 ${c + q},${c - 4.5} Z"/>`
+        : `<path class="activa" d="M${c + q},${c + 4.5} A${q},${q} 0 0 1 ${c - q},${c + 4.5} Z"/>`;
+    }
+  }
+  return s + '</svg>';
+}
+
+function svgRectangular() {
+  const f = sel.p.forma, E = 10, borde = 16, W = f.w * E, H = f.h * E;
+  const cw = W / f.cols, ch = H / f.filas;
+  let s = `<svg viewBox="0 0 ${W + borde * 2} ${H + borde * 2}" role="img" aria-label="${esc(sel.p.nombre)}">
+    <rect class="masa" x="0" y="0" width="${W + borde * 2}" height="${H + borde * 2}" rx="18"/>`;
+  sel.espacios.forEach((e, i) => {
+    const x = borde + (i % f.cols) * cw, y = borde + Math.floor(i / f.cols) * ch;
+    s += `<g class="zona" data-i="${i}" data-h="a"><rect class="${e.a ? 'elegida' : 'vacia'}" x="${x}" y="${y}" width="${cw}" height="${ch}"/>` +
+      `<text x="${x + 12}" y="${y + 24}" font-size="20" fill="${e.a ? '#3a1600' : '#ffb59e'}">${i + 1}</text>` +
+      textoSvg(e.a || 'Elegir', x + cw / 2, y + ch / 2, e.a ? 34 : 38, e.a ? '#3a1600' : '#fff') + '</g>';
+    if (sel.activo.i === i) s += `<rect class="activa" x="${x + 4.5}" y="${y + 4.5}" width="${cw - 9}" height="${ch - 9}"/>`;
+  });
+  // líneas de división entre cuadros
+  for (let k = 1; k < f.cols; k++) s += `<line class="linea" x1="${borde + k * cw}" y1="${borde}" x2="${borde + k * cw}" y2="${borde + H}"/>`;
+  for (let k = 1; k < f.filas; k++) s += `<line class="linea" x1="${borde}" y1="${borde + k * ch}" x2="${borde + W}" y2="${borde + k * ch}"/>`;
+  return s + '</svg>';
+}
+
+function pintarPizzas() {
+  const cont = $('vsPizzas');
+  if (sel.rect) {
+    cont.className = 'rect';
+    cont.innerHTML = svgRectangular();
+  } else {
+    const tres = sel.espacios.length >= 3;
+    cont.className = 'pizzas' + (tres ? ' tres' : '');
+    cont.innerHTML = sel.espacios.map((e, i) => `<div class="pz">${svgRedonda(e, i)}
+      <span class="pz-num">Pizza ${i + 1}</span>
+      ${permiteMitad() ? `<label class="opc"><input type="checkbox" data-opc="mitad" data-i="${i}"${e.mitad ? ' checked' : ''}>${tres ? 'Mitad' : 'Mitad y mitad'} +${dinero(PRECIO_MITAD)}</label>` : ''}
+      ${permiteOrilla() ? `<label class="opc"><input type="checkbox" data-opc="orilla" data-i="${i}"${e.orilla ? ' checked' : ''}>${tres ? 'Orilla' : 'Orilla rellena'} +${dinero(PRECIO_ORILLA[sel.p.tam])}</label>` : ''}
+    </div>`).join('');
+  }
+  pintarTotal();
+}
+
+function pintarRefresco() {
+  const r = $('vsRefresco');
+  r.hidden = !sel.p.refresco;
+  if (!sel.p.refresco) return;
+  r.innerHTML = PRECIO_COCA === null
+    ? '<b>Refresco incluido:</b> Refresco de sabor 1.75 L'
+    : `<b>Refresco 1.75 L:</b>
+       <label><input type="radio" name="refresco" value="sabor" checked> Sabor disponible</label>
+       <label><input type="radio" name="refresco" value="coca"> Cambiar a Coca Cola (+${dinero(PRECIO_COCA)})</label>`;
+}
+
+// Cálculo del precio con extras
+function calcular() {
+  const extras = [];
+  let total = sel.una ? Math.round(sel.p.precio * 0.6) : sel.p.precio;
+  sel.espacios.forEach((e, i) => {
+    if (e.mitad) { total += PRECIO_MITAD; extras.push(`P${i + 1}: Mitad +${dinero(PRECIO_MITAD)}`); }
+    if (e.orilla) { const o = PRECIO_ORILLA[sel.p.tam]; total += o; extras.push(`P${i + 1}: Orilla +${dinero(o)}`); }
+  });
+  if (sel.coca) { total += PRECIO_COCA; extras.push(`Coca Cola +${dinero(PRECIO_COCA)}`); }
+  return { total, extras };
+}
+function pintarTotal() {
+  const { total, extras } = calcular();
+  $('vsTotal').innerHTML = (extras.length ? esc(extras.join(' | ')) + ' -> ' : '') + 'Total: <b>' + dinero(total) + '</b>';
+}
+
+// Orden de los espacios para saltar al siguiente vacío
+function listaEspacios() {
+  const l = [];
+  sel.espacios.forEach((e, i) => { l.push({ i, h: 'a' }); if (e.mitad) l.push({ i, h: 'b' }); });
+  return l;
+}
+function primerVacio() {
+  return listaEspacios().find(x => !sel.espacios[x.i][x.h]);
+}
+
+// Clic en un círculo, mitad o cuadro: se vuelve el espacio activo
+$('vsPizzas').addEventListener('click', e => {
+  const z = e.target.closest('.zona');
+  if (!z) return;
+  sel.activo = { i: +z.dataset.i, h: z.dataset.h };
+  pintarPizzas();
+});
+// Casillas de mitad y mitad / orilla
+$('vsPizzas').addEventListener('change', e => {
+  const c = e.target.closest('[data-opc]');
+  if (!c) return;
+  const esp = sel.espacios[+c.dataset.i];
+  if (c.dataset.opc === 'mitad') {
+    esp.mitad = c.checked;
+    if (c.checked) sel.activo = { i: +c.dataset.i, h: esp.a ? 'b' : 'a' };
+    else { esp.b = null; if (sel.activo.h === 'b') sel.activo.h = 'a'; }
+  } else esp.orilla = c.checked;
+  pintarPizzas();
+});
+// Refresco
+$('vsRefresco').addEventListener('change', e => {
+  sel.coca = e.target.value === 'coca';
+  pintarTotal();
+});
+// 1 pizza −40% (solo 2x1)
+$('pill40').addEventListener('click', () => {
+  sel.una = !sel.una;
+  $('pill40').setAttribute('aria-pressed', String(sel.una));
+  $('pill40').textContent = (sel.una ? '☑' : '☐') + ' 1 pizza −40%';
+  if (sel.una) { sel.espacios.length = 1; sel.activo = { i: 0, h: sel.activo.i === 0 ? sel.activo.h : 'a' }; }
+  else sel.espacios.push({ mitad: false, orilla: false, a: null, b: null });
+  pintarPizzas();
+});
+// Botón "+" de cada sabor
+$('vsSabores').addEventListener('click', e => {
+  const b = e.target.closest('[data-sabor]');
+  if (!b) return;
+  const { i, h } = sel.activo;
+  sel.espacios[i][h] = b.dataset.sabor;
+  const lista = listaEspacios(), pos = lista.findIndex(x => x.i === i && x.h === h);
+  const siguiente = lista.slice(pos + 1).concat(lista.slice(0, pos)).find(x => !sel.espacios[x.i][x.h]);
+  if (siguiente) sel.activo = siguiente;
+  pintarPizzas();
+});
+// Agregar al carrito desde la ventana
+$('vsAgregar').addEventListener('click', () => {
+  const falta = primerVacio();
+  if (falta) {
+    sel.activo = falta;
+    pintarPizzas();
+    avisar(sel.rect ? `Elige la especialidad ${falta.i + 1}` : `Elige el sabor de la Pizza ${falta.i + 1}`, true);
+    return;
+  }
+  const { total } = calcular();
+  const detalles = sel.espacios.map(e => (e.mitad ? `${e.a} 1/2 ${e.b}` : e.a) + (e.orilla ? ' + orilla rellena' : ''));
+  if (sel.coca) detalles.push(`Coca Cola 1.75 L (+${dinero(PRECIO_COCA)})`);
+  const nombre = sel.una ? `${sel.p.nombre.replace(' 2x1', '')} (1 pizza -40%)` : sel.p.nombre;
+  agregarAlCarrito(nombre, total, detalles);
+  cerrarCapa($('capaSabores'));
+});
+
+/* =========================================================
+   10. CARRITO (se guarda en el navegador)
+   ========================================================= */
+const CLAVE_CARRITO = 'palma-pizza-carrito';
+let carrito = [];
+try { carrito = JSON.parse(localStorage.getItem(CLAVE_CARRITO)) || []; } catch (e) { carrito = []; }
+function guardarCarrito() {
+  try { localStorage.setItem(CLAVE_CARRITO, JSON.stringify(carrito)); } catch (e) { /* almacenamiento no disponible */ }
+}
+const subtotal = () => carrito.reduce((s, x) => s + x.precio * x.cant, 0);
+const articulos = () => carrito.reduce((s, x) => s + x.cant, 0);
+
+function agregarAlCarrito(nombre, precio, detalles) {
+  const clave = nombre + '|' + precio + '|' + detalles.join('|');
+  const existente = carrito.find(x => x.clave === clave);
+  if (existente) existente.cant++; else carrito.push({ clave, nombre, precio, detalles, cant: 1 });
+  guardarCarrito();
+  pintarCarrito();
+  avisar(nombre + ' agregado al carrito');
+}
+
+function pintarCarrito() {
+  const n = articulos();
+  $('barraCant').textContent = n + (n === 1 ? ' artículo' : ' artículos');
+  $('barraTotal').textContent = dinero(subtotal());
+  $('carritoVacio').hidden = carrito.length > 0;
+  $('items').innerHTML = carrito.map((x, k) => `<li class="item">
+    <div class="item-fila">
+      <span class="item-nombre">${esc(x.nombre)}</span>
+      <span class="item-precio">${dinero(x.precio * x.cant)}</span>
+    </div>
+    ${x.detalles.length ? '<ul class="item-detalles">' + x.detalles.map(d => `<li>• ${esc(d)}</li>`).join('') + '</ul>' : ''}
+    <div class="item-fila item-acciones">
+      <div class="cant">
+        <button type="button" data-acc="menos" data-k="${k}" aria-label="Quitar uno de ${esc(x.nombre)}">−</button>
+        <span>${x.cant}</span>
+        <button type="button" data-acc="mas" data-k="${k}" aria-label="Agregar uno de ${esc(x.nombre)}">+</button>
+      </div>
+      <button class="quitar" type="button" data-acc="quitar" data-k="${k}" aria-label="Quitar ${esc(x.nombre)} del carrito">✕</button>
+    </div>
+  </li>`).join('');
+  pintarPago();
+}
+$('items').addEventListener('click', e => {
+  const b = e.target.closest('[data-acc]');
+  if (!b) return;
+  const x = carrito[+b.dataset.k];
+  if (b.dataset.acc === 'mas') x.cant++;
+  else if (b.dataset.acc === 'menos') x.cant--;
+  if (b.dataset.acc === 'quitar' || x.cant < 1) carrito.splice(+b.dataset.k, 1);
+  guardarCarrito();
+  pintarCarrito();
+});
+$('barraCarrito').addEventListener('click', () => { pintarCarrito(); abrirCapa($('capaCarrito')); });
+
+/* =========================================================
+   11. CONFIRMAR PEDIDO: GPS, forma de pago y total
+   ========================================================= */
+let ubicacion = '';
+let formaPago = 'Efectivo';
+
+$('btnGps').addEventListener('click', () => {
+  const t = $('gpsEstado');
+  t.hidden = false;
+  if (!navigator.geolocation) { t.textContent = 'Tu navegador no permite compartir la ubicación.'; return; }
+  t.textContent = 'Obteniendo ubicación...';
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      ubicacion = `https://maps.google.com/?q=${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`;
+      t.textContent = 'Ubicación capturada correctamente.';
+    },
+    err => { t.textContent = err.code === 1 ? 'No diste permiso para usar tu ubicación.' : 'No se pudo obtener la ubicación. Intenta de nuevo.'; },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+});
+
+const comision = () => formaPago === 'Tarjeta' ? Math.round(subtotal() * COMISION_TARJETA / 100) : 0;
+const totalPedido = () => subtotal() + comision();
+
+function pintarPago() {
+  document.querySelectorAll('[data-pago]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pago === formaPago)));
+  $('pagoEfectivo').hidden = formaPago !== 'Efectivo';
+  $('pagoTransferencia').hidden = formaPago !== 'Transferencia';
+  $('pagoTarjeta').hidden = formaPago !== 'Tarjeta';
+  $('txtComision').textContent = `Al pagar con tarjeta se agrega ${COMISION_TARJETA}% al total (${dinero(subtotal())} + ${dinero(comision())})`;
+  $('totalFinal').textContent = 'Total: ' + dinero(totalPedido());
+  // Cambio en efectivo
+  const paga = parseFloat($('fPagaCon').value), c = $('cambioTxt');
+  c.className = 'cambio-txt';
+  if (!paga) c.textContent = '';
+  else if (paga < totalPedido()) { c.textContent = 'La cantidad es menor al total.'; c.classList.add('mal'); }
+  else {
+    const cambio = paga - totalPedido();
+    c.textContent = 'Tu cambio: ' + dinero(cambio) + (cambio > CAMBIO_MAXIMO ? ` — el repartidor no lleva más de ${dinero(CAMBIO_MAXIMO)} de cambio.` : '');
+    if (cambio > CAMBIO_MAXIMO) c.classList.add('mal');
+  }
+}
+document.querySelector('.pagos').addEventListener('click', e => {
+  const b = e.target.closest('[data-pago]');
+  if (b) { formaPago = b.dataset.pago; pintarPago(); }
+});
+$('fPagaCon').addEventListener('input', pintarPago);
+$('btnCopiar').addEventListener('click', () => {
+  const b = $('btnCopiar'), limpio = CLABE.replace(/\s/g, '');
+  const listo = () => { b.textContent = '¡Copiada!'; setTimeout(() => { b.textContent = 'Copiar CLABE'; }, 2000); };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(limpio).then(listo, () => avisar('No se pudo copiar', true));
+  else {
+    const t = document.createElement('textarea');
+    t.value = limpio; document.body.appendChild(t); t.select();
+    try { document.execCommand('copy'); listo(); } catch (e) { avisar('No se pudo copiar', true); }
+    t.remove();
+  }
+});
+
+/* =========================================================
+   12. ENVIAR PEDIDO POR WHATSAPP
+   ========================================================= */
+const valor = id => $(id).value.trim();
+const SEPARADOR = '----------------';
+
+$('btnEnviar').addEventListener('click', () => {
+  if (!carrito.length) return avisar('Tu carrito está vacío', true);
+  if (!estaAbierto()) return avisar(`Estamos cerrados. Abrimos de ${hora12(OPEN_MIN)} a ${hora12(CLOSE_MIN)}.`, true);
+  const obligatorios = [['fNombre', 'tu nombre completo'], ['fTelefono', 'tu teléfono'], ['fCalle', 'calle y número'], ['fEntre', 'entre qué calles'], ['fColonia', 'la colonia']];
+  const vacio = obligatorios.find(([id]) => !valor(id));
+  if (vacio) { $(vacio[0]).focus(); return avisar('Escribe ' + vacio[1], true); }
+  const tel = valor('fTelefono').replace(/\D/g, '');
+  if (tel.length !== 10) { $('fTelefono').focus(); return avisar('El teléfono debe tener 10 dígitos', true); }
+  const paga = parseFloat($('fPagaCon').value);
+  if (formaPago === 'Efectivo' && !paga) { $('fPagaCon').focus(); return avisar('Escribe con cuánto pagas', true); }
+  if (formaPago === 'Efectivo' && paga < totalPedido()) { $('fPagaCon').focus(); return avisar('La cantidad es menor al total', true); }
+
+  const o = id => valor(id) || '-';
+  const l = [
+    `*${NEGOCIO.toUpperCase()} - PEDIDO*`,
+    'Cliente: ' + valor('fNombre'),
+    'Teléfono: ' + tel,
+    'Dirección: ' + valor('fCalle'),
+    'Entre calles: ' + valor('fEntre'),
+    'Colonia: ' + valor('fColonia'),
+    `Zaguán: ${o('fZaguan')} | Fachada: ${o('fFachada')}`,
+    'GPS: ' + (ubicacion || 'No enviada'),
+    'Notas: ' + o('fNotas'),
+    SEPARADOR
+  ];
+  carrito.forEach(x => {
+    l.push(`- ${x.cant > 1 ? x.cant + ' x ' : ''}${x.nombre} ${dinero(x.precio * x.cant)}`);
+    x.detalles.forEach(d => l.push('   • ' + d));
+  });
+  l.push(SEPARADOR, 'Pago: ' + formaPago);
+  if (formaPago === 'Efectivo') l.push(`Paga con: ${dinero(paga)} (cambio ${dinero(paga - totalPedido())})`);
+  if (formaPago === 'Tarjeta') l.push(`Comisión tarjeta ${COMISION_TARJETA}%: +${dinero(comision())}`);
+  l.push(`*TOTAL: ${dinero(totalPedido())}*`);
+  if (formaPago !== 'Efectivo') l.push('Enviaré mi comprobante por este chat.');
+  window.open(urlWa(l.join('\n')), '_blank');
+});
+
+/* =========================================================
+   13. ARRANQUE
+   ========================================================= */
+document.addEventListener('click', e => {
+  const b = e.target.closest('main [data-tipo]');
+  if (!b) return;
+  if (b.dataset.tipo === 'complemento') {
+    const p = COMPLEMENTOS.find(x => x.id === b.dataset.id);
+    agregarAlCarrito(p.nombre, p.precio, []);
+  } else abrirSabores(b.dataset.tipo, b.dataset.id);
+});
+pintarInfo();
+pintarMenu();
+pintarCarrito();
+activarFotos();
+actualizarEstado();
+setInterval(actualizarEstado, 60000);
+</script>
+</body>
+</html>
